@@ -28,9 +28,13 @@ function renderTable(records) {
 
 
 async function deleteRecord(record) {
+  const token = localStorage.getItem("authToken");
   const res = await fetch("https://key-loan-api-xxx.a.run.app/borrow/delete", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
     body: JSON.stringify(record),
   });
 
