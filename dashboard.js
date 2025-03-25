@@ -1,8 +1,9 @@
 // dashboard.js
 
-// 驗證 token 並取得使用者資料
-let currentUser = null; // 全域存取使用者資料
+let currentUser = null;
 const token = localStorage.getItem("authToken");
+
+// 驗證 Token
 if (!token) {
   location.href = "index.html";
 } else {
@@ -15,9 +16,12 @@ if (!token) {
     .then(data => {
       if (data.success) {
         currentUser = data.user;
-        // 顯示歡迎訊息與自動填入借用人欄位
         document.getElementById("welcome").innerText = `Hi, ${data.user.name}`;
         document.getElementById("borrower").value = data.user.name;
+
+        // 顯示目前時間（畫面用途）
+        document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
+
         // 載入車號下拉選單
         loadCarNumbers(data.user.carNo);
       } else {
@@ -32,40 +36,29 @@ if (!token) {
     });
 }
 
-// 登出功能
+// 登出按鈕
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("authToken");
   location.href = "index.html";
 });
 
-// 自動填入當下時間 (格式符合 datetime-local) 並鎖定
+// === 工具：取得當下時間（送給後端）
 function getCurrentDatetimeLocal() {
   const now = new Date();
   const offset = now.getTimezoneOffset();
   const localDate = new Date(now.getTime() - offset * 60000);
   return localDate.toISOString().slice(0, 16);
 }
-document.getElementById("borrowTime").value = getCurrentDatetimeLocal();
 
-// 顯示現在時間在畫面上（僅顯示）
-document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
-
-// 傳送資料時不要送 borrowTime
-const borrowData = {
-  borrower: user.name,
-  carNumber: selectedCarNo
-  // borrowTime 不傳！讓後端自動產生
-};
-
-// 取得 CARNO 工作表的車號，並填入下拉選單
+// === 載入車號選單
 function loadCarNumbers(defaultCar) {
   fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno")
     .then(res => res.json())
     .then(carData => {
       if (carData.success) {
         const select = document.getElementById("carNumber");
-        select.innerHTML = ""; // 清空原有選項
-        // 若使用者預設的車號存在，先加入該選項並預設選取
+        select.innerHTML = "";
+
         if (defaultCar) {
           const opt = document.createElement("option");
           opt.value = defaultCar;
@@ -73,7 +66,7 @@ function loadCarNumbers(defaultCar) {
           select.appendChild(opt);
           select.value = defaultCar;
         }
-        // 將其他車號加入，避免重覆
+
         carData.data.forEach(car => {
           if (car !== defaultCar) {
             const opt = document.createElement("option");
@@ -89,24 +82,22 @@ function loadCarNumbers(defaultCar) {
     .catch(err => console.error("Error fetching car numbers:", err));
 }
 
-// 借用申請功能
+// === 送出借用申請
 document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrower = document.getElementById("borrower").value.trim();
   const carNumber = document.getElementById("carNumber").value;
-  // 系統自動取得當下時間，不接受使用者修改
-  const borrowTime = getCurrentDatetimeLocal();
   const borrowMsg = document.getElementById("borrowMsg");
 
-  if (!borrower || !carNumber || !borrowTime) {
+  if (!borrower || !carNumber) {
     borrowMsg.innerText = "請完整填寫必填欄位";
+    borrowMsg.style.color = "red";
     return;
   }
 
-  // 只傳送需要的欄位
   const borrowData = {
     borrower,
-    carNumber,
-    borrowTime
+    carNumber
+    // borrowTime 不送出，後端自動填入
   };
 
   try {
@@ -129,4 +120,3 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     borrowMsg.innerText = "發生錯誤，請稍後再試。";
   }
 });
-
