@@ -47,6 +47,16 @@ function getCurrentDatetimeLocal() {
 }
 document.getElementById("borrowTime").value = getCurrentDatetimeLocal();
 
+// 顯示現在時間在畫面上（僅顯示）
+document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
+
+// 傳送資料時不要送 borrowTime
+const borrowData = {
+  borrower: user.name,
+  carNumber: selectedCarNo
+  // borrowTime 不傳！讓後端自動產生
+};
+
 // 取得 CARNO 工作表的車號，並填入下拉選單
 function loadCarNumbers(defaultCar) {
   fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno")
