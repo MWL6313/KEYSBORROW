@@ -1,40 +1,55 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>鑰匙借用系統 - 主頁</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>鑰匙借用系統 - Dashboard</title>
   <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png">
   <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
-  <h2>歡迎使用鑰匙借用系統</h2>
-  <p id="welcome"></p>
-  <button id="logoutBtn">登出</button>
-
-  <script type="module">
-    const token = localStorage.getItem("authToken");
-    if (!token) location.href = "index.html";
-
-    fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById("welcome").innerText = `Hi, ${data.user.name}`;
-        } else {
-          localStorage.removeItem("authToken");
-          location.href = "index.html";
-        }
-      });
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("authToken");
-      location.href = "index.html";
-    });
-  </script>
+  <header>
+    <h2>鑰匙借用系統</h2>
+    <div id="userInfo">
+      <p id="welcome"></p>
+      <button id="logoutBtn">登出</button>
+    </div>
+  </header>
+  <main>
+    <section id="borrowSection">
+      <h3>借用申請</h3>
+      <div class="form-container">
+        <!-- 借用人直接帶入登入者名稱，不允許修改 -->
+        <label>
+          借用人：
+          <input type="text" id="borrower" placeholder="借用人" readonly>
+        </label>
+        <!-- 車號下拉選單 -->
+        <label>
+          鑰匙車號：
+          <select id="carNumber">
+            <option value="">請選擇車號</option>
+            <option value="ABC-123">ABC-123</option>
+            <option value="XYZ-789">XYZ-789</option>
+            <!-- 可根據需要擴充或從後端動態取得 -->
+          </select>
+        </label>
+        <!-- 借用時間直接預設為當下時間 -->
+        <label>
+          借用時間：
+          <input type="datetime-local" id="borrowTime">
+        </label>
+        <!-- 詳細資料 -->
+        <label>
+          詳細資料：
+          <textarea id="detail" placeholder="輸入其他備註"></textarea>
+        </label>
+        <button id="submitBorrow">送出申請</button>
+        <p id="borrowMsg"></p>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
