@@ -85,12 +85,21 @@
           借用人：
           <input type="text" id="borrower" readonly>
         </label>
+        
+        <!-- 🚗 鑰匙車號：可輸入 + 可選擇 -->
         <label>
+          鑰匙車號：
+          <input list="carList" id="carNumber" placeholder="請輸入或選擇車號">
+          <datalist id="carList"></datalist>
+        </label>
+
+        
+<!--         <label>
           鑰匙車號：
           <select id="carNumber">
             <option value="">請選擇車號</option>
           </select>
-        </label>
+        </label> -->
         <!-- ✅ 改為純顯示用，不傳送到後端 -->
 <!--         <label>
           借用時間：
