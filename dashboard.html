@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>鑰匙借用系統 - 主頁</title>
+</head>
+<body>
+  <h2>歡迎使用鑰匙借用系統</h2>
+  <p id="welcome"></p>
+  <button id="logoutBtn">登出</button>
+
+  <script type="module">
+    const token = localStorage.getItem("authToken");
+    if (!token) location.href = "index.html";
+
+    fetch("https://YOUR_CLOUD_RUN_URL/validateToken", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById("welcome").innerText = `Hi, ${data.user.name}`;
+        } else {
+          localStorage.removeItem("authToken");
+          location.href = "index.html";
+        }
+      });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("authToken");
+      location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
