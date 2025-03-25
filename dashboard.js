@@ -92,15 +92,11 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     return;
   }
 
-  // 依據 BORROW 工作表欄位順序：
-  // 借用人, 車號, 借用時間, 詳細資料, 異常, 車頭, 尾車, 檢查日期, 檢查人員, 完成率, 執行區間, 執行開始時間, 執行結束時間
-  // 這裡 detail 不需要，其他欄位以空字串填入
+  // 只傳送需要的欄位
   const borrowData = {
     borrower,
     carNumber,
-    borrowTime,
-    approvalStatus: "待審核",    // 初始狀態，待管理員核准
-    inspectionStatus: "未檢查"  // 初始巡檢狀態
+    borrowTime
   };
 
   try {
@@ -123,3 +119,4 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     borrowMsg.innerText = "發生錯誤，請稍後再試。";
   }
 });
+
