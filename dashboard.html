@@ -15,7 +15,7 @@
     const token = localStorage.getItem("authToken");
     if (!token) location.href = "index.html";
 
-    fetch("https://YOUR_CLOUD_RUN_URL/validateToken", {
+    fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token }),
