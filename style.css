@@ -9,25 +9,39 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
   padding: 20px;
 }
 
-h2 {
+header {
+  width: 100%;
+  max-width: 600px;
   margin-bottom: 20px;
-  color: #007BFF;
   text-align: center;
 }
 
-/* 表單容器 */
+#userInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h2, h3 {
+  color: #007BFF;
+}
+
+main {
+  width: 100%;
+  max-width: 600px;
+}
+
 .form-container {
   background: #fff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   width: 100%;
-  max-width: 400px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 label {
@@ -36,7 +50,7 @@ label {
   font-size: 16px;
 }
 
-input {
+input, select, textarea {
   width: 100%;
   padding: 12px;
   margin-top: 5px;
@@ -63,9 +77,8 @@ button:hover {
   background: #0056b3;
 }
 
-#msg {
+#borrowMsg {
   margin-top: 15px;
   text-align: center;
-  color: red;
   font-size: 14px;
 }
