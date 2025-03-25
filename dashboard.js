@@ -56,23 +56,26 @@ function loadCarNumbers(defaultCar) {
     .then(res => res.json())
     .then(carData => {
       if (carData.success) {
-        const select = document.getElementById("carNumber");
-        select.innerHTML = "";
+        const datalist = document.getElementById("carList");
+        const input = document.getElementById("carNumber");
 
+        datalist.innerHTML = ""; // 清空舊資料
+
+        // 先填入 defaultCar 為預設值
         if (defaultCar) {
-          const opt = document.createElement("option");
-          opt.value = defaultCar;
-          opt.text = defaultCar;
-          select.appendChild(opt);
-          select.value = defaultCar;
+          input.value = defaultCar;
         }
 
+        // 將所有車號加入 datalist（避免重複）
+        const uniqueSet = new Set();
+        if (defaultCar) uniqueSet.add(defaultCar);
+
         carData.data.forEach(car => {
-          if (car !== defaultCar) {
+          if (!uniqueSet.has(car)) {
+            uniqueSet.add(car);
             const opt = document.createElement("option");
             opt.value = car;
-            opt.text = car;
-            select.appendChild(opt);
+            datalist.appendChild(opt);
           }
         });
       } else {
@@ -81,6 +84,39 @@ function loadCarNumbers(defaultCar) {
     })
     .catch(err => console.error("Error fetching car numbers:", err));
 }
+
+
+
+// function loadCarNumbers(defaultCar) {
+//   fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno")
+//     .then(res => res.json())
+//     .then(carData => {
+//       if (carData.success) {
+//         const select = document.getElementById("carNumber");
+//         select.innerHTML = "";
+
+//         if (defaultCar) {
+//           const opt = document.createElement("option");
+//           opt.value = defaultCar;
+//           opt.text = defaultCar;
+//           select.appendChild(opt);
+//           select.value = defaultCar;
+//         }
+
+//         carData.data.forEach(car => {
+//           if (car !== defaultCar) {
+//             const opt = document.createElement("option");
+//             opt.value = car;
+//             opt.text = car;
+//             select.appendChild(opt);
+//           }
+//         });
+//       } else {
+//         console.error("Failed to load car numbers");
+//       }
+//     })
+//     .catch(err => console.error("Error fetching car numbers:", err));
+// }
 
 // === 送出借用申請
 // === 送出借用申請
