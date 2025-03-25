@@ -34,7 +34,7 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
   location.href = "index.html";
 });
 
-// 自動填入當下時間 (格式符合 datetime-local)
+// 自動填入當下時間 (格式符合 datetime-local) 並鎖定
 function getCurrentDatetimeLocal() {
   const now = new Date();
   const offset = now.getTimezoneOffset();
@@ -47,8 +47,8 @@ document.getElementById("borrowTime").value = getCurrentDatetimeLocal();
 document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrower = document.getElementById("borrower").value.trim();
   const carNumber = document.getElementById("carNumber").value;
-  const borrowTime = document.getElementById("borrowTime").value;
-  const detail = document.getElementById("detail").value.trim();
+  // 由系統自動取得當下時間，不接受使用者輸入修改
+  const borrowTime = getCurrentDatetimeLocal();
   const borrowMsg = document.getElementById("borrowMsg");
 
   if (!borrower || !carNumber || !borrowTime) {
@@ -56,11 +56,14 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     return;
   }
 
+  // 依據 BORROW 工作表欄位順序：
+  // 借用人, 車號, 借用時間, 詳細資料, 異常, 車頭, 尾車, 檢查日期, 檢查人員, 完成率, 執行區間, 執行開始時間, 執行結束時間
+  // 這裡不需要詳細資料，將該欄填空，其餘欄位也以空字串填入
   const borrowData = {
     borrower,
     carNumber,
     borrowTime,
-    detail,
+    // detail 不需要
     approvalStatus: "待審核",    // 初始狀態，待管理員核准
     inspectionStatus: "未檢查"  // 初始巡檢狀態
   };
