@@ -6,6 +6,67 @@
   <title>鑰匙借用系統 - Dashboard</title>
   <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png">
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: "Microsoft JhengHei", sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background-color: #f9f9f9;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #3f51b5;
+      color: white;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    h2 {
+      margin: 0;
+    }
+    main {
+      margin-top: 1rem;
+    }
+    .form-container {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    input[readonly], input[disabled] {
+      background-color: #eee;
+      color: #666;
+      cursor: not-allowed;
+    }
+    button {
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #303f9f;
+    }
+    #borrowMsg {
+      margin-top: 0.5rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -15,24 +76,21 @@
       <button id="logoutBtn">登出</button>
     </div>
   </header>
+
   <main>
     <section id="borrowSection">
       <h3>借用申請</h3>
       <div class="form-container">
-        <!-- 借用人自動填入，使用者無法修改 -->
         <label>
           借用人：
           <input type="text" id="borrower" readonly>
         </label>
-        <!-- 車號下拉選單 -->
         <label>
           鑰匙車號：
           <select id="carNumber">
             <option value="">請選擇車號</option>
           </select>
-
         </label>
-        <!-- 借用時間自動填入並鎖定，不允許修改 -->
         <label>
           借用時間：
           <input type="datetime-local" id="borrowTime" readonly>
@@ -42,7 +100,9 @@
       </div>
     </section>
   </main>
+
   <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
 
