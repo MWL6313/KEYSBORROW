@@ -91,10 +91,12 @@
             <option value="">請選擇車號</option>
           </select>
         </label>
+        <!-- ✅ 改為純顯示用，不傳送到後端 -->
         <label>
           借用時間：
-          <input type="datetime-local" id="borrowTime" readonly>
+          <input type="text" id="borrowTimeDisplay" readonly>
         </label>
+
         <button id="submitBorrow">送出申請</button>
         <p id="borrowMsg"></p>
       </div>
