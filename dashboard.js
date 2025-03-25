@@ -56,33 +56,44 @@ function loadCarNumbers(defaultCar) {
     .then(res => res.json())
     .then(carData => {
       if (carData.success) {
-        const input = document.getElementById("carNumber");
+        const select = document.getElementById("carNumber");
+        select.innerHTML = ""; // 清空選單
 
-        // 去除重複 + 避免 defaultCar 重複
-        const carSet = new Set(carData.data.filter(car => car !== defaultCar));
-        const fullList = defaultCar ? [defaultCar, ...carSet] : [...carSet];
+        // 避免重複 + 把預設放第一筆
+        const uniqueSet = new Set(carData.data);
+        const sorted = [...uniqueSet];
+        if (defaultCar && uniqueSet.has(defaultCar)) {
+          sorted.splice(sorted.indexOf(defaultCar), 1); // 先移除
+          sorted.unshift(defaultCar); // 放最前
+        }
 
-        // 設定預設值
-        if (defaultCar) input.value = defaultCar;
-
-        // 初始化 Awesomplete
-        const awesomplete = new Awesomplete(input, {
-          list: fullList,
-          minChars: 0,
-          autoFirst: true
+        // 加入選項
+        sorted.forEach(car => {
+          const opt = document.createElement("option");
+          opt.value = car;
+          opt.textContent = car;
+          select.appendChild(opt);
         });
 
-        // 點擊時強制展開清單（即使有預設值）
-        input.addEventListener("focus", () => {
-          awesomplete.evaluate();
+        // 初始化 Tom Select
+        new TomSelect("#carNumber", {
+          create: false,
+          sortField: {
+            field: "text",
+            direction: "asc"
+          },
+          placeholder: "請輸入或選擇車號",
         });
 
-      } else {
-        console.error("Failed to load car numbers");
+        // 預設選定 defaultCar
+        if (defaultCar) {
+          select.value = defaultCar;
+        }
       }
     })
     .catch(err => console.error("Error fetching car numbers:", err));
 }
+
 
 
 // function loadCarNumbers(defaultCar) {
