@@ -10,7 +10,7 @@ loginBtn.addEventListener("click", async () => {
     return;
   }
 
-  const res = await fetch("https://YOUR_CLOUD_RUN_URL/login", {
+  const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ account, password }),
