@@ -57,19 +57,24 @@ function loadCarNumbers(defaultCar) {
     .then(carData => {
       if (carData.success) {
         const input = document.getElementById("carNumber");
-        if (defaultCar) {
-          input.value = defaultCar;
-        }
 
-        new Awesomplete(input, {
-          list: carData.data,
-          minChars: 0, // ✅ 設定為 0 → 點一下就能顯示
+        // 去除重複 + 避免 defaultCar 重複
+        const carSet = new Set(carData.data.filter(car => car !== defaultCar));
+        const fullList = defaultCar ? [defaultCar, ...carSet] : [...carSet];
+
+        // 設定預設值
+        if (defaultCar) input.value = defaultCar;
+
+        // 初始化 Awesomplete
+        const awesomplete = new Awesomplete(input, {
+          list: fullList,
+          minChars: 0,
           autoFirst: true
         });
 
-        // ✅ 點一下就展開選單
-        input.addEventListener("focus", function () {
-          input.dispatchEvent(new KeyboardEvent("keydown", { keyCode: 40 })); // 模擬方向鍵 ↓
+        // 點擊時強制展開清單（即使有預設值）
+        input.addEventListener("focus", () => {
+          awesomplete.evaluate();
         });
 
       } else {
