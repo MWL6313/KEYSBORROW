@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>借用紀錄管理</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h2>🔐 鑰匙借用紀錄</h2>
+    <button id="logoutBtn">登出</button>
+  </header>
+
+  <main>
+    <div class="filters">
+      <input type="text" id="filterUser" placeholder="輸入借用人">
+      <input type="text" id="filterCar" placeholder="輸入車號">
+      <button id="refreshBtn">重新整理</button>
+    </div>
+
+    <div id="recordList" class="record-table"></div>
+  </main>
+
+  <script type="module" src="records.js"></script>
+</body>
+</html>
