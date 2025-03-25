@@ -1,6 +1,7 @@
 // dashboard.js
 
 // 驗證 token 並取得使用者資料
+let currentUser = null; // 全域存取使用者資料
 const token = localStorage.getItem("authToken");
 if (!token) {
   location.href = "index.html";
@@ -13,9 +14,12 @@ if (!token) {
     .then(res => res.json())
     .then(data => {
       if (data.success) {
+        currentUser = data.user;
         // 顯示歡迎訊息與自動填入借用人欄位
         document.getElementById("welcome").innerText = `Hi, ${data.user.name}`;
         document.getElementById("borrower").value = data.user.name;
+        // 載入車號下拉選單
+        loadCarNumbers(data.user.carNo);
       } else {
         localStorage.removeItem("authToken");
         location.href = "index.html";
@@ -43,11 +47,43 @@ function getCurrentDatetimeLocal() {
 }
 document.getElementById("borrowTime").value = getCurrentDatetimeLocal();
 
+// 取得 CARNO 工作表的車號，並填入下拉選單
+function loadCarNumbers(defaultCar) {
+  fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno")
+    .then(res => res.json())
+    .then(carData => {
+      if (carData.success) {
+        const select = document.getElementById("carNumber");
+        select.innerHTML = ""; // 清空原有選項
+        // 若使用者預設的車號存在，先加入該選項並預設選取
+        if (defaultCar) {
+          const opt = document.createElement("option");
+          opt.value = defaultCar;
+          opt.text = defaultCar;
+          select.appendChild(opt);
+          select.value = defaultCar;
+        }
+        // 將其他車號加入，避免重覆
+        carData.data.forEach(car => {
+          if (car !== defaultCar) {
+            const opt = document.createElement("option");
+            opt.value = car;
+            opt.text = car;
+            select.appendChild(opt);
+          }
+        });
+      } else {
+        console.error("Failed to load car numbers");
+      }
+    })
+    .catch(err => console.error("Error fetching car numbers:", err));
+}
+
 // 借用申請功能
 document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrower = document.getElementById("borrower").value.trim();
   const carNumber = document.getElementById("carNumber").value;
-  // 由系統自動取得當下時間，不接受使用者輸入修改
+  // 系統自動取得當下時間，不接受使用者修改
   const borrowTime = getCurrentDatetimeLocal();
   const borrowMsg = document.getElementById("borrowMsg");
 
@@ -58,12 +94,11 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
 
   // 依據 BORROW 工作表欄位順序：
   // 借用人, 車號, 借用時間, 詳細資料, 異常, 車頭, 尾車, 檢查日期, 檢查人員, 完成率, 執行區間, 執行開始時間, 執行結束時間
-  // 這裡不需要詳細資料，將該欄填空，其餘欄位也以空字串填入
+  // 這裡 detail 不需要，其他欄位以空字串填入
   const borrowData = {
     borrower,
     carNumber,
     borrowTime,
-    // detail 不需要
     approvalStatus: "待審核",    // 初始狀態，待管理員核准
     inspectionStatus: "未檢查"  // 初始巡檢狀態
   };
