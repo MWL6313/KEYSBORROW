@@ -101,10 +101,10 @@
           </select>
         </label> -->
         <!-- ✅ 改為純顯示用，不傳送到後端 -->
-        <label style="display: none;">
-          借用時間：
-          <input type="text" id="borrowTimeDisplay" readonly>
-        </label>
+        <!-- 正確對應 for + id，並用 style 隱藏 -->
+        <label for="borrowTimeDisplay" style="display: none;">借用時間：</label>
+        <input type="text" id="borrowTimeDisplay" readonly style="display: none;">
+
 
 
         <button id="submitBorrow">送出申請</button>
