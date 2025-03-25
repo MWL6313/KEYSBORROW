@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>鑰匙借用系統 - Dashboard</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js"></script>
   <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png">
   <link rel="stylesheet" href="style.css">
   <style>
@@ -87,11 +90,9 @@
         </label>
         
         <!-- 🚗 鑰匙車號：可輸入 + 可選擇 -->
-        <label>
-          鑰匙車號：
-          <input list="carList" id="carNumber" placeholder="請輸入或選擇車號">
-          <datalist id="carList"></datalist>
-        </label>
+        <label for="carNumber">鑰匙車號：</label>
+        <input id="carNumber" class="awesomplete" placeholder="請輸入或選擇車號" autocomplete="off">
+
 
         
 <!--         <label>
