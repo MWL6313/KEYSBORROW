@@ -3,42 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>鑰匙借用系統 - 借用申請</title>
+  <title>鑰匙借用系統 - Dashboard</title>
   <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>借用申請</h2>
-  <div class="form-container">
-    <!-- 借用人：可以預設為登入使用者，也可下拉選擇 -->
-    <label>
-      借用人：
-      <input type="text" id="borrower" placeholder="請輸入借用人" />
-    </label>
-    <!-- 車號下拉選單 -->
-    <label>
-      鑰匙車號：
-      <select id="carNumber">
-        <option value="">請選擇車號</option>
-        <option value="ABC-123">ABC-123</option>
-        <option value="XYZ-789">XYZ-789</option>
-        <!-- 更多選項可從後端動態取得 -->
-      </select>
-    </label>
-    <!-- 預計借用時間：使用日期/時間選擇器 -->
-    <label>
-      借用時間：
-      <input type="datetime-local" id="borrowTime" />
-    </label>
-    <!-- 詳細資料，可選填 -->
-    <label>
-      詳細資料：
-      <textarea id="detail" placeholder="輸入其他備註"></textarea>
-    </label>
-    <button id="submitBorrow">送出申請</button>
-    <p id="borrowMsg"></p>
-  </div>
-
-  <script type="module" src="borrow.js"></script>
+  <header>
+    <h2>鑰匙借用系統</h2>
+    <div id="userInfo">
+      <p id="welcome"></p>
+      <button id="logoutBtn">登出</button>
+    </div>
+  </header>
+  <main>
+    <section id="borrowSection">
+      <h3>借用申請</h3>
+      <div class="form-container">
+        <!-- 借用人自動填入，使用者無法修改 -->
+        <label>
+          借用人：
+          <input type="text" id="borrower" readonly>
+        </label>
+        <!-- 車號下拉選單 -->
+        <label>
+          鑰匙車號：
+          <select id="carNumber">
+            <option value="">請選擇車號</option>
+            <option value="ABC-123">ABC-123</option>
+            <option value="XYZ-789">XYZ-789</option>
+            <!-- 更多選項可從後端動態取得 -->
+          </select>
+        </label>
+        <!-- 借用時間自動填入並鎖定，不允許修改 -->
+        <label>
+          借用時間：
+          <input type="datetime-local" id="borrowTime" readonly>
+        </label>
+        <button id="submitBorrow">送出申請</button>
+        <p id="borrowMsg"></p>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
+
