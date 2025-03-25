@@ -83,10 +83,12 @@ function loadCarNumbers(defaultCar) {
 }
 
 // === 送出借用申請
+// === 送出借用申請
 document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrower = document.getElementById("borrower").value.trim();
   const carNumber = document.getElementById("carNumber").value;
   const borrowMsg = document.getElementById("borrowMsg");
+  const submitBtn = document.getElementById("submitBorrow");
 
   if (!borrower || !carNumber) {
     borrowMsg.innerText = "請完整填寫必填欄位";
@@ -97,7 +99,6 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrowData = {
     borrower,
     carNumber
-    // borrowTime 不送出，後端自動填入
   };
 
   try {
@@ -106,10 +107,29 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(borrowData)
     });
+
     const data = await res.json();
     if (data.success) {
       borrowMsg.style.color = "green";
       borrowMsg.innerText = "借用申請送出成功！";
+
+      // ✅ 禁用按鈕 10 秒 + 顯示倒數
+      submitBtn.disabled = true;
+      let countdown = 10;
+      const originalText = submitBtn.innerText;
+      submitBtn.innerText = `請稍候 ${countdown} 秒`;
+
+      const timer = setInterval(() => {
+        countdown--;
+        submitBtn.innerText = `請稍候 ${countdown} 秒`;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          submitBtn.disabled = false;
+          submitBtn.innerText = originalText;
+          borrowMsg.innerText = ""; // 清除提示
+        }
+      }, 1000);
+
     } else {
       borrowMsg.style.color = "red";
       borrowMsg.innerText = "申請送出失敗，請再試一次。";
@@ -120,3 +140,4 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     borrowMsg.innerText = "發生錯誤，請稍後再試。";
   }
 });
+
