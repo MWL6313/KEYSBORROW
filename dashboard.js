@@ -121,7 +121,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
 
       const timer = setInterval(() => {
         countdown--;
-        submitBtn.innerText = `請稍候 ${countdown} 秒`;
+        submitBtn.innerText = `借用申請送出成功，請稍候 ${countdown} 秒`;
         if (countdown <= 0) {
           clearInterval(timer);
           submitBtn.disabled = false;
