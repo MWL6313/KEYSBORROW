@@ -151,5 +151,58 @@ async function handleDelete(record) {
   }
 }
 
+let allRecords = []; // 全部資料快取
+let sortAsc = true;  // 初始排序方向
+
+// 篩選資料
+function filterRecords() {
+  const start = new Date(document.getElementById("startDate").value);
+  const end = new Date(document.getElementById("endDate").value);
+  const filtered = allRecords.filter(r => {
+    const time = new Date(r.借用時間);
+    return (!isNaN(start) ? time >= start : true) &&
+           (!isNaN(end) ? time <= end : true);
+  });
+  renderTable(filtered);
+}
+
+// 排序借用時間
+document.getElementById("sortTimeBtn").onclick = () => {
+  allRecords.sort((a, b) => {
+    const t1 = new Date(a.借用時間);
+    const t2 = new Date(b.借用時間);
+    return sortAsc ? t1 - t2 : t2 - t1;
+  });
+  sortAsc = !sortAsc;
+  renderTable(allRecords);
+};
+
+// 匯出 CSV
+document.getElementById("exportCsvBtn").onclick = () => {
+  const rows = [["借用人","車號","借用時間","歸還時間","車頭","尾車","完成率","巡檢結束時間"]];
+  allRecords.forEach(r => {
+    rows.push([
+      r.借用人, r.車號, r.借用時間, r.歸還時間, r.車頭 || "", r.尾車 || "", r.完成率 || "", r.巡檢結束時間 || ""
+    ]);
+  });
+  const csv = rows.map(r => r.join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "借用紀錄.csv";
+  link.click();
+};
+
+// 匯出 PDF（簡單表格）
+document.getElementById("exportPdfBtn").onclick = () => {
+  const doc = new window.jspdf.jsPDF();
+  doc.text("鑰匙借用與巡檢總覽", 10, 10);
+  allRecords.forEach((r, i) => {
+    doc.text(`${i + 1}. ${r.借用人} / ${r.車號} / ${formatDate(r.借用時間)}`, 10, 20 + i * 8);
+  });
+  doc.save("borrow_records.pdf");
+};
+
+
 loadRecords();
 
