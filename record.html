@@ -9,16 +9,84 @@
   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 
   <style>
-    body { font-family: "Segoe UI", sans-serif; margin: 20px; background-color: #f9f9f9; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    h2 { margin: 0; }
-    table { width: 100%; border-collapse: collapse; background-color: white; }
-    th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
-    th { background-color: #f0f0f0; }
-    button { margin: 5px; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; }
-    button:hover { background-color: #ddd; }
-    .filters { margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; }
-    .filters input { padding: 5px; }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f7fb;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #ccc;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    .filters, .controls {
+      margin: 15px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    input[type="text"], input[type="date"] {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 8px 14px;
+      font-size: 1rem;
+      background-color: #eee;
+      border: 1px solid #bbb;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ddd;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      font-size: 1rem;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+      background-color: #f2f4f8;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f9fbfd;
+    }
+
+    #statusMsg {
+      margin-top: 15px;
+      color: #888;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -30,24 +98,16 @@
     </div>
   </header>
 
-
   <div class="filters">
     <input type="text" id="searchUser" placeholder="🔍 搜尋借用人">
     <input type="text" id="searchCar" placeholder="🔍 搜尋車號">
   </div>
-  <div class="controls">
-<!--     <label>起始日期：<input type="date" id="startDate"></label>
-    <label>結束日期：<input type="date" id="endDate"></label> -->
-<!--     <button id="filterBtn">🔍 篩選</button>
-    <button id="resetBtn">♻️ 重設</button> -->
-<!--     <button id="exportCsvBtn">📁 匯出 CSV</button>
-    <button id="exportPdfBtn">🧾 匯出 PDF</button> -->
-    
-  <div style="margin: 10px 0;">
-    ⏱️ 最後更新時間：<span id="lastUpdateTime">尚未更新</span>
-    <button id="refreshBtn">🔄 手動更新</button>
-  </div>
 
+  <div class="controls">
+    <div style="margin: 10px 0;">
+      ⏱️ 最後更新時間：<span id="lastUpdateTime">尚未更新</span>
+      <button id="refreshBtn">🔄 手動更新</button>
+    </div>
     <button id="sortTimeBtn">⏳ 排序</button>
   </div>
 
@@ -74,3 +134,4 @@
   <script type="module" src="record.js"></script>
 </body>
 </html>
+
