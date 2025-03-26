@@ -197,11 +197,15 @@ document.getElementById("exportCsvBtn").onclick = () => {
 
 // 匯出 PDF（簡單表格）
 document.getElementById("exportPdfBtn").onclick = () => {
-  const doc = new window.jspdf.jsPDF();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
   doc.text("鑰匙借用與巡檢總覽", 10, 10);
+
   allRecords.forEach((r, i) => {
     doc.text(`${i + 1}. ${r.借用人} / ${r.車號} / ${formatDate(r.借用時間)}`, 10, 20 + i * 8);
   });
+
   doc.save("borrow_records.pdf");
 };
 
