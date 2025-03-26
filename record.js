@@ -71,12 +71,13 @@ function filterAndRender() {
 
     const actionTd = document.createElement("td");
 
-    if (!record.歸還時間) {
-      const returnBtn = document.createElement("button");
-      returnBtn.innerText = "🔁 歸還";
-      returnBtn.onclick = () => handleReturn(record);
-      actionTd.appendChild(returnBtn);
-    }
+  if (user.role === 'admin' && !record.歸還時間) {
+    const returnBtn = document.createElement("button");
+    returnBtn.innerText = "🔁 歸還";
+    returnBtn.onclick = () => handleReturn(record);
+    actionTd.appendChild(returnBtn);
+  }
+
 
     if (currentRole === "admin") {
       const deleteBtn = document.createElement("button");
