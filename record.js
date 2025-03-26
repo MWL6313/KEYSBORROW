@@ -71,7 +71,7 @@ function filterAndRender() {
 
     const actionTd = document.createElement("td");
 
-  if (user.role === 'admin' && !record.歸還時間) {
+  if (currentRole === 'admin' && !record.歸還時間) {
     const returnBtn = document.createElement("button");
     returnBtn.innerText = "🔁 歸還";
     returnBtn.onclick = () => handleReturn(record);
