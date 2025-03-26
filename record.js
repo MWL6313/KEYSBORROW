@@ -153,18 +153,6 @@ async function handleDelete(record) {
 
 let sortAsc = true;  // 初始排序方向
 
-// 篩選資料
-function filterRecords() {
-  const start = new Date(document.getElementById("startDate").value);
-  const end = new Date(document.getElementById("endDate").value);
-  const filtered = allRecords.filter(r => {
-    const time = new Date(r.借用時間);
-    return (!isNaN(start) ? time >= start : true) &&
-           (!isNaN(end) ? time <= end : true);
-  });
-  renderTable(filtered);
-}
-
 // 排序借用時間
 document.getElementById("sortTimeBtn").onclick = () => {
   allRecords.sort((a, b) => {
@@ -173,8 +161,23 @@ document.getElementById("sortTimeBtn").onclick = () => {
     return sortAsc ? t1 - t2 : t2 - t1;
   });
   sortAsc = !sortAsc;
-  renderTable(allRecords);
+  filterAndRender(); // ⬅ 這裡改掉
 };
+
+// 篩選日期區間（如果你有日期欄位）
+function filterRecords() {
+  const start = new Date(document.getElementById("startDate").value);
+  const end = new Date(document.getElementById("endDate").value);
+  const filtered = allRecords.filter(r => {
+    const time = new Date(r.借用時間);
+    return (!isNaN(start) ? time >= start : true) &&
+           (!isNaN(end) ? time <= end : true);
+  });
+  // renderTable(filtered);  // ⛔這行應刪除
+  allRecords = filtered;
+  filterAndRender(); // ✅用這行重新渲染
+}
+
 
 // 匯出 CSV
 document.getElementById("exportCsvBtn").onclick = () => {
