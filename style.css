@@ -1,130 +1,61 @@
-body {
-  font-family: "Noto Sans TC", "Segoe UI", sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: linear-gradient(to bottom, #fefcea, #f9e4bd);
-  color: #333;
-  line-height: 1.6;
-}
-
-header {
+#cardContainer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 15px;
-  margin-bottom: 10px;
-  border-bottom: 2px solid #ddd;
+  flex-direction: column;
+  gap: 16px;
 }
 
-h2 {
-  margin: 0;
-  font-size: 1.6rem;
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-left: 6px solid #c76f30;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
   color: #7b3e1d;
 }
 
-.top-bar {
+.card .info {
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 10px 30px;
+  font-size: 1rem;
+  margin-bottom: 10px;
 }
 
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
+.card .info span {
+  min-width: 140px;
+  display: inline-block;
 }
 
-.controls {
+.card .actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  justify-content: flex-end;
   gap: 10px;
 }
 
-input[type="text"], input[type="date"] {
-  padding: 10px 14px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #fffefc;
-}
-
-button {
-  padding: 8px 14px;
-  font-size: 1rem;
-  background-color: #c76f30;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: background 0.3s ease;
-}
-
-button:hover {
-  background-color: #a35420;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  font-size: 1rem;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-th, td {
-  padding: 14px 12px;
-  text-align: center;
-  border-bottom: 1px solid #eee;
-}
-
-th {
-  background-color: #f2ede6;
-  font-weight: 600;
-  color: #5a2b0c;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-tbody tr:nth-child(even) {
-  background-color: #fdf8f0;
-}
-
-.action-btn {
-  padding: 6px 10px;
+.card .action-btn {
   background-color: #5c84cc;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  padding: 8px 12px;
   font-size: 0.95rem;
-  margin: 2px;
   cursor: pointer;
-  transition: background 0.2s ease;
 }
 
-.action-btn:hover {
+.card .action-btn:hover {
   background-color: #3a66b3;
 }
 
-#statusMsg {
-  margin-top: 15px;
-  color: #888;
-  font-style: italic;
-}
-
-@media (max-width: 768px) {
-  .top-bar, .filters, .controls {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 
   table, thead, tbody, th, td, tr {
     font-size: 0.9rem;
