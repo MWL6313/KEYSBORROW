@@ -3,14 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <title>鑰匙借用紀錄總覽</title>
-  <link rel="stylesheet" href="style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { font-family: "Segoe UI", sans-serif; margin: 20px; background-color: #f9f9f9; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    h2 { margin: 0; }
+    table { width: 100%; border-collapse: collapse; background-color: white; }
+    th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+    th { background-color: #f0f0f0; }
+    button { margin: 5px; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background-color: #ddd; }
+    .filters { margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .filters input { padding: 5px; }
+  </style>
 </head>
 <body>
   <header>
     <h2>🔑 鑰匙借用與巡檢總覽</h2>
     <button onclick="location.href='dashboard.html'">返回首頁</button>
   </header>
+
+  <div class="filters">
+    <input type="text" id="searchUser" placeholder="🔍 搜尋借用人">
+    <input type="text" id="searchCar" placeholder="🔍 搜尋車號">
+  </div>
 
   <main>
     <table id="recordTable">
