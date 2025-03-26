@@ -22,12 +22,27 @@ h2 {
   color: #7b3e1d;
 }
 
-.filters, .controls {
-  margin: 15px 0;
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filters {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
 input[type="text"], input[type="date"] {
@@ -39,7 +54,7 @@ input[type="text"], input[type="date"] {
 }
 
 button {
-  padding: 8px 16px;
+  padding: 8px 14px;
   font-size: 1rem;
   background-color: #c76f30;
   color: white;
@@ -83,6 +98,22 @@ tbody tr:nth-child(even) {
   background-color: #fdf8f0;
 }
 
+.action-btn {
+  padding: 6px 10px;
+  background-color: #5c84cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  margin: 2px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.action-btn:hover {
+  background-color: #3a66b3;
+}
+
 #statusMsg {
   margin-top: 15px;
   color: #888;
@@ -90,17 +121,12 @@ tbody tr:nth-child(even) {
 }
 
 @media (max-width: 768px) {
-  table, thead, tbody, th, td, tr {
-    font-size: 0.85rem;
-  }
-  .filters, .controls {
+  .top-bar, .filters, .controls {
     flex-direction: column;
     align-items: flex-start;
   }
-}
 
-}
-
-.login-card .links a:hover {
-  text-decoration: underline;
+  table, thead, tbody, th, td, tr {
+    font-size: 0.9rem;
+  }
 }
