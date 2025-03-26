@@ -1,26 +1,105 @@
-#cardContainer {
+body {
+  font-family: "Noto Sans TC", "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 40px 20px;
+  background: linear-gradient(to bottom, #fefcea, #f1daae);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-size: 1.5rem; /* ✅ 全站放大 */
+}
+
+.login-card {
+  background: #fff;
+  border: 2px solid #a73232;
+  border-radius: 12px;
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-card h2 {
+  margin-bottom: 10px;
+}
+
+.login-card p {
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #eaf1ff;
+  box-sizing: border-box;
+}
+
+.login-card button {
+  width: 100%;
+  background: linear-gradient(to right, #a73232, #7a320f);
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-card button:hover {
+  background: #912020;
+}
+
+.login-card .links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.login-card .links a {
+  color: #a73232;
+  text-decoration: none;
+}
+
+.login-card .links a:hover {
+  text-decoration: underline;
+}
+
+/* ✅ 卡片清單樣式擴充區 */
+
+#cardContainer {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .card {
-  background: white;
-  padding: 20px;
+  background: #fff;
+  border-left: 6px solid #a73232;
+  padding: 24px 20px;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  border-left: 6px solid #c76f30;
-  transition: transform 0.2s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
 }
 
 .card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 .card h3 {
-  margin: 0 0 10px;
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #7a320f;
   font-size: 1.2rem;
-  color: #7b3e1d;
 }
 
 .card .info {
@@ -28,11 +107,11 @@
   flex-wrap: wrap;
   gap: 10px 30px;
   font-size: 1rem;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .card .info span {
-  min-width: 140px;
+  min-width: 180px;
   display: inline-block;
 }
 
@@ -43,21 +122,36 @@
 }
 
 .card .action-btn {
-  background-color: #5c84cc;
+  padding: 10px 14px;
+  font-size: 1rem;
+  background: linear-gradient(to right, #a73232, #7a320f);
   color: white;
   border: none;
   border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 0.95rem;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background 0.3s ease;
 }
 
 .card .action-btn:hover {
-  background-color: #3a66b3;
+  background: #912020;
 }
 
+@media (max-width: 768px) {
+  body {
+    font-size: 1.2rem;
+  }
 
-  table, thead, tbody, th, td, tr {
-    font-size: 0.9rem;
+  .card .info {
+    flex-direction: column;
+  }
+
+  .card .info span {
+    min-width: unset;
+  }
+
+  .card .actions {
+    flex-direction: column;
+    align-items: flex-end;
   }
 }
