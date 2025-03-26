@@ -151,7 +151,6 @@ async function handleDelete(record) {
   }
 }
 
-let allRecords = []; // 全部資料快取
 let sortAsc = true;  // 初始排序方向
 
 // 篩選資料
