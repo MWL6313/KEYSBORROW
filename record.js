@@ -209,6 +209,26 @@ document.getElementById("exportPdfBtn").onclick = () => {
   doc.save("borrow_records.pdf");
 };
 
+// 顯示最後更新時間
+function updateLastUpdateTime() {
+  const now = new Date().toLocaleString("zh-TW");
+  document.getElementById("lastUpdateTime").innerText = now;
+}
 
-loadRecords();
+// 每次載入完成都更新時間
+async function reloadWithTimestamp() {
+  await loadRecords();
+  updateLastUpdateTime();
+}
+
+// 手動刷新按鈕
+document.getElementById("refreshBtn").addEventListener("click", reloadWithTimestamp);
+
+// 自動每 30 秒更新
+setInterval(reloadWithTimestamp, 30 * 1000);
+
+// 初次載入
+reloadWithTimestamp();
+
+
 
