@@ -24,8 +24,12 @@
 <body>
   <header>
     <h2>🔑 鑰匙借用與巡檢總覽</h2>
-    <button onclick="location.href='dashboard.html'">返回首頁</button>
+    <div>
+      👤 使用者帳號：<span id="currentUser"></span>
+      <button onclick="location.href='dashboard.html'">返回首頁</button>
+    </div>
   </header>
+
 
   <div class="filters">
     <input type="text" id="searchUser" placeholder="🔍 搜尋借用人">
