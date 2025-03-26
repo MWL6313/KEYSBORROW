@@ -8,7 +8,9 @@ body {
   align-items: flex-start;
   min-height: 100vh;
   box-sizing: border-box;
+  font-size: 1.5rem;  /* ✅ 全站放大 1.5 倍 */
 }
+
 
 
 .login-card {
@@ -17,10 +19,11 @@ body {
   border-radius: 12px;
   padding: 40px 30px;
   width: 100%;
-  max-width: 420px;
+  max-width: 600px;  /* ✅ 原本是 420px */
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   text-align: center;
 }
+
 
 .login-card h2 {
   font-size: 1.5rem;
