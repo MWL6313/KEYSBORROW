@@ -1,7 +1,13 @@
 const token = localStorage.getItem("authToken");
 if (!token) location.href = "index.html";
 
-// 建立表格內容
+let allRecords = [];
+let currentRole = "";
+
+document.getElementById("searchUser").addEventListener("input", filterAndRender);
+document.getElementById("searchCar").addEventListener("input", filterAndRender);
+
+// 載入資料
 async function loadRecords() {
   const tableBody = document.querySelector("#recordTable tbody");
   tableBody.innerHTML = "";
@@ -18,48 +24,9 @@ async function loadRecords() {
       return;
     }
 
-    data.records.forEach(record => {
-      const tr = document.createElement("tr");
-
-      const cols = [
-        record.借用人,
-        record.車號,
-        formatDate(record.借用時間),
-        formatDate(record.歸還時間),
-        record.車頭 || "-",
-        record.尾車 || "-",
-        record.完成率 || "-",
-        formatDate(record.巡檢結束時間)
-      ];
-
-      cols.forEach(val => {
-        const td = document.createElement("td");
-        td.innerText = val || "";
-        tr.appendChild(td);
-      });
-
-      // 操作欄位
-      const actionTd = document.createElement("td");
-
-      // 歸還按鈕（如果未歸還才顯示）
-      if (!record.歸還時間) {
-        const returnBtn = document.createElement("button");
-        returnBtn.innerText = "🔁 歸還";
-        returnBtn.onclick = () => handleReturn(record);
-        actionTd.appendChild(returnBtn);
-      }
-
-      // 刪除按鈕（顯示給管理員）
-      if (data.role === "admin") {
-        const deleteBtn = document.createElement("button");
-        deleteBtn.innerText = "⛔ 刪除";
-        deleteBtn.onclick = () => handleDelete(record);
-        actionTd.appendChild(deleteBtn);
-      }
-
-      tr.appendChild(actionTd);
-      tableBody.appendChild(tr);
-    });
+    allRecords = data.records;
+    currentRole = data.role;
+    filterAndRender();
 
   } catch (err) {
     console.error("載入失敗", err);
@@ -67,14 +34,63 @@ async function loadRecords() {
   }
 }
 
-// 格式化時間
+function filterAndRender() {
+  const searchUser = document.getElementById("searchUser").value.toLowerCase();
+  const searchCar = document.getElementById("searchCar").value.toLowerCase();
+  const tableBody = document.querySelector("#recordTable tbody");
+  tableBody.innerHTML = "";
+
+  const filtered = allRecords.filter(r =>
+    (!searchUser || r.借用人.toLowerCase().includes(searchUser)) &&
+    (!searchCar || r.車號.toLowerCase().includes(searchCar))
+  );
+
+  filtered.forEach(record => {
+    const tr = document.createElement("tr");
+    const cols = [
+      record.借用人,
+      record.車號,
+      formatDate(record.借用時間),
+      formatDate(record.歸還時間),
+      record.車頭 || "-",
+      record.尾車 || "-",
+      record.完成率 || "-",
+      formatDate(record.巡檢結束時間)
+    ];
+
+    cols.forEach(val => {
+      const td = document.createElement("td");
+      td.innerText = val || "";
+      tr.appendChild(td);
+    });
+
+    const actionTd = document.createElement("td");
+
+    if (!record.歸還時間) {
+      const returnBtn = document.createElement("button");
+      returnBtn.innerText = "🔁 歸還";
+      returnBtn.onclick = () => handleReturn(record);
+      actionTd.appendChild(returnBtn);
+    }
+
+    if (currentRole === "admin") {
+      const deleteBtn = document.createElement("button");
+      deleteBtn.innerText = "⛔ 刪除";
+      deleteBtn.onclick = () => handleDelete(record);
+      actionTd.appendChild(deleteBtn);
+    }
+
+    tr.appendChild(actionTd);
+    tableBody.appendChild(tr);
+  });
+}
+
 function formatDate(str) {
   if (!str) return "";
   const d = new Date(str);
   return isNaN(d) ? str : d.toLocaleString("zh-TW");
 }
 
-// 歸還操作
 async function handleReturn(record) {
   if (!confirm("確定要標記為歸還嗎？")) return;
 
@@ -105,7 +121,6 @@ async function handleReturn(record) {
   }
 }
 
-// 刪除操作
 async function handleDelete(record) {
   if (!confirm("確定要刪除此紀錄嗎？此操作不可復原")) return;
 
@@ -136,6 +151,5 @@ async function handleDelete(record) {
   }
 }
 
-// 載入資料
 loadRecords();
 
