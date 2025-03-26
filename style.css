@@ -1,84 +1,75 @@
-/* style.css */
-
-/* 基本樣式 */
 body {
+  font-family: "Noto Sans TC", "Segoe UI", sans-serif;
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background: #f2f2f2;
-  color: #333;
+  padding: 0;
+  background: linear-gradient(to bottom, #fefcea, #f1daae);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 20px;
+  height: 100vh;
 }
 
-header {
+.login-card {
+  background: #fff;
+  border: 2px solid #a73232;
+  border-radius: 12px;
+  padding: 40px 30px;
   width: 100%;
-  max-width: 600px;
-  margin-bottom: 20px;
+  max-width: 420px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   text-align: center;
 }
 
-#userInfo {
+.login-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.login-card p {
+  font-weight: bold;
+  margin-bottom: 30px;
+  font-size: 1rem;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #eaf1ff;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.login-card button {
+  width: 100%;
+  background: linear-gradient(to right, #a73232, #7a320f);
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-card button:hover {
+  background: #912020;
+}
+
+.login-card .links {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  margin-top: 25px;
+  font-size: 0.95rem;
 }
 
-h2, h3 {
-  color: #007BFF;
+.login-card .links a {
+  color: #a73232;
+  text-decoration: none;
 }
 
-main {
-  width: 100%;
-  max-width: 600px;
-}
-
-.form-container {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 16px;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  background: #007BFF;
-  border: none;
-  color: #fff;
-  font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 15px;
-  transition: background 0.3s;
-}
-
-button:hover {
-  background: #0056b3;
-}
-
-#borrowMsg {
-  margin-top: 15px;
-  text-align: center;
-  font-size: 14px;
+.login-card .links a:hover {
+  text-decoration: underline;
 }
