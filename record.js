@@ -24,6 +24,10 @@ async function loadRecords() {
       return;
     }
 
+    // ✅ 顯示登入帳號
+    const currentUser = data.user?.id || "(未知)";
+    document.getElementById("currentUser").innerText = currentUser;
+
     allRecords = data.records;
     currentRole = data.role;
     filterAndRender();
@@ -33,6 +37,7 @@ async function loadRecords() {
     statusMsg.innerText = "無法連線伺服器。";
   }
 }
+
 
 function filterAndRender() {
   const searchUser = document.getElementById("searchUser").value.toLowerCase();
