@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>鑰匙借用紀錄總覽</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <header>
+    <h2>🔑 鑰匙借用與巡檢總覽</h2>
+    <button onclick="location.href='dashboard.html'">返回首頁</button>
+  </header>
+
+  <main>
+    <table id="recordTable">
+      <thead>
+        <tr>
+          <th>借用人</th>
+          <th>車號</th>
+          <th>借用時間</th>
+          <th>歸還時間</th>
+          <th>車頭</th>
+          <th>尾車</th>
+          <th>完成率</th>
+          <th>巡檢結束時間</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p id="statusMsg"></p>
+  </main>
+
+  <script type="module" src="record.js"></script>
+</body>
+</html>
