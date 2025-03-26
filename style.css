@@ -1,78 +1,104 @@
 body {
   font-family: "Noto Sans TC", "Segoe UI", sans-serif;
   margin: 0;
-  padding: 40px 20px;
-  background: linear-gradient(to bottom, #fefcea, #f1daae);
+  padding: 20px;
+  background: linear-gradient(to bottom, #fefcea, #f9e4bd);
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  box-sizing: border-box;
-  font-size: 1.5rem;  /* ✅ 全站放大 1.5 倍 */
-}
-
-
-
-.login-card {
-  background: #fff;
-  border: 2px solid #a73232;
-  border-radius: 12px;
-  padding: 40px 30px;
-  width: 100%;
-  max-width: 600px;  /* ✅ 原本是 420px */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  text-align: center;
-}
-
-
-.login-card h2 {
-/*   font-size: 1.5rem; */
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
   margin-bottom: 10px;
+  border-bottom: 2px solid #ddd;
 }
 
-.login-card p {
-  font-weight: bold;
-  margin-bottom: 30px;
-/*   font-size: 1rem; */
+h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #7b3e1d;
 }
 
-.login-card input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 8px;
+.filters, .controls {
+  margin: 15px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+input[type="text"], input[type="date"] {
+  padding: 10px 14px;
+  font-size: 1rem;
   border: 1px solid #ccc;
-  background-color: #eaf1ff;
-/*   font-size: 1rem; */
-  box-sizing: border-box;
+  border-radius: 6px;
+  background: #fffefc;
 }
 
-.login-card button {
-  width: 100%;
-  background: linear-gradient(to right, #a73232, #7a320f);
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  background-color: #c76f30;
   color: white;
-  padding: 14px;
   border: none;
-  border-radius: 8px;
-/*   font-size: 1.1rem; */
+  border-radius: 6px;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   transition: background 0.3s ease;
 }
 
-.login-card button:hover {
-  background: #912020;
+button:hover {
+  background-color: #a35420;
 }
 
-.login-card .links {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 25px;
-/*   font-size: 0.95rem; */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  font-size: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.login-card .links a {
-  color: #a73232;
-  text-decoration: none;
+th, td {
+  padding: 14px 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f2ede6;
+  font-weight: 600;
+  color: #5a2b0c;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fdf8f0;
+}
+
+#statusMsg {
+  margin-top: 15px;
+  color: #888;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    font-size: 0.85rem;
+  }
+  .filters, .controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 }
 
 .login-card .links a:hover {
