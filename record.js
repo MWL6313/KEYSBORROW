@@ -351,10 +351,30 @@ function updateTableRow(record) {
       cols.forEach((val, i) => {
         tr.children[i].innerText = val || "";
       });
+
+      // ✅ 重新建構操作欄（最後一欄）
+      const actionTd = tr.children[8];
+      actionTd.innerHTML = "";
+
+      if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
+        const returnBtn = document.createElement("button");
+        returnBtn.innerText = "🔁 歸還";
+        returnBtn.onclick = () => handleReturn(record);
+        actionTd.appendChild(returnBtn);
+      }
+
+      if (currentRole === "admin") {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerText = "⛔ 刪除";
+        deleteBtn.onclick = () => handleDelete(record);
+        actionTd.appendChild(deleteBtn);
+      }
+
       return;
     }
   }
 }
+
 
 //🔧 新增一列（如果是新資料）
 function appendTableRow(record) {
