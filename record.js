@@ -57,49 +57,37 @@ function filterAndRender() {
   const filtered = allRecords.filter(r => {
     const matchUser = !searchUser || r.借用人.toLowerCase().includes(searchUser);
     const matchCar = !searchCar || r.車號.toLowerCase().includes(searchCar);
-  
-    // ✅ 若啟用只顯示異常
+
     if (showOnlyAbnormal) {
       const now = new Date();
       const borrowTime = new Date(r.借用時間);
       const inspectionTime = r.巡檢結束時間 ? new Date(r.巡檢結束時間) : null;
-      const isTimeout = !inspectionTime && !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-      return matchUser && matchCar && isTimeout;
+      const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+      const noInspection = !inspectionTime;
+      const noAction = !r.異常處置對策;
+      return matchUser && matchCar && timeout && noInspection && noAction;
     }
-  
+
     return matchUser && matchCar;
   });
 
-
-  // filtered.forEach(record => {
-  //   const tr = document.createElement("tr");
-  //   const cols = [
-  //     record.借用人,
-  //     record.車號,
-  //     formatDate(record.借用時間),
-  //     formatDate(record.歸還時間),
-  //     record.車頭 || "-",
-  //     record.尾車 || "-",
-  //     record.完成率 || "-",
-  //     formatDate(record.巡檢結束時間)
-  //   ];
   filtered.forEach(record => {
     const tr = document.createElement("tr");
-  
-    // ✅ 判斷：若巡檢結束時間為空，且借用時間已超過 1.5 小時
+
     const now = new Date();
     const borrowTime = new Date(record.借用時間);
     const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-  
-    const isTimeoutWithoutInspection =
-      !inspectionTime &&
-      !isNaN(borrowTime) &&
-      (now - borrowTime) > 1.5 * 60 * 60 * 1000; // 1.5 小時
-  
-    if (isTimeoutWithoutInspection) {
-      tr.style.backgroundColor = "#ffdddd"; // 淺紅背景
+    const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+    const noInspection = !inspectionTime;
+    const hasAction = !!record.異常處置對策;
+
+    // ✅ 判斷背景顏色
+    if (noInspection && timeout && !hasAction) {
+      tr.style.backgroundColor = "#ffdddd"; // 淺紅
+    } else if (noInspection && timeout && hasAction) {
+      tr.style.backgroundColor = "#eeeeee"; // 灰色
     }
-  
+
     const cols = [
       record.借用人,
       record.車號,
@@ -110,7 +98,6 @@ function filterAndRender() {
       record.完成率 || "-",
       formatDate(record.巡檢結束時間),
       record.異常處置對策 || "-"
-
     ];
 
     cols.forEach(val => {
@@ -128,21 +115,19 @@ function filterAndRender() {
       actionTd.appendChild(returnBtn);
     }
 
-
-
     if (currentRole === "admin") {
       const deleteBtn = document.createElement("button");
       deleteBtn.innerText = "⛔ 刪除";
       deleteBtn.onclick = () => handleDelete(record);
       actionTd.appendChild(deleteBtn);
     }
-    
+
     if (
       (currentRole === 'admin' || currentRole === 'manager') &&
-      !record.巡檢結束時間 && 
-      record.歸還時間 && 
-      new Date() - new Date(record.借用時間) > 1.5 * 60 * 60 * 1000 &&
-      !record.異常處置對策
+      !record.巡檢結束時間 &&
+      record.歸還時間 &&
+      timeout &&
+      !hasAction
     ) {
       const editBtn = document.createElement("button");
       editBtn.innerText = "📝 編輯";
