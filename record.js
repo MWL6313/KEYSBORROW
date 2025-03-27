@@ -117,16 +117,44 @@ async function handleReturn(record) {
 
     const result = await res.json();
     if (result.success) {
-      alert("已成功標記歸還");
-      loadRecords();
+      // ✅ 從 API 重新抓該筆資料（使用 updatedAfter 查詢）
+      const updatedURL = `https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection?updatedAfter=${record.借用時間}`;
+      const res2 = await fetch(updatedURL, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res2.json();
+
+      if (data.success && Array.isArray(data.records)) {
+        const updatedRecord = data.records.find(r =>
+          r.借用人 === record.借用人 &&
+          r.車號 === record.車號 &&
+          r.借用時間 === record.借用時間
+        );
+
+        if (updatedRecord) {
+          // ✅ 更新 allRecords 裡的那筆
+          const idx = allRecords.findIndex(r =>
+            r.借用人 === updatedRecord.借用人 &&
+            r.車號 === updatedRecord.車號 &&
+            r.借用時間 === updatedRecord.借用時間
+          );
+          if (idx !== -1) allRecords[idx] = updatedRecord;
+
+          // ✅ 更新畫面上的那一列
+          updateTableRow(updatedRecord);
+        }
+      }
+
+      alert("✅ 已成功標記歸還（已更新該筆資料）");
     } else {
-      alert("歸還失敗");
+      alert("❌ 歸還失敗");
     }
   } catch (err) {
-    alert("伺服器錯誤");
+    alert("⚠️ 伺服器錯誤");
     console.error(err);
   }
 }
+
 
 async function handleDelete(record) {
   if (!confirm("確定要刪除此紀錄嗎？此操作不可復原")) return;
