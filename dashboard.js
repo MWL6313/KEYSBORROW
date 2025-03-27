@@ -96,41 +96,6 @@ function loadCarNumbers(defaultCar) {
 
 
 
-// function loadCarNumbers(defaultCar) {
-//   fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno")
-//     .then(res => res.json())
-//     .then(carData => {
-//       if (carData.success) {
-//         const datalist = document.getElementById("carList");
-//         const input = document.getElementById("carNumber");
-
-//         datalist.innerHTML = ""; // 清空舊資料
-
-//         // 先填入 defaultCar 為預設值
-//         if (defaultCar) {
-//           input.value = defaultCar;
-//         }
-
-//         // 將所有車號加入 datalist（避免重複）
-//         const uniqueSet = new Set();
-//         if (defaultCar) uniqueSet.add(defaultCar);
-
-//         carData.data.forEach(car => {
-//           if (!uniqueSet.has(car)) {
-//             uniqueSet.add(car);
-//             const opt = document.createElement("option");
-//             opt.value = car;
-//             datalist.appendChild(opt);
-//           }
-//         });
-//       } else {
-//         console.error("Failed to load car numbers");
-//       }
-//     })
-//     .catch(err => console.error("Error fetching car numbers:", err));
-// }
-
-
 // === 送出借用申請
 // === 送出借用申請
 document.getElementById("submitBorrow").addEventListener("click", async () => {
@@ -160,14 +125,17 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     const data = await res.json();
     if (data.success) {
       borrowMsg.style.color = "green";
-      borrowMsg.innerText = "借用申請送出成功！";
-
-      // ✅ 禁用按鈕 10 秒 + 顯示倒數
+      borrowMsg.innerHTML = "✅ 借用申請送出成功！";
+      
+      // ✅ 按鈕動畫
+      submitBtn.classList.add("success-pulse");
+    
+      // 禁用按鈕 10 秒 + 顯示倒數
       submitBtn.disabled = true;
       let countdown = 10;
       const originalText = submitBtn.innerText;
       submitBtn.innerText = `借用申請送出成功，請稍候 ${countdown} 秒`;
-
+    
       const timer = setInterval(() => {
         countdown--;
         submitBtn.innerText = `借用申請送出成功，請稍候 ${countdown} 秒`;
@@ -176,13 +144,16 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
           submitBtn.disabled = false;
           submitBtn.innerText = originalText;
           borrowMsg.innerText = ""; // 清除提示
+          submitBtn.classList.remove("success-pulse"); // ✅ 移除動畫 class
         }
       }, 1000);
-
     } else {
       borrowMsg.style.color = "red";
-      borrowMsg.innerText = "申請送出失敗，請再試一次。";
+      borrowMsg.innerText = "❌ 申請送出失敗，請再試一次。";
+      borrowMsg.classList.add("shake");
+      setTimeout(() => borrowMsg.classList.remove("shake"), 500);
     }
+
   } catch (error) {
     console.error(error);
     borrowMsg.style.color = "red";
