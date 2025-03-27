@@ -460,7 +460,23 @@ function updateTableRow(record) {
       tr.children[1].innerText === record.車號 &&
       tr.children[2].innerText === formatDate(record.借用時間)
     ) {
-      // ✅ 更新文字欄位
+      // ✅ 更新背景色判斷邏輯
+      const now = new Date();
+      const borrowTime = new Date(record.借用時間);
+      const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
+      const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+      const noInspection = !inspectionTime;
+      const hasAction = !!record.異常處置對策;
+
+      if (noInspection && timeout && !hasAction) {
+        tr.style.backgroundColor = "#ffdddd"; // 淺紅背景
+      } else if (noInspection && timeout && hasAction) {
+        tr.style.backgroundColor = "#eeeeee"; // 灰色背景
+      } else {
+        tr.style.backgroundColor = ""; // 清除背景（若無條件）
+      }
+
+      // ✅ 更新資料欄位
       const cols = [
         record.借用人,
         record.車號,
@@ -470,13 +486,13 @@ function updateTableRow(record) {
         record.尾車 || "-",
         record.完成率 || "-",
         formatDate(record.巡檢結束時間),
-        record.異常處置對策 || "-"  // ✅ 正確加入欄位      
-        ];
+        record.異常處置對策 || "-"
+      ];
       cols.forEach((val, i) => {
         tr.children[i].innerText = val || "";
       });
 
-      // ✅ 重新建構操作欄（最後一欄）
+      // ✅ 更新操作按鈕欄位
       const actionTd = tr.children[9];
       actionTd.innerHTML = "";
 
@@ -493,13 +509,13 @@ function updateTableRow(record) {
         deleteBtn.onclick = () => handleDelete(record);
         actionTd.appendChild(deleteBtn);
       }
-      
+
       if (
         (currentRole === 'admin' || currentRole === 'manager') &&
-        !record.巡檢結束時間 &&  // 尚未巡檢
-        record.歸還時間 &&        // 已歸還
-        new Date() - new Date(record.借用時間) > 1.5 * 60 * 60 * 1000 &&  // 逾時
-        !record.異常處置對策       // 還沒填異常處置
+        !record.巡檢結束時間 &&
+        record.歸還時間 &&
+        timeout &&
+        !hasAction
       ) {
         const editBtn = document.createElement("button");
         editBtn.innerText = "📝 編輯";
@@ -513,10 +529,26 @@ function updateTableRow(record) {
 }
 
 
-//🔧 新增一列（如果是新資料）
+
 function appendTableRow(record) {
   const tableBody = document.querySelector("#recordTable tbody");
   const tr = document.createElement("tr");
+
+  // ✅ 背景色條件判斷
+  const now = new Date();
+  const borrowTime = new Date(record.借用時間);
+  const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
+  const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+  const noInspection = !inspectionTime;
+  const hasAction = !!record.異常處置對策;
+
+  if (noInspection && timeout && !hasAction) {
+    tr.style.backgroundColor = "#ffdddd"; // 🔴 淺紅背景
+  } else if (noInspection && timeout && hasAction) {
+    tr.style.backgroundColor = "#eeeeee"; // ⚫ 灰色背景
+  }
+
+  // ✅ 建立資料欄位
   const cols = [
     record.借用人,
     record.車號,
@@ -526,7 +558,7 @@ function appendTableRow(record) {
     record.尾車 || "-",
     record.完成率 || "-",
     formatDate(record.巡檢結束時間),
-    record.異常處置對策 || "-"  // ✅ 正確加入欄位
+    record.異常處置對策 || "-"
   ];
   cols.forEach(val => {
     const td = document.createElement("td");
@@ -534,7 +566,9 @@ function appendTableRow(record) {
     tr.appendChild(td);
   });
 
+  // ✅ 操作欄位
   const actionTd = document.createElement("td");
+
   if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
     const returnBtn = document.createElement("button");
     returnBtn.innerText = "🔁 歸還";
@@ -549,7 +583,21 @@ function appendTableRow(record) {
     actionTd.appendChild(deleteBtn);
   }
 
+  if (
+    (currentRole === 'admin' || currentRole === 'manager') &&
+    !record.巡檢結束時間 &&
+    record.歸還時間 &&
+    timeout &&
+    !hasAction
+  ) {
+    const editBtn = document.createElement("button");
+    editBtn.innerText = "📝 編輯";
+    editBtn.onclick = () => handleEditAbnormal(record);
+    actionTd.appendChild(editBtn);
+  }
+
   tr.appendChild(actionTd);
   tableBody.appendChild(tr);
 }
+
 
