@@ -337,6 +337,7 @@ function updateTableRow(record) {
       tr.children[1].innerText === record.車號 &&
       tr.children[2].innerText === formatDate(record.借用時間)
     ) {
+      // ✅ 更新文字欄位
       const cols = [
         record.借用人,
         record.車號,
