@@ -251,10 +251,10 @@ async function checkLatestChanges() {
     if (data.records.length > 0) {
       const ul = document.getElementById("changesList");
       data.records.forEach(r => {
-        const li = document.createElement("li");
-        li.innerText = `${r.借用人} 借用 ${r.車號} (${formatDate(r.借用時間)})`;
-        ul.prepend(li);
+        showChange(`${r.借用人} 借用 ${r.車號} (${formatDate(r.借用時間)})`);
       });
+
+
 
       // 可選擇：也更新主表格內容
       await loadRecords();
@@ -267,6 +267,29 @@ async function checkLatestChanges() {
     console.error("檢查異動錯誤", err);
   }
 }
+
+function showChange(message, duration = 6000) {
+  const changesList = document.getElementById("changesList");
+  const latestChanges = document.getElementById("latestChanges");
+
+  const li = document.createElement("li");
+  li.textContent = message;
+  li.style.padding = "6px 0";
+  li.style.transition = "all 0.3s ease";
+  changesList.appendChild(li);
+  latestChanges.style.display = "block";
+
+  setTimeout(() => {
+    li.classList.add("fade-out");
+    setTimeout(() => {
+      li.remove();
+      if (changesList.children.length === 0) {
+        latestChanges.style.display = "none";
+      }
+    }, 1000);
+  }, duration);
+}
+
 
 setInterval(checkLatestChanges, 10 * 1000); // 每 10 秒檢查一次
 
