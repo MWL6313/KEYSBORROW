@@ -207,6 +207,7 @@ setInterval(reloadWithTimestamp, 1800 * 1000);
 reloadWithTimestamp();
 
 let lastCheckTime = new Date().toISOString();
+const shownKeys = new Set();  // 防止重複顯示
 
 async function checkLatestChanges() {
   try {
@@ -218,23 +219,46 @@ async function checkLatestChanges() {
 
     if (data.records.length > 0) {
       const ul = document.getElementById("changesList");
+
       data.records.forEach(r => {
-        showChange(`${r.借用人} ${r.車號} (${formatDate(r.借用時間)})`);
+        const uniqueKey = `${r.借用人}-${r.車號}-${r.借用時間}`;
+        if (shownKeys.has(uniqueKey)) return; // 已顯示過就跳過
+        shownKeys.add(uniqueKey);
+
+        const li = document.createElement("li");
+        li.innerText = `📌 ${r.借用人} 借用 ${r.車號}（${formatDate(r.借用時間)}）\n🕓 更新於 ${formatDate(r.最後更新時間)}`;
+        li.style.padding = "4px 0";
+        ul.prepend(li);
       });
 
+      // 最多只保留 10 筆
+      while (ul.children.length > 10) {
+        const last = ul.lastChild;
+        const key = last?.dataset?.key;
+        if (key) shownKeys.delete(key);
+        ul.removeChild(last);
+      }
 
-
-      // 可選擇：也更新主表格內容
+      // 也更新主表格
       await loadRecords();
     }
 
-    // 更新查詢時間
-    lastCheckTime = new Date().toISOString();
+    // 更新查詢時間為最新異動時間（避免漏抓）
+    const latestUpdate = data.records
+      .map(r => r.最後更新時間)
+      .filter(Boolean)
+      .sort()
+      .pop(); // 最新的一筆
+
+    if (latestUpdate) lastCheckTime = latestUpdate;
 
   } catch (err) {
     console.error("檢查異動錯誤", err);
   }
 }
+
+setInterval(checkLatestChanges, 10 * 1000); // 每 10 秒檢查一次
+
 
 function showChange(message) {
   const latestChanges = document.getElementById("latestChanges");
@@ -256,8 +280,6 @@ document.getElementById("clearChangesBtn").addEventListener("click", () => {
 });
 
 
-
-setInterval(checkLatestChanges, 10 * 1000); // 每 10 秒檢查一次
 
 document.getElementById("clearChangesBtn").addEventListener("click", () => {
   document.getElementById("changesList").innerHTML = "";
