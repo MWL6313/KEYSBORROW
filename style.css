@@ -157,6 +157,30 @@ body {
   transition: opacity 0.5s ease-out;
 }
 
+
+@keyframes buttonSuccessPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,0,0.3); }
+  50% { transform: scale(1.05); box-shadow: 0 0 10px rgba(0,255,0,0.6); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,0,0.3); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
+
+.success-pulse {
+  animation: buttonSuccessPulse 1s ease-in-out 2;
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+
+
 @media (max-width: 768px) {
   body {
     font-size: 1.2rem;
