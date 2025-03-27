@@ -87,66 +87,6 @@
       color: #888;
       font-style: italic;
     }
-    
-    .notification-box {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 300px;
-      max-height: 400px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      overflow: hidden;
-      z-index: 9999;
-      animation: slideIn 0.5s ease-out;
-      display: none;
-    }
-    
-    .notification-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #f7f7f7;
-      padding: 8px 12px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    #changesList {
-      list-style: none;
-      margin: 0;
-      padding: 10px;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    
-    .notification-box.hidden #changesList {
-      display: none;
-    }
-    
-    @keyframes slideIn {
-      from {
-        transform: translateY(50px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-    
-    .fade-out {
-      animation: fadeOut 1s forwards;
-    }
-    
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-    }
-
   </style>
 </head>
 <body>
@@ -157,16 +97,28 @@
       <button onclick="location.href='dashboard.html'">返回首頁</button>
     </div>
   </header>
-  <section id="latestChanges" class="notification-box">
-    <div class="notification-header">
+  
+  <section id="latestChanges" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    display: none; /* 預設隱藏，等有變動再顯示 */
+  ">
+    <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
       <strong>📣 最新異動紀錄</strong>
-      <div>
-        <button id="toggleChangesBtn">🔽</button>
-        <button id="clearChangesBtn">🧹</button>
-      </div>
+      <button id="clearChangesBtn" style="font-size: 0.8rem; background: none; border: none; cursor: pointer;">🧹 清空</button>
     </div>
-    <ul id="changesList"></ul>
+    <ul id="changesList" style="list-style: none; margin: 0; padding: 10px;"></ul>
   </section>
+
 
 
  <div class="top-bar">
