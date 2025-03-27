@@ -203,6 +203,62 @@ async function handleReturn(record) {
   }
 }
 
+async function handleEditAbnormal(record) {
+  const input = prompt("請輸入異常處置對策：", "");
+  if (!input) return;
+
+  try {
+    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAbnormal", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        借用人: record.借用人,
+        車號: record.車號,
+        借用時間: record.借用時間,
+        異常處置對策: input
+      })
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      alert("✅ 已成功更新異常處置對策");
+
+      // 重新抓取該筆資料
+      const updatedURL = `https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection?updatedAfter=${record.借用時間}`;
+      const res2 = await fetch(updatedURL, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res2.json();
+
+      if (data.success && Array.isArray(data.records)) {
+        const updatedRecord = data.records.find(r =>
+          r.借用人 === record.借用人 &&
+          r.車號 === record.車號 &&
+          r.借用時間 === record.借用時間
+        );
+
+        if (updatedRecord) {
+          const idx = allRecords.findIndex(r =>
+            r.借用人 === updatedRecord.借用人 &&
+            r.車號 === updatedRecord.車號 &&
+            r.借用時間 === updatedRecord.借用時間
+          );
+          if (idx !== -1) allRecords[idx] = updatedRecord;
+          updateTableRow(updatedRecord);
+        }
+      }
+    } else {
+      alert("❌ 更新失敗：" + (result.message || ""));
+    }
+  } catch (err) {
+    console.error("伺服器錯誤", err);
+    alert("⚠️ 伺服器錯誤，請稍後再試");
+  }
+}
+
 
 async function handleDelete(record) {
   if (!confirm("確定要刪除此紀錄嗎？此操作不可復原")) return;
@@ -416,6 +472,19 @@ function updateTableRow(record) {
         deleteBtn.innerText = "⛔ 刪除";
         deleteBtn.onclick = () => handleDelete(record);
         actionTd.appendChild(deleteBtn);
+      }
+      
+      if (
+        (currentRole === 'admin' || currentRole === 'manager') &&
+        !record.巡檢結束時間 &&  // 尚未巡檢
+        record.歸還時間 &&        // 已歸還
+        new Date() - new Date(record.借用時間) > 1.5 * 60 * 60 * 1000 &&  // 逾時
+        !record.異常處置對策       // 還沒填異常處置
+      ) {
+        const editBtn = document.createElement("button");
+        editBtn.innerText = "📝 編輯";
+        editBtn.onclick = () => handleEditAbnormal(record);
+        actionTd.appendChild(editBtn);
       }
 
       return;
