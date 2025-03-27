@@ -137,6 +137,26 @@ body {
   background: #912020;
 }
 
+/* 簡單晃動動畫 */
+@keyframes shake {
+  0% { transform: translateX(0px); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+  100% { transform: translateX(0px); }
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
+/* 登入成功時淡出 */
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
 @media (max-width: 768px) {
   body {
     font-size: 1.2rem;
