@@ -13,72 +13,101 @@
   <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png">
   <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: "Microsoft JhengHei", sans-serif;
-      margin: 0;
-      padding: 2rem;
-      background-color: #f9f9f9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    main {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start; /* 頂部對齊 */
-      width: 100%;
-      margin-top: 1rem;
-    }
-    
-    section#borrowSection {
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
-    }
-    
-    h3 {
-      text-align: center;
-    }
-    
-    .form-container {
-      background-color: white;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 1rem;
-      font-weight: bold;
-      text-align: left; /* 保持輸入欄標籤靠左 */
-    }
-    
-    button {
-      background-color: #3f51b5;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: 0.3s;
-      font-weight: bold;
-    }
-    
-    button:hover {
-      background-color: #303f9f;
-    }
-    
-    nav {
-      background-color: #e8eaf6;
-      padding: 0.5rem 1rem;
-      margin: 1rem auto;
-      border-radius: 8px;
-      display: flex;
-      gap: 1rem;
-      font-size: 1rem;
-      font-weight: bold;
-      justify-content: center;
-    }
+      body {
+        font-family: "Microsoft JhengHei", sans-serif;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(to bottom, #fffce5, #fdf6da);
+      }
+      
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #3f51b5;
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        margin-bottom: 1rem;
+      }
+      
+      main {
+        width: 100%;
+        max-width: 600px;
+      }
+      
+      section#borrowSection {
+        background-color: white;
+        border: 2px solid #b71c1c;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        text-align: center;
+      }
+      
+      h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        color: #333;
+      }
+      
+      label {
+        display: block;
+        text-align: left;
+        margin: 1rem 0 0.2rem;
+        font-weight: bold;
+      }
+      
+      input, select {
+        width: 100%;
+        padding: 0.7rem;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        background-color: #eef3fc;
+        font-size: 1rem;
+      }
+      
+      button {
+        width: 100%;
+        margin-top: 1.5rem;
+        padding: 0.7rem;
+        background: linear-gradient(to right, #b71c1c, #5d1c00);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      
+      button:hover {
+        opacity: 0.9;
+      }
+      nav {
+        background-color: #fff5f5;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      nav a {
+        color: #b71c1c;
+        text-decoration: none;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
 
   </style>
 </head>
