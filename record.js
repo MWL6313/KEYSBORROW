@@ -268,27 +268,25 @@ async function checkLatestChanges() {
   }
 }
 
-function showChange(message, duration = 6000) {
-  const changesList = document.getElementById("changesList");
+function showChange(message) {
   const latestChanges = document.getElementById("latestChanges");
+  const changesList = document.getElementById("changesList");
 
   const li = document.createElement("li");
   li.textContent = message;
-  li.style.padding = "6px 0";
-  li.style.transition = "all 0.3s ease";
+  li.style.padding = "5px 0";
   changesList.appendChild(li);
-  latestChanges.style.display = "block";
 
-  setTimeout(() => {
-    li.classList.add("fade-out");
-    setTimeout(() => {
-      li.remove();
-      if (changesList.children.length === 0) {
-        latestChanges.style.display = "none";
-      }
-    }, 1000);
-  }, duration);
+  // 顯示懸浮窗
+  latestChanges.style.display = "block";
 }
+
+// 清空按鈕
+document.getElementById("clearChangesBtn").addEventListener("click", () => {
+  document.getElementById("changesList").innerHTML = "";
+  document.getElementById("latestChanges").style.display = "none";
+});
+
 
 
 setInterval(checkLatestChanges, 10 * 1000); // 每 10 秒檢查一次
@@ -297,13 +295,3 @@ document.getElementById("clearChangesBtn").addEventListener("click", () => {
   document.getElementById("changesList").innerHTML = "";
   document.getElementById("latestChanges").style.display = "none";
 });
-
-document.getElementById("toggleChangesBtn").addEventListener("click", () => {
-  const panel = document.getElementById("latestChanges");
-  panel.classList.toggle("hidden");
-  const icon = document.getElementById("toggleChangesBtn");
-  icon.innerText = panel.classList.contains("hidden") ? "🔼" : "🔽";
-});
-
-
-
