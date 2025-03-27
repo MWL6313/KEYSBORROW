@@ -109,6 +109,8 @@ function filterAndRender() {
       record.尾車 || "-",
       record.完成率 || "-",
       formatDate(record.巡檢結束時間)
+      record.異常處置對策 || "-",
+
     ];
 
     cols.forEach(val => {
@@ -133,6 +135,19 @@ function filterAndRender() {
       deleteBtn.innerText = "⛔ 刪除";
       deleteBtn.onclick = () => handleDelete(record);
       actionTd.appendChild(deleteBtn);
+    }
+    
+    if (
+      (currentRole === 'admin' || currentRole === 'manager') &&
+      !record.巡檢結束時間 && 
+      record.歸還時間 && 
+      new Date() - new Date(record.借用時間) > 1.5 * 60 * 60 * 1000 &&
+      !record.異常處置對策
+    ) {
+      const editBtn = document.createElement("button");
+      editBtn.innerText = "📝 編輯";
+      editBtn.onclick = () => handleEditAbnormal(record);
+      actionTd.appendChild(editBtn);
     }
 
     tr.appendChild(actionTd);
