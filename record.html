@@ -97,10 +97,15 @@
       <button onclick="location.href='dashboard.html'">返回首頁</button>
     </div>
   </header>
+
   <section id="latestChanges" style="margin-top: 20px;">
-    <h3>📣 最新異動紀錄</h3>
+    <h3 style="display: flex; justify-content: space-between; align-items: center;">
+      📣 最新異動紀錄
+      <button id="clearChangesBtn" style="font-size: 0.9rem;">🧹 清空</button>
+    </h3>
     <ul id="changesList" style="background:#fff;border:1px solid #ccc;padding:10px;border-radius:8px;"></ul>
   </section>
+
 
   <div class="top-bar">
   <div class="filters">
