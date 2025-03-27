@@ -226,7 +226,7 @@ async function checkLatestChanges() {
         shownKeys.add(uniqueKey);
 
         const li = document.createElement("li");
-        li.innerText = `📌 ${r.借用人} 借用 ${r.車號}（${formatDate(r.借用時間)}）\n🕓 更新於 ${formatDate(r.最後更新時間)}`;
+        li.innerText = `📌 ${r.借用人} 、 ${r.車號}（${formatDate(r.借用時間)}）\n🕓 更新於 ${formatDate(r.最後更新時間)}`;
         li.style.padding = "4px 0";
         ul.prepend(li);
       });
