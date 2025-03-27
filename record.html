@@ -155,6 +155,7 @@
           <th>尾車</th>
           <th>完成率</th>
           <th>巡檢結束時間</th>
+          <th>異常處置對策</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -162,8 +163,84 @@
     </table>
     <p id="statusMsg"></p>
   </main>
+  
+  <!-- 📌 編輯異常處置對策用的彈窗 -->
+  <div id="abnormalModal" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+  ">
+    <div style="
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    ">
+      <h3>✏️ 輸入異常處置對策</h3>
+      <textarea id="abnormalInput" rows="5" style="width: 100%; font-size: 1rem;"></textarea>
+      <div style="margin-top: 15px; text-align: right;">
+        <button onclick="closeAbnormalModal()">取消</button>
+        <button id="submitAbnormalBtn" style="background-color: #d32f2f; color: white;">儲存</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="record.js"></script>
+  <script>
+  let currentEditingRecord = null;
+
+  function openAbnormalModal(record) {
+    currentEditingRecord = record;
+    document.getElementById("abnormalInput").value = "";
+    document.getElementById("abnormalModal").style.display = "flex";
+  }
+
+  function closeAbnormalModal() {
+    document.getElementById("abnormalModal").style.display = "none";
+    currentEditingRecord = null;
+  }
+
+  document.getElementById("submitAbnormalBtn").addEventListener("click", async () => {
+    const input = document.getElementById("abnormalInput").value.trim();
+    if (!input) return alert("請輸入異常處置對策");
+    if (!currentEditingRecord) return;
+
+    try {
+      const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAbnormal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`
+        },
+        body: JSON.stringify({
+          借用人: currentEditingRecord.借用人,
+          車號: currentEditingRecord.車號,
+          借用時間: currentEditingRecord.借用時間,
+          異常處置對策: input
+        })
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        alert("✅ 已更新異常處置對策");
+        closeAbnormalModal();
+        await reloadWithTimestamp(); // 重新載入最新資料
+      } else {
+        alert("❌ 更新失敗：" + (result.message || ""));
+      }
+    } catch (err) {
+      alert("⚠️ 伺服器錯誤");
+      console.error(err);
+    }
+  });
+</script>
+
 </body>
 </html>
 
