@@ -3,6 +3,15 @@ if (!token) location.href = "index.html";
 
 let allRecords = [];
 let currentRole = "";
+let showOnlyAbnormal = false;
+
+document.getElementById("filterAbnormalBtn").addEventListener("click", () => {
+  showOnlyAbnormal = !showOnlyAbnormal;
+  document.getElementById("filterAbnormalBtn").innerText = showOnlyAbnormal
+    ? "✅ 顯示全部"
+    : "🚨 僅顯示異常（逾時未巡檢）";
+  filterAndRender();
+});
 
 document.getElementById("searchUser").addEventListener("input", filterAndRender);
 document.getElementById("searchCar").addEventListener("input", filterAndRender);
@@ -45,10 +54,22 @@ function filterAndRender() {
   const tableBody = document.querySelector("#recordTable tbody");
   tableBody.innerHTML = "";
 
-  const filtered = allRecords.filter(r =>
-    (!searchUser || r.借用人.toLowerCase().includes(searchUser)) &&
-    (!searchCar || r.車號.toLowerCase().includes(searchCar))
-  );
+  const filtered = allRecords.filter(r => {
+    const matchUser = !searchUser || r.借用人.toLowerCase().includes(searchUser);
+    const matchCar = !searchCar || r.車號.toLowerCase().includes(searchCar);
+  
+    // ✅ 若啟用只顯示異常
+    if (showOnlyAbnormal) {
+      const now = new Date();
+      const borrowTime = new Date(r.借用時間);
+      const inspectionTime = r.巡檢結束時間 ? new Date(r.巡檢結束時間) : null;
+      const isTimeout = !inspectionTime && !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+      return matchUser && matchCar && isTimeout;
+    }
+  
+    return matchUser && matchCar;
+  });
+
 
   // filtered.forEach(record => {
   //   const tr = document.createElement("tr");
