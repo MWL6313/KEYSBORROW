@@ -130,9 +130,9 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       // ✅ 按鈕動畫
       submitBtn.classList.add("success-pulse");
     
-      // 禁用按鈕 10 秒 + 顯示倒數
+      // 禁用按鈕 20 秒 + 顯示倒數
       submitBtn.disabled = true;
-      let countdown = 10;
+      let countdown = 20;
       const originalText = submitBtn.innerText;
       submitBtn.innerText = `借用申請送出成功，請稍候 ${countdown} 秒`;
     
@@ -146,7 +146,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
           borrowMsg.innerText = ""; // 清除提示
           submitBtn.classList.remove("success-pulse"); // ✅ 移除動畫 class
         }
-      }, 1000);
+      }, 2000);
     } else {
       borrowMsg.style.color = "red";
       borrowMsg.innerText = "❌ 申請送出失敗，請再試一次。";
