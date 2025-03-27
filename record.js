@@ -230,11 +230,43 @@ async function reloadWithTimestamp() {
 // 手動刷新按鈕
 document.getElementById("refreshBtn").addEventListener("click", reloadWithTimestamp);
 
-// 自動每 30 秒更新
-setInterval(reloadWithTimestamp, 30 * 1000);
+// 自動每 1800 秒更新
+setInterval(reloadWithTimestamp, 1800 * 1000);
+
 
 // 初次載入
 reloadWithTimestamp();
 
+let lastCheckTime = new Date().toISOString();
+
+async function checkLatestChanges() {
+  try {
+    const res = await fetch(`https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection?updatedAfter=${lastCheckTime}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (!data.success || !Array.isArray(data.records)) return;
+
+    if (data.records.length > 0) {
+      const ul = document.getElementById("changesList");
+      data.records.forEach(r => {
+        const li = document.createElement("li");
+        li.innerText = `${r.借用人} 借用 ${r.車號} (${formatDate(r.借用時間)})`;
+        ul.prepend(li);
+      });
+
+      // 可選擇：也更新主表格內容
+      await loadRecords();
+    }
+
+    // 更新查詢時間
+    lastCheckTime = new Date().toISOString();
+
+  } catch (err) {
+    console.error("檢查異動錯誤", err);
+  }
+}
+
+setInterval(checkLatestChanges, 10 * 1000); // 每 10 秒檢查一次
 
 
