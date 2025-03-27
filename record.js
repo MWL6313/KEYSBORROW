@@ -295,6 +295,15 @@ setInterval(checkLatestChanges, 10 * 1000); // 每 10 秒檢查一次
 
 document.getElementById("clearChangesBtn").addEventListener("click", () => {
   document.getElementById("changesList").innerHTML = "";
+  document.getElementById("latestChanges").style.display = "none";
 });
+
+document.getElementById("toggleChangesBtn").addEventListener("click", () => {
+  const panel = document.getElementById("latestChanges");
+  panel.classList.toggle("hidden");
+  const icon = document.getElementById("toggleChangesBtn");
+  icon.innerText = panel.classList.contains("hidden") ? "🔼" : "🔽";
+});
+
 
 
