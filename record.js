@@ -108,8 +108,8 @@ function filterAndRender() {
       record.車頭 || "-",
       record.尾車 || "-",
       record.完成率 || "-",
-      formatDate(record.巡檢結束時間)
-      record.異常處置對策 || "-",
+      formatDate(record.巡檢結束時間),
+      record.異常處置對策 || "-"
 
     ];
 
