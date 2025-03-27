@@ -465,14 +465,15 @@ function updateTableRow(record) {
         record.車頭 || "-",
         record.尾車 || "-",
         record.完成率 || "-",
-        formatDate(record.巡檢結束時間)
-      ];
+        formatDate(record.巡檢結束時間),
+        record.異常處置對策 || "-"  // ✅ 正確加入欄位      
+        ];
       cols.forEach((val, i) => {
         tr.children[i].innerText = val || "";
       });
 
       // ✅ 重新建構操作欄（最後一欄）
-      const actionTd = tr.children[8];
+      const actionTd = tr.children[9];
       actionTd.innerHTML = "";
 
       if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
@@ -520,7 +521,8 @@ function appendTableRow(record) {
     record.車頭 || "-",
     record.尾車 || "-",
     record.完成率 || "-",
-    formatDate(record.巡檢結束時間)
+    formatDate(record.巡檢結束時間),
+    record.異常處置對策 || "-"  // ✅ 正確加入欄位
   ];
   cols.forEach(val => {
     const td = document.createElement("td");
