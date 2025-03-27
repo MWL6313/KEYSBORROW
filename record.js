@@ -71,13 +71,13 @@ function filterAndRender() {
 
     const actionTd = document.createElement("td");
 
-  // if (currentRole === 'admin' && !record.歸還時間) {["admin", "manager"]
-  if (currentRole === ["admin", "manager"] && !record.歸還時間) {
-    const returnBtn = document.createElement("button");
-    returnBtn.innerText = "🔁 歸還";
-    returnBtn.onclick = () => handleReturn(record);
-    actionTd.appendChild(returnBtn);
-  }
+    if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
+      const returnBtn = document.createElement("button");
+      returnBtn.innerText = "🔁 歸還";
+      returnBtn.onclick = () => handleReturn(record);
+      actionTd.appendChild(returnBtn);
+    }
+
 
 
     if (currentRole === "admin") {
