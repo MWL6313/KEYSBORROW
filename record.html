@@ -97,14 +97,28 @@
       <button onclick="location.href='dashboard.html'">返回首頁</button>
     </div>
   </header>
-
-  <section id="latestChanges" style="margin-top: 20px;">
-    <h3 style="display: flex; justify-content: space-between; align-items: center;">
-      📣 最新異動紀錄
-      <button id="clearChangesBtn" style="font-size: 0.9rem;">🧹 清空</button>
-    </h3>
-    <ul id="changesList" style="background:#fff;border:1px solid #ccc;padding:10px;border-radius:8px;"></ul>
+  
+  <section id="latestChanges" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    display: none; /* 預設隱藏，等有變動再顯示 */
+  ">
+    <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+      <strong>📣 最新異動紀錄</strong>
+      <button id="clearChangesBtn" style="font-size: 0.8rem; background: none; border: none; cursor: pointer;">🧹 清空</button>
+    </div>
+    <ul id="changesList" style="list-style: none; margin: 0; padding: 10px;"></ul>
   </section>
+
 
 
   <div class="top-bar">
