@@ -263,7 +263,26 @@ async function handleEditAbnormal(record) {
           );
           if (idx !== -1) allRecords[idx] = updatedRecord;
           updateTableRow(updatedRecord);
+        
+          // 🔽 這段是你要補進去的
+          const tableBody = document.querySelector("#recordTable tbody");
+          const rows = tableBody.querySelectorAll("tr");
+          for (let tr of rows) {
+            if (
+              tr.children[0].innerText === record.借用人 &&
+              tr.children[1].innerText === record.車號 &&
+              tr.children[2].innerText === formatDate(record.借用時間)
+            ) {
+              tr.style.backgroundColor = "#eeeeee";
+              const actionTd = tr.children[8];
+              const editBtn = Array.from(actionTd.querySelectorAll("button"))
+                .find(btn => btn.innerText.includes("📝"));
+              if (editBtn) editBtn.remove();
+              break;
+            }
+          }
         }
+
       }
     } else {
       alert("❌ 更新失敗：" + (result.message || ""));
