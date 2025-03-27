@@ -269,4 +269,8 @@ async function checkLatestChanges() {
 
 setInterval(checkLatestChanges, 10 * 1000); // 每 10 秒檢查一次
 
+document.getElementById("clearChangesBtn").addEventListener("click", () => {
+  document.getElementById("changesList").innerHTML = "";
+});
+
 
