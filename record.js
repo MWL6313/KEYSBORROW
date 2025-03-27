@@ -50,8 +50,35 @@ function filterAndRender() {
     (!searchCar || r.車號.toLowerCase().includes(searchCar))
   );
 
+  // filtered.forEach(record => {
+  //   const tr = document.createElement("tr");
+  //   const cols = [
+  //     record.借用人,
+  //     record.車號,
+  //     formatDate(record.借用時間),
+  //     formatDate(record.歸還時間),
+  //     record.車頭 || "-",
+  //     record.尾車 || "-",
+  //     record.完成率 || "-",
+  //     formatDate(record.巡檢結束時間)
+  //   ];
   filtered.forEach(record => {
     const tr = document.createElement("tr");
+  
+    // ✅ 判斷：若巡檢結束時間為空，且借用時間已超過 1.5 小時
+    const now = new Date();
+    const borrowTime = new Date(record.借用時間);
+    const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
+  
+    const isTimeoutWithoutInspection =
+      !inspectionTime &&
+      !isNaN(borrowTime) &&
+      (now - borrowTime) > 1.5 * 60 * 60 * 1000; // 1.5 小時
+  
+    if (isTimeoutWithoutInspection) {
+      tr.style.backgroundColor = "#ffdddd"; // 淺紅背景
+    }
+  
     const cols = [
       record.借用人,
       record.車號,
