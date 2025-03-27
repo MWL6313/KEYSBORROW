@@ -87,6 +87,7 @@
       color: #888;
       font-style: italic;
     }
+    
     .notification-box {
       position: fixed;
       bottom: 20px;
@@ -100,6 +101,7 @@
       overflow: hidden;
       z-index: 9999;
       animation: slideIn 0.5s ease-out;
+      display: none;
     }
     
     .notification-header {
@@ -144,6 +146,7 @@
         transform: translateY(10px);
       }
     }
+
   </style>
 </head>
 <body>
@@ -154,7 +157,7 @@
       <button onclick="location.href='dashboard.html'">返回首頁</button>
     </div>
   </header>
-   <section id="latestChanges" class="notification-box">
+  <section id="latestChanges" class="notification-box">
     <div class="notification-header">
       <strong>📣 最新異動紀錄</strong>
       <div>
@@ -164,6 +167,7 @@
     </div>
     <ul id="changesList"></ul>
   </section>
+
 
  <div class="top-bar">
   <div class="filters">
