@@ -223,7 +223,7 @@ async function handleEditAbnormal(record) {
   if (!input) return;
 
   try {
-    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAbnormal", {
+      const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAction", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
