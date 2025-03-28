@@ -51,52 +51,63 @@ function getCurrentDatetimeLocal() {
 }
 
 // === 載入車號選單
-function loadCarNumbers(defaultCar) {
-  fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno")
-    .then(res => res.json())
-    .then(carData => {
-      if (carData.success) {
-        const select = document.getElementById("carNumber");
-        select.innerHTML = ""; // 清空選單
+async function loadCarNumbers(defaultCar) {
+  try {
+    const [carRes, borrowRes] = await Promise.all([
+      fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno"),
+      fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection")
+    ]);
 
-        // 避免重複 + 把預設放第一筆
-        const uniqueSet = new Set(carData.data);
-        const sorted = [...uniqueSet];
-        if (defaultCar && uniqueSet.has(defaultCar)) {
-          sorted.splice(sorted.indexOf(defaultCar), 1); // 先移除
-          sorted.unshift(defaultCar); // 放最前
-        }
+    const carData = await carRes.json();
+    const borrowData = await borrowRes.json();
 
-        // 加入選項
-        sorted.forEach(car => {
-          const opt = document.createElement("option");
-          opt.value = car;
-          opt.textContent = car;
-          select.appendChild(opt);
-        });
+    if (carData.success && borrowData.success) {
+      const select = document.getElementById("carNumber");
+      select.innerHTML = "";
 
-        // 初始化 Tom Select
-        new TomSelect("#carNumber", {
-          create: false,
-          sortField: {
-            field: "text",
-            direction: "asc"
-          },
-          placeholder: "請輸入或選擇車號",
-        });
+      const allCars = new Set(carData.data);
+      const borrowedCars = new Set(
+        borrowData.records
+          .filter(r => !r.歸還時間)  // 尚未歸還
+          .map(r => r.車號)
+      );
 
-        // 預設選定 defaultCar
-        if (defaultCar) {
-          select.value = defaultCar;
-        }
+      // 移除已借用中車號
+      const availableCars = [...allCars].filter(car => !borrowedCars.has(car));
+
+      if (defaultCar && allCars.has(defaultCar)) {
+        availableCars.unshift(defaultCar); // 優先放 defaultCar
       }
-    })
-    .catch(err => console.error("Error fetching car numbers:", err));
+
+      availableCars.forEach(car => {
+        const opt = document.createElement("option");
+        opt.value = car;
+        opt.textContent = car;
+        select.appendChild(opt);
+      });
+
+      // Tom Select 初始化
+      new TomSelect("#carNumber", {
+        create: false,
+        sortField: {
+          field: "text",
+          direction: "asc"
+        },
+        placeholder: "請輸入或選擇車號",
+      });
+
+      if (defaultCar) {
+        select.value = defaultCar;
+      }
+    }
+
+  } catch (err) {
+    console.error("載入車號時錯誤", err);
+  }
 }
 
 
 
-// === 送出借用申請
 // === 送出借用申請
 document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrower = document.getElementById("borrower").value.trim();
@@ -110,6 +121,36 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     return;
   }
 
+  // 🔍 檢查是否已借用
+  const resCheck = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection");
+  const checkData = await resCheck.json();
+  const borrowedList = checkData.records || [];
+
+  const alreadyBorrowed = borrowedList.some(r =>
+    r.車號 === carNumber && !r.歸還時間
+  );
+
+  if (alreadyBorrowed) {
+    // ⛔ SweetAlert2 + 清空車號 + focus 回選單
+    Swal.fire({
+      icon: "warning",
+      title: "🚫 車輛仍在借用中",
+      text: `【${carNumber}】目前尚未歸還，請選擇其他車輛。`,
+      confirmButtonText: "我知道了"
+    }).then(() => {
+      const carSelect = document.querySelector("#carNumber");
+      if (carSelect.tomselect) {
+        carSelect.tomselect.clear(); // 使用 Tom Select 清空
+        carSelect.tomselect.focus(); // 聚焦
+      } else {
+        carSelect.value = "";
+        carSelect.focus();
+      }
+    });
+    return;
+  }
+
+  // 🚀 繼續送出借用申請
   const borrowData = {
     borrower,
     carNumber
@@ -126,16 +167,13 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     if (data.success) {
       borrowMsg.style.color = "green";
       borrowMsg.innerHTML = "✅ 借用申請送出成功！";
-      
-      // ✅ 按鈕動畫
       submitBtn.classList.add("success-pulse");
-    
-      // 禁用按鈕 20 秒 + 顯示倒數
+
       submitBtn.disabled = true;
       let countdown = 20;
       const originalText = submitBtn.innerText;
       submitBtn.innerText = `借用申請送出成功，請稍候 ${countdown} 秒`;
-    
+
       const timer = setInterval(() => {
         countdown--;
         submitBtn.innerText = `借用申請送出成功，請稍候 ${countdown} 秒`;
@@ -143,10 +181,10 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
           clearInterval(timer);
           submitBtn.disabled = false;
           submitBtn.innerText = originalText;
-          borrowMsg.innerText = ""; // 清除提示
-          submitBtn.classList.remove("success-pulse"); // ✅ 移除動畫 class
+          borrowMsg.innerText = "";
+          submitBtn.classList.remove("success-pulse");
         }
-      }, 2000);
+      }, 1000);
     } else {
       borrowMsg.style.color = "red";
       borrowMsg.innerText = "❌ 申請送出失敗，請再試一次。";
@@ -160,4 +198,3 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     borrowMsg.innerText = "發生錯誤，請稍後再試。";
   }
 });
-
