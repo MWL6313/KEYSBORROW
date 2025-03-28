@@ -324,17 +324,25 @@ document.getElementById("sortTimeBtn").onclick = () => {
   filterAndRender(); // ⬅ 這裡改掉
 };
 
+
 let sortInspectionAsc = true; // 初始排序方向
 
 document.getElementById("sortInspectionBtn").onclick = () => {
   allRecords.sort((a, b) => {
-    const t1 = new Date(a.巡檢結束時間);
-    const t2 = new Date(b.巡檢結束時間);
+    const t1 = a.巡檢結束時間 ? new Date(a.巡檢結束時間) : null;
+    const t2 = b.巡檢結束時間 ? new Date(b.巡檢結束時間) : null;
+
+    if (!t1 && !t2) return 0;         // 都沒有時間 → 不變
+    if (!t1) return sortInspectionAsc ? 1 : -1;  // a 沒時間 → 排後或前
+    if (!t2) return sortInspectionAsc ? -1 : 1;  // b 沒時間 → 排後或前
+
     return sortInspectionAsc ? t1 - t2 : t2 - t1;
   });
+
   sortInspectionAsc = !sortInspectionAsc;
   filterAndRender();
 };
+
 
 
 // 顯示最後更新時間
