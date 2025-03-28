@@ -151,23 +151,23 @@ function filterAndRender() {
   });
 }
 
-function createButton(label, onClick, bgColor = "#4a5568") {
-  const btn = document.createElement("button");
-  btn.innerText = label;
-  btn.style.margin = "2px";
-  btn.style.padding = "6px 10px";
-  btn.style.fontSize = "0.95rem";
-  btn.style.border = "none";
-  btn.style.borderRadius = "6px";
-  btn.style.cursor = "pointer";
-  btn.style.backgroundColor = bgColor;
-  btn.style.color = "white";
-  btn.style.transition = "background 0.2s ease";
-  btn.onmouseover = () => (btn.style.opacity = "0.85");
-  btn.onmouseout = () => (btn.style.opacity = "1");
-  btn.onclick = onClick;
-  return btn;
-}
+// function createButton(label, onClick, bgColor = "#4a5568") {
+//   const btn = document.createElement("button");
+//   btn.innerText = label;
+//   btn.style.margin = "2px";
+//   btn.style.padding = "6px 10px";
+//   btn.style.fontSize = "0.95rem";
+//   btn.style.border = "none";
+//   btn.style.borderRadius = "6px";
+//   btn.style.cursor = "pointer";
+//   btn.style.backgroundColor = bgColor;
+//   btn.style.color = "white";
+//   btn.style.transition = "background 0.2s ease";
+//   btn.onmouseover = () => (btn.style.opacity = "0.85");
+//   btn.onmouseout = () => (btn.style.opacity = "1");
+//   btn.onclick = onClick;
+//   return btn;
+// }
 
 async function handleReturn(record) {
   if (!confirm("確定要標記為歸還嗎？")) return;
