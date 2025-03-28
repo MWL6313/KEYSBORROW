@@ -51,6 +51,7 @@ function getCurrentDatetimeLocal() {
 }
 
 // === 載入車號選單
+// === 載入車號選單，排除已借用中的車號
 async function loadCarNumbers(defaultCar) {
   try {
     const [carRes, borrowRes] = await Promise.all([
@@ -68,15 +69,14 @@ async function loadCarNumbers(defaultCar) {
       const allCars = new Set(carData.data);
       const borrowedCars = new Set(
         borrowData.records
-          .filter(r => !r.歸還時間)  // 尚未歸還
+          .filter(r => !r.歸還時間)
           .map(r => r.車號)
       );
 
-      // 移除已借用中車號
       const availableCars = [...allCars].filter(car => !borrowedCars.has(car));
 
       if (defaultCar && allCars.has(defaultCar)) {
-        availableCars.unshift(defaultCar); // 優先放 defaultCar
+        availableCars.unshift(defaultCar); // 預設車號優先放最前
       }
 
       availableCars.forEach(car => {
@@ -86,29 +86,25 @@ async function loadCarNumbers(defaultCar) {
         select.appendChild(opt);
       });
 
-      // Tom Select 初始化
+      // 初始化 Tom Select（若已存在則先 destroy）
+      if (select.tomselect) select.tomselect.destroy();
       new TomSelect("#carNumber", {
         create: false,
-        sortField: {
-          field: "text",
-          direction: "asc"
-        },
+        sortField: { field: "text", direction: "asc" },
         placeholder: "請輸入或選擇車號",
       });
 
       if (defaultCar) {
-        select.value = defaultCar;
+        select.tomselect.setValue(defaultCar);
       }
     }
 
   } catch (err) {
-    console.error("載入車號時錯誤", err);
+    console.error("🚨 載入車號失敗", err);
   }
 }
 
-
-
-// === 送出借用申請
+// === 借用申請送出邏輯（含防止已借用車號）
 document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrower = document.getElementById("borrower").value.trim();
   const carNumber = document.getElementById("carNumber").value;
@@ -121,40 +117,39 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     return;
   }
 
-  // 🔍 檢查是否已借用
-  const resCheck = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection");
-  const checkData = await resCheck.json();
-  const borrowedList = checkData.records || [];
+  // 🔍 檢查是否已借用該車
+  try {
+    const resCheck = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection");
+    const checkData = await resCheck.json();
+    const borrowedList = checkData.records || [];
 
-  const alreadyBorrowed = borrowedList.some(r =>
-    r.車號 === carNumber && !r.歸還時間
-  );
+    const alreadyBorrowed = borrowedList.some(r => r.車號 === carNumber && !r.歸還時間);
 
-  if (alreadyBorrowed) {
-    // ⛔ SweetAlert2 + 清空車號 + focus 回選單
-    Swal.fire({
-      icon: "warning",
-      title: "🚫 車輛仍在借用中",
-      text: `【${carNumber}】目前尚未歸還，請選擇其他車輛。`,
-      confirmButtonText: "我知道了"
-    }).then(() => {
+    if (alreadyBorrowed) {
+      await Swal.fire({
+        icon: "warning",
+        title: "🚫 車輛仍在借用中",
+        text: `【${carNumber}】尚未歸還，請選擇其他車輛。`,
+        confirmButtonText: "我知道了"
+      });
+
       const carSelect = document.querySelector("#carNumber");
       if (carSelect.tomselect) {
-        carSelect.tomselect.clear(); // 使用 Tom Select 清空
-        carSelect.tomselect.focus(); // 聚焦
+        carSelect.tomselect.clear();  // 清空選擇
+        carSelect.tomselect.focus();  // 聚焦回選單
       } else {
         carSelect.value = "";
         carSelect.focus();
       }
-    });
-    return;
+      return;
+    }
+  } catch (err) {
+    console.error("檢查已借用車輛錯誤", err);
+    return Swal.fire("錯誤", "查詢目前借用狀況失敗，請稍後再試", "error");
   }
 
   // 🚀 繼續送出借用申請
-  const borrowData = {
-    borrower,
-    carNumber
-  };
+  const borrowData = { borrower, carNumber };
 
   try {
     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow", {
@@ -165,36 +160,40 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
 
     const data = await res.json();
     if (data.success) {
-      borrowMsg.style.color = "green";
-      borrowMsg.innerHTML = "✅ 借用申請送出成功！";
-      submitBtn.classList.add("success-pulse");
+      await Swal.fire({
+        icon: "success",
+        title: "✅ 借用申請成功！",
+        text: `【${carNumber}】借用成功，請盡速完成巡檢`,
+        timer: 3000,
+        showConfirmButton: false
+      });
 
+      // 🚫 鎖定按鈕與倒數提示
       submitBtn.disabled = true;
       let countdown = 20;
       const originalText = submitBtn.innerText;
-      submitBtn.innerText = `借用申請送出成功，請稍候 ${countdown} 秒`;
+      submitBtn.innerText = `請稍候 ${countdown} 秒...`;
+      submitBtn.classList.add("success-pulse");
 
       const timer = setInterval(() => {
         countdown--;
-        submitBtn.innerText = `借用申請送出成功，請稍候 ${countdown} 秒`;
+        submitBtn.innerText = `請稍候 ${countdown} 秒...`;
         if (countdown <= 0) {
           clearInterval(timer);
           submitBtn.disabled = false;
           submitBtn.innerText = originalText;
-          borrowMsg.innerText = "";
           submitBtn.classList.remove("success-pulse");
         }
       }, 1000);
+
+      // ✅ 自動重新載入車號（剔除剛借走的車）
+      loadCarNumbers();
     } else {
-      borrowMsg.style.color = "red";
-      borrowMsg.innerText = "❌ 申請送出失敗，請再試一次。";
-      borrowMsg.classList.add("shake");
-      setTimeout(() => borrowMsg.classList.remove("shake"), 500);
+      throw new Error(data.message || "未知錯誤");
     }
 
   } catch (error) {
-    console.error(error);
-    borrowMsg.style.color = "red";
-    borrowMsg.innerText = "發生錯誤，請稍後再試。";
+    console.error("借用失敗", error);
+    Swal.fire("錯誤", "借用申請送出失敗，請稍後再試", "error");
   }
 });
