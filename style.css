@@ -8,7 +8,7 @@ body {
   align-items: center;
   min-height: 100vh;
   box-sizing: border-box;
-  font-size: 1.5rem; /* ✅ 全站放大 */
+  font-size: 2rem; /* ✅ 全站放大 */
 }
 
 .login-card {
