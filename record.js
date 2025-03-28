@@ -106,46 +106,31 @@ function filterAndRender() {
       tr.appendChild(td);
     });
 
-    // ✅ 操作按鈕欄位（統一邏輯）
     const actionTd = document.createElement("td");
-    actionTd.classList.add("action-buttons"); // 可加上 class 統一美化
-    
-    // 🔁 歸還
+
     if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
       const returnBtn = document.createElement("button");
       returnBtn.innerText = "🔁 歸還";
-      returnBtn.classList.add("btn", "btn-return");
       returnBtn.onclick = () => handleReturn(record);
       actionTd.appendChild(returnBtn);
     }
-    
-    // ⛔ 刪除
+
     if (currentRole === "admin") {
       const deleteBtn = document.createElement("button");
       deleteBtn.innerText = "⛔ 刪除";
-      deleteBtn.classList.add("btn", "btn-delete");
       deleteBtn.onclick = () => handleDelete(record);
       actionTd.appendChild(deleteBtn);
     }
-    
-    // 📝 編輯（異常處置）
-    // const now = new Date();
-    // const borrowTime = new Date(record.借用時間);
-    // const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-    // const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-    // const noInspection = !inspectionTime;
-    // const hasAction = !!record.異常處置對策;
-    
+
     if (
       (currentRole === 'admin' || currentRole === 'manager') &&
       !record.巡檢結束時間 &&
-      record.歸還時間 &&
+      // record.歸還時間 &&
       timeout &&
       !hasAction
     ) {
       const editBtn = document.createElement("button");
       editBtn.innerText = "📝 編輯";
-      editBtn.classList.add("btn", "btn-edit");
       editBtn.onclick = () => handleEditAbnormal(record);
       actionTd.appendChild(editBtn);
     }
@@ -510,49 +495,35 @@ function updateTableRow(record) {
       });
 
       // ✅ 更新操作按鈕欄位
-    // ✅ 操作按鈕欄位（統一邏輯）
-    const actionTd = document.createElement("td");
-    actionTd.classList.add("action-buttons"); // 可加上 class 統一美化
-    
-    // 🔁 歸還
-    if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
-      const returnBtn = document.createElement("button");
-      returnBtn.innerText = "🔁 歸還";
-      returnBtn.classList.add("btn", "btn-return");
-      returnBtn.onclick = () => handleReturn(record);
-      actionTd.appendChild(returnBtn);
-    }
-    
-    // ⛔ 刪除
-    if (currentRole === "admin") {
-      const deleteBtn = document.createElement("button");
-      deleteBtn.innerText = "⛔ 刪除";
-      deleteBtn.classList.add("btn", "btn-delete");
-      deleteBtn.onclick = () => handleDelete(record);
-      actionTd.appendChild(deleteBtn);
-    }
-    
-    // 📝 編輯（異常處置）
-    // const now = new Date();
-    // const borrowTime = new Date(record.借用時間);
-    // const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-    // const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-    // const noInspection = !inspectionTime;
-    // const hasAction = !!record.異常處置對策;
-    
-    if (
-      (currentRole === 'admin' || currentRole === 'manager') &&
-      !record.巡檢結束時間 &&
-      record.歸還時間 &&
-      timeout &&
-      !hasAction
-    ) {
-      const editBtn = document.createElement("button");
-      editBtn.innerText = "📝 編輯";
-      editBtn.classList.add("btn", "btn-edit");
-      editBtn.onclick = () => handleEditAbnormal(record);
-      actionTd.appendChild(editBtn);
-    }
+      const actionTd = tr.children[9];
+      actionTd.innerHTML = "";
+
+      if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
+        const returnBtn = document.createElement("button");
+        returnBtn.innerText = "🔁 歸還";
+        returnBtn.onclick = () => handleReturn(record);
+        actionTd.appendChild(returnBtn);
+      }
+
+      if (currentRole === "admin") {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerText = "⛔ 刪除";
+        deleteBtn.onclick = () => handleDelete(record);
+        actionTd.appendChild(deleteBtn);
+      }
+
+      if (
+        (currentRole === 'admin' || currentRole === 'manager') &&
+        !record.巡檢結束時間 &&
+        // record.歸還時間 &&
+        timeout &&
+        !hasAction
+      ) {
+        const editBtn = document.createElement("button");
+        editBtn.innerText = "📝 編輯";
+        editBtn.onclick = () => handleEditAbnormal(record);
+        actionTd.appendChild(editBtn);
+      }
 
       return;
     }
@@ -599,50 +570,34 @@ function appendTableRow(record) {
   });
 
   // ✅ 操作欄位
-    // ✅ 操作按鈕欄位（統一邏輯）
-    const actionTd = document.createElement("td");
-    actionTd.classList.add("action-buttons"); // 可加上 class 統一美化
-    
-    // 🔁 歸還
-    if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
-      const returnBtn = document.createElement("button");
-      returnBtn.innerText = "🔁 歸還";
-      returnBtn.classList.add("btn", "btn-return");
-      returnBtn.onclick = () => handleReturn(record);
-      actionTd.appendChild(returnBtn);
-    }
-    
-    // ⛔ 刪除
-    if (currentRole === "admin") {
-      const deleteBtn = document.createElement("button");
-      deleteBtn.innerText = "⛔ 刪除";
-      deleteBtn.classList.add("btn", "btn-delete");
-      deleteBtn.onclick = () => handleDelete(record);
-      actionTd.appendChild(deleteBtn);
-    }
-    
-    // 📝 編輯（異常處置）
-    // const now = new Date();
-    // const borrowTime = new Date(record.借用時間);
-    // const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-    // const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-    // const noInspection = !inspectionTime;
-    // const hasAction = !!record.異常處置對策;
-    
-    if (
-      (currentRole === 'admin' || currentRole === 'manager') &&
-      !record.巡檢結束時間 &&
-      record.歸還時間 &&
-      timeout &&
-      !hasAction
-    ) {
-      const editBtn = document.createElement("button");
-      editBtn.innerText = "📝 編輯";
-      editBtn.classList.add("btn", "btn-edit");
-      editBtn.onclick = () => handleEditAbnormal(record);
-      actionTd.appendChild(editBtn);
-    }
-  
+  const actionTd = document.createElement("td");
+
+  if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
+    const returnBtn = document.createElement("button");
+    returnBtn.innerText = "🔁 歸還";
+    returnBtn.onclick = () => handleReturn(record);
+    actionTd.appendChild(returnBtn);
+  }
+
+  if (currentRole === "admin") {
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerText = "⛔ 刪除";
+    deleteBtn.onclick = () => handleDelete(record);
+    actionTd.appendChild(deleteBtn);
+  }
+
+  if (
+    (currentRole === 'admin' || currentRole === 'manager') &&
+    !record.巡檢結束時間 &&
+    // record.歸還時間 &&
+    timeout &&
+    !hasAction
+  ) {
+    const editBtn = document.createElement("button");
+    editBtn.innerText = "📝 編輯";
+    editBtn.onclick = () => handleEditAbnormal(record);
+    actionTd.appendChild(editBtn);
+  }
 
   tr.appendChild(actionTd);
   tableBody.appendChild(tr);
