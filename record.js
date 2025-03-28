@@ -253,8 +253,39 @@ async function handleEditAbnormal(record) {
   const input = prompt("請輸入異常處置對策：", "");
   if (!input) return;
 
+  // 找到對應行與按鈕
+  const tableBody = document.querySelector("#recordTable tbody");
+  const rows = tableBody.querySelectorAll("tr");
+
+  let targetRow = null;
+  let editBtn = null;
+
+  for (let tr of rows) {
+    if (
+      tr.children[0].innerText === record.借用人 &&
+      tr.children[1].innerText === record.車號 &&
+      tr.children[2].innerText === formatDate(record.借用時間)
+    ) {
+      targetRow = tr;
+      const actionTd = tr.children[9]; // 第 10 欄為按鈕欄
+      editBtn = Array.from(actionTd.querySelectorAll("button"))
+        .find(btn => btn.innerText.includes("📝"));
+      break;
+    }
+  }
+
+  if (editBtn) {
+    editBtn.disabled = true;
+    editBtn.innerText = "⏳ 更新中...";
+  }
+
+  if (targetRow) {
+    targetRow.style.transition = "background-color 0.3s ease";
+    targetRow.style.backgroundColor = "#fff3cd"; // 黃色提示
+  }
+
   try {
-      const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAction", {
+    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAction", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -272,7 +303,7 @@ async function handleEditAbnormal(record) {
     if (result.success) {
       alert("✅ 已成功更新異常處置對策");
 
-      // 重新抓取該筆資料
+      // 抓更新後資料
       const updatedURL = `https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection?updatedAfter=${record.借用時間}`;
       const res2 = await fetch(updatedURL, {
         headers: { Authorization: `Bearer ${token}` }
@@ -294,33 +325,29 @@ async function handleEditAbnormal(record) {
           );
           if (idx !== -1) allRecords[idx] = updatedRecord;
           updateTableRow(updatedRecord);
-        
-          // 🔽 這段是你要補進去的
-          const tableBody = document.querySelector("#recordTable tbody");
-          const rows = tableBody.querySelectorAll("tr");
-          for (let tr of rows) {
-            if (
-              tr.children[0].innerText === record.借用人 &&
-              tr.children[1].innerText === record.車號 &&
-              tr.children[2].innerText === formatDate(record.借用時間)
-            ) {
-              tr.style.backgroundColor = "#eeeeee";
-              const actionTd = tr.children[8];
-              const editBtn = Array.from(actionTd.querySelectorAll("button"))
-                .find(btn => btn.innerText.includes("📝"));
-              if (editBtn) editBtn.remove();
-              break;
-            }
+
+          // ✅ 成功動畫
+          if (targetRow) {
+            targetRow.style.backgroundColor = "#d4edda"; // 綠色背景
+            setTimeout(() => {
+              targetRow.style.backgroundColor = "";
+            }, 1000);
           }
         }
-
       }
     } else {
       alert("❌ 更新失敗：" + (result.message || ""));
+      if (targetRow) targetRow.style.backgroundColor = "#f8d7da"; // 紅色錯誤提示
     }
   } catch (err) {
     console.error("伺服器錯誤", err);
     alert("⚠️ 伺服器錯誤，請稍後再試");
+    if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+  } finally {
+    if (editBtn) {
+      editBtn.disabled = false;
+      editBtn.innerText = "📝 編輯";
+    }
   }
 }
 
