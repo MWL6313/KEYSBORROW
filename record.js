@@ -408,7 +408,7 @@ async function checkLatestChanges() {
       if (!shownKeys.has(key)) {
         shownKeys.add(key);
         const li = document.createElement("li");
-        li.innerText = `📌 ${newRec.借用人}  ${newRec.車號}🕓 更新 ${formatDate(newRec.最後更新時間)}）`;
+        li.innerText = `📌 ${newRec.借用人}  ${newRec.車號}🕓 ${formatDate(newRec.最後更新時間)}`;
         li.style.padding = "4px 0";
         ul.prepend(li);
       }
