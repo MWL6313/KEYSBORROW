@@ -1,151 +1,3 @@
-// const token = localStorage.getItem("authToken");
-// if (!token) location.href = "index.html";
-
-// let allRecords = [];
-// let currentRole = "";
-// let showOnlyAbnormal = false;
-
-// document.getElementById("filterAbnormalBtn").addEventListener("click", () => {
-//   showOnlyAbnormal = !showOnlyAbnormal;
-//   document.getElementById("filterAbnormalBtn").innerText = showOnlyAbnormal
-//     ? "✅ 顯示全部"
-//     : "🚨 僅顯示異常（逾時未巡檢）";
-//   filterAndRender();
-// });
-
-// document.getElementById("searchUser").addEventListener("input", filterAndRender);
-// document.getElementById("searchCar").addEventListener("input", filterAndRender);
-
-// // 載入資料
-// async function loadRecords() {
-//   const tableBody = document.querySelector("#recordTable tbody");
-//   tableBody.innerHTML = "";
-//   const statusMsg = document.getElementById("statusMsg");
-
-//   try {
-//     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
-//       headers: { Authorization: `Bearer ${token}` }
-//     });
-//     const data = await res.json();
-
-//     if (!data.success || !Array.isArray(data.records)) {
-//       statusMsg.innerText = "資料載入失敗，請稍後再試。";
-//       return;
-//     }
-
-//     // ✅ 顯示登入帳號
-//     const currentUser = data.user?.id || "(未知)";
-//     document.getElementById("currentUser").innerText = currentUser;
-
-//     allRecords = data.records;
-//     currentRole = data.role;
-//     filterAndRender();
-
-//   } catch (err) {
-//     console.error("載入失敗", err);
-//     statusMsg.innerText = "無法連線伺服器。";
-//   }
-// }
-
-
-// function filterAndRender() {
-//   const searchUser = document.getElementById("searchUser").value.toLowerCase();
-//   const searchCar = document.getElementById("searchCar").value.toLowerCase();
-//   const tableBody = document.querySelector("#recordTable tbody");
-//   tableBody.innerHTML = "";
-
-//   const filtered = allRecords.filter(r => {
-//     const matchUser = !searchUser || r.借用人.toLowerCase().includes(searchUser);
-//     const matchCar = !searchCar || r.車號.toLowerCase().includes(searchCar);
-
-//     if (showOnlyAbnormal) {
-//       const now = new Date();
-//       const borrowTime = new Date(r.借用時間);
-//       const inspectionTime = r.巡檢結束時間 ? new Date(r.巡檢結束時間) : null;
-//       const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-//       const noInspection = !inspectionTime;
-//       const noAction = !r.異常處置對策;
-//       return matchUser && matchCar && timeout && noInspection && noAction;
-//     }
-
-//     return matchUser && matchCar;
-//   });
-
-//   filtered.forEach(record => {
-//     const tr = document.createElement("tr");
-
-//     const now = new Date();
-//     const borrowTime = new Date(record.借用時間);
-//     const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-//     const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-//     const noInspection = !inspectionTime;
-//     const hasAction = !!record.異常處置對策;
-
-//     // ✅ 判斷背景顏色
-//     if (noInspection && timeout && !hasAction) {
-//       tr.style.backgroundColor = "#ffdddd"; // 淺紅
-//     } else if (noInspection && timeout && hasAction) {
-//       tr.style.backgroundColor = "#eeeeee"; // 灰色
-//     }
-
-//     const cols = [
-//       record.借用人,
-//       record.車號,
-//       formatDate(record.借用時間),
-//       formatDate(record.歸還時間),
-//       record.車頭 || "-",
-//       record.尾車 || "-",
-//       record.完成率 || "-",
-//       formatDate(record.巡檢結束時間),
-//       record.異常處置對策 || "-"
-//     ];
-
-//     cols.forEach(val => {
-//       const td = document.createElement("td");
-//       td.innerText = val || "";
-//       tr.appendChild(td);
-//     });
-
-//     const actionTd = document.createElement("td");
-
-//     if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
-//       const returnBtn = document.createElement("button");
-//       returnBtn.innerText = "🔁 歸還";
-//       returnBtn.onclick = () => handleReturn(record);
-//       actionTd.appendChild(returnBtn);
-//     }
-
-//     if (currentRole === "admin") {
-//       const deleteBtn = document.createElement("button");
-//       deleteBtn.innerText = "⛔ 刪除";
-//       deleteBtn.onclick = () => handleDelete(record);
-//       actionTd.appendChild(deleteBtn);
-//     }
-
-//     if (
-//       (currentRole === 'admin' || currentRole === 'manager') &&
-//       !record.巡檢結束時間 &&
-//       record.歸還時間 &&
-//       timeout &&
-//       !hasAction
-//     ) {
-//       const editBtn = document.createElement("button");
-//       editBtn.innerText = "📝 編輯";
-//       editBtn.onclick = () => handleEditAbnormal(record);
-//       actionTd.appendChild(editBtn);
-//     }
-
-//     tr.appendChild(actionTd);
-//     tableBody.appendChild(tr);
-//   });
-// }
-
-// function formatDate(str) {
-//   if (!str) return "";
-//   const d = new Date(str);
-//   return isNaN(d) ? str : d.toLocaleString("zh-TW");
-// }
-
 const token = localStorage.getItem("authToken");
 if (!token) location.href = "index.html";
 
@@ -164,6 +16,7 @@ document.getElementById("filterAbnormalBtn").addEventListener("click", () => {
 document.getElementById("searchUser").addEventListener("input", filterAndRender);
 document.getElementById("searchCar").addEventListener("input", filterAndRender);
 
+// 載入資料
 async function loadRecords() {
   const tableBody = document.querySelector("#recordTable tbody");
   tableBody.innerHTML = "";
@@ -180,17 +33,20 @@ async function loadRecords() {
       return;
     }
 
+    // ✅ 顯示登入帳號
     const currentUser = data.user?.id || "(未知)";
     document.getElementById("currentUser").innerText = currentUser;
 
     allRecords = data.records;
     currentRole = data.role;
     filterAndRender();
+
   } catch (err) {
     console.error("載入失敗", err);
     statusMsg.innerText = "無法連線伺服器。";
   }
 }
+
 
 function filterAndRender() {
   const searchUser = document.getElementById("searchUser").value.toLowerCase();
@@ -198,17 +54,6 @@ function filterAndRender() {
   const tableBody = document.querySelector("#recordTable tbody");
   tableBody.innerHTML = "";
 
-
-
-  const actionTd = document.createElement("td");
-  actionTd.appendChild(createActionButtons(record));
-  tr.appendChild(actionTd);
-
-
-
-
-
-  
   const filtered = allRecords.filter(r => {
     const matchUser = !searchUser || r.借用人.toLowerCase().includes(searchUser);
     const matchCar = !searchCar || r.車號.toLowerCase().includes(searchCar);
@@ -236,10 +81,11 @@ function filterAndRender() {
     const noInspection = !inspectionTime;
     const hasAction = !!record.異常處置對策;
 
+    // ✅ 判斷背景顏色
     if (noInspection && timeout && !hasAction) {
-      tr.style.backgroundColor = "#ffdddd";
+      tr.style.backgroundColor = "#ffdddd"; // 淺紅
     } else if (noInspection && timeout && hasAction) {
-      tr.style.backgroundColor = "#eeeeee";
+      tr.style.backgroundColor = "#eeeeee"; // 灰色
     }
 
     const cols = [
@@ -262,7 +108,6 @@ function filterAndRender() {
 
     const actionTd = document.createElement("td");
 
-    // 🔁 歸還按鈕
     if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
       const returnBtn = document.createElement("button");
       returnBtn.innerText = "🔁 歸還";
@@ -270,7 +115,6 @@ function filterAndRender() {
       actionTd.appendChild(returnBtn);
     }
 
-    // ⛔ 刪除按鈕
     if (currentRole === "admin") {
       const deleteBtn = document.createElement("button");
       deleteBtn.innerText = "⛔ 刪除";
@@ -278,15 +122,11 @@ function filterAndRender() {
       actionTd.appendChild(deleteBtn);
     }
 
-    // 📝 編輯按鈕
-    const nowTime = new Date();
-    const isTimeout = !isNaN(borrowTime) && (nowTime - borrowTime) > 1.5 * 60 * 60 * 1000;
-
     if (
       (currentRole === 'admin' || currentRole === 'manager') &&
       !record.巡檢結束時間 &&
       record.歸還時間 &&
-      isTimeout &&
+      timeout &&
       !hasAction
     ) {
       const editBtn = document.createElement("button");
@@ -306,74 +146,6 @@ function formatDate(str) {
   return isNaN(d) ? str : d.toLocaleString("zh-TW");
 }
 
-function createActionButtons(record) {
-  const wrapper = document.createElement("div");
-  wrapper.style.display = "flex";
-  wrapper.style.flexWrap = "wrap";
-  wrapper.style.gap = "6px";
-
-  // 樣式共用函式
-  function styleButton(btn) {
-    btn.style.padding = "6px 12px";
-    btn.style.border = "none";
-    btn.style.borderRadius = "6px";
-    btn.style.cursor = "pointer";
-    btn.style.fontSize = "1rem";
-    btn.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
-    btn.style.transition = "background 0.3s";
-    return btn;
-  }
-
-  // 🔁 歸還按鈕
-  if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
-    const returnBtn = document.createElement("button");
-    returnBtn.innerText = "🔁 歸還";
-    styleButton(returnBtn);
-    returnBtn.style.background = "#2979ff";
-    returnBtn.style.color = "#fff";
-    returnBtn.onmouseenter = () => returnBtn.style.background = "#1565c0";
-    returnBtn.onmouseleave = () => returnBtn.style.background = "#2979ff";
-    returnBtn.onclick = () => handleReturn(record);
-    wrapper.appendChild(returnBtn);
-  }
-
-  // 📝 編輯異常處置按鈕
-  const timeout = !isNaN(new Date(record.借用時間)) &&
-                  (new Date() - new Date(record.借用時間)) > 1.5 * 60 * 60 * 1000;
-  const noInspection = !record.巡檢結束時間;
-  const noAction = !record.異常處置對策;
-  if ((currentRole === 'admin' || currentRole === 'manager') &&
-      record.歸還時間 && timeout && noInspection && noAction) {
-    const editBtn = document.createElement("button");
-    editBtn.innerText = "📝 編輯";
-    styleButton(editBtn);
-    editBtn.style.background = "#ffa000";
-    editBtn.style.color = "#fff";
-    editBtn.onmouseenter = () => editBtn.style.background = "#ef6c00";
-    editBtn.onmouseleave = () => editBtn.style.background = "#ffa000";
-    editBtn.onclick = () => handleEditAbnormal(record);
-    wrapper.appendChild(editBtn);
-  }
-
-  // ⛔ 刪除按鈕（僅 admin）
-  if (currentRole === "admin") {
-    const deleteBtn = document.createElement("button");
-    deleteBtn.innerText = "⛔ 刪除";
-    styleButton(deleteBtn);
-    deleteBtn.style.background = "#d32f2f";
-    deleteBtn.style.color = "#fff";
-    deleteBtn.onmouseenter = () => deleteBtn.style.background = "#b71c1c";
-    deleteBtn.onmouseleave = () => deleteBtn.style.background = "#d32f2f";
-    deleteBtn.onclick = () => handleDelete(record);
-    wrapper.appendChild(deleteBtn);
-  }
-
-  return wrapper;
-}
-
-
-// handleReturn、handleDelete、handleEditAbnormal、updateTableRow 等函式
-// 如你原有程式碼所示可繼續保留，這邊已確認按鈕會同時 append，不會被覆蓋
 
 
 async function handleReturn(record) {
@@ -763,13 +535,6 @@ function updateTableRow(record) {
 function appendTableRow(record) {
   const tableBody = document.querySelector("#recordTable tbody");
   const tr = document.createElement("tr");
-
-
-  const actionTd = document.createElement("td");
-  actionTd.appendChild(createActionButtons(record));
-  tr.appendChild(actionTd);
-
-  
 
   
   // ✅ 背景色條件判斷
