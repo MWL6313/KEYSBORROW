@@ -129,12 +129,12 @@ function filterAndRender() {
     }
     
     // 📝 編輯（異常處置）
-    const now = new Date();
-    const borrowTime = new Date(record.借用時間);
-    const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-    const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-    const noInspection = !inspectionTime;
-    const hasAction = !!record.異常處置對策;
+    // const now = new Date();
+    // const borrowTime = new Date(record.借用時間);
+    // const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
+    // const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+    // const noInspection = !inspectionTime;
+    // const hasAction = !!record.異常處置對策;
     
     if (
       (currentRole === 'admin' || currentRole === 'manager') &&
@@ -533,12 +533,12 @@ function updateTableRow(record) {
     }
     
     // 📝 編輯（異常處置）
-    const now = new Date();
-    const borrowTime = new Date(record.借用時間);
-    const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-    const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-    const noInspection = !inspectionTime;
-    const hasAction = !!record.異常處置對策;
+    // const now = new Date();
+    // const borrowTime = new Date(record.借用時間);
+    // const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
+    // const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+    // const noInspection = !inspectionTime;
+    // const hasAction = !!record.異常處置對策;
     
     if (
       (currentRole === 'admin' || currentRole === 'manager') &&
@@ -622,12 +622,12 @@ function appendTableRow(record) {
     }
     
     // 📝 編輯（異常處置）
-    const now = new Date();
-    const borrowTime = new Date(record.借用時間);
-    const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-    const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-    const noInspection = !inspectionTime;
-    const hasAction = !!record.異常處置對策;
+    // const now = new Date();
+    // const borrowTime = new Date(record.借用時間);
+    // const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
+    // const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+    // const noInspection = !inspectionTime;
+    // const hasAction = !!record.異常處置對策;
     
     if (
       (currentRole === 'admin' || currentRole === 'manager') &&
