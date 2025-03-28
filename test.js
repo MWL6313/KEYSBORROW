@@ -17,21 +17,21 @@ document.getElementById("filterAbnormalBtn").addEventListener("click", () => {
 document.getElementById("searchUser").addEventListener("input", filterAndRender);
 document.getElementById("searchCar").addEventListener("input", filterAndRender);
 
-function createButton(text, handler, color = "#a73232") {
-  const btn = document.createElement("button");
-  btn.innerText = text;
-  btn.style.marginRight = "6px";
-  btn.style.padding = "6px 10px";
-  btn.style.borderRadius = "6px";
-  btn.style.border = "none";
-  btn.style.cursor = "pointer";
-  btn.style.color = "white";
-  btn.style.background = color;
-  btn.onmouseover = () => btn.style.opacity = "0.85";
-  btn.onmouseout = () => btn.style.opacity = "1";
-  btn.onclick = handler;
-  return btn;
-}
+// function createButton(text, handler, color = "#a73232") {
+//   const btn = document.createElement("button");
+//   btn.innerText = text;
+//   btn.style.marginRight = "6px";
+//   btn.style.padding = "6px 10px";
+//   btn.style.borderRadius = "6px";
+//   btn.style.border = "none";
+//   btn.style.cursor = "pointer";
+//   btn.style.color = "white";
+//   btn.style.background = color;
+//   btn.onmouseover = () => btn.style.opacity = "0.85";
+//   btn.onmouseout = () => btn.style.opacity = "1";
+//   btn.onclick = handler;
+//   return btn;
+// }
 
 function formatDate(str) {
   if (!str) return "";
