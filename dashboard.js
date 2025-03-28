@@ -50,33 +50,29 @@ function getCurrentDatetimeLocal() {
   return localDate.toISOString().slice(0, 16);
 }
 
-// === 載入車號選單
 // === 載入車號選單，排除已借用中的車號
 async function loadCarNumbers(defaultCar) {
   try {
-    const [carRes, borrowRes] = await Promise.all([
+    const [carRes, unreturnedRes] = await Promise.all([
       fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno"),
-      fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection")
+      fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/unreturned")
     ]);
 
     const carData = await carRes.json();
-    const borrowData = await borrowRes.json();
+    const unreturnedData = await unreturnedRes.json();
 
-    if (carData.success && borrowData.success) {
+    if (carData.success && unreturnedData.success) {
       const select = document.getElementById("carNumber");
       select.innerHTML = "";
 
       const allCars = new Set(carData.data);
-      const borrowedCars = new Set(
-        borrowData.records
-          .filter(r => !r.歸還時間)
-          .map(r => r.車號)
-      );
+      const borrowedCars = new Set(unreturnedData.data);
 
       const availableCars = [...allCars].filter(car => !borrowedCars.has(car));
 
+      // ✅ 若有 defaultCar（登入者常用），優先放最前
       if (defaultCar && allCars.has(defaultCar)) {
-        availableCars.unshift(defaultCar); // 預設車號優先放最前
+        availableCars.unshift(defaultCar);
       }
 
       availableCars.forEach(car => {
@@ -86,7 +82,7 @@ async function loadCarNumbers(defaultCar) {
         select.appendChild(opt);
       });
 
-      // 初始化 Tom Select（若已存在則先 destroy）
+      // ✅ 初始化 Tom Select
       if (select.tomselect) select.tomselect.destroy();
       new TomSelect("#carNumber", {
         create: false,
@@ -100,9 +96,10 @@ async function loadCarNumbers(defaultCar) {
     }
 
   } catch (err) {
-    console.error("🚨 載入車號失敗", err);
+    console.error("🚨 載入車號清單失敗：", err);
   }
 }
+
 
 // === 借用申請送出邏輯（含防止已借用車號）
 document.getElementById("submitBorrow").addEventListener("click", async () => {
