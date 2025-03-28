@@ -151,6 +151,38 @@ function formatDate(str) {
 async function handleReturn(record) {
   if (!confirm("確定要標記為歸還嗎？")) return;
 
+  // 🔐 防止重複點擊
+  const tableBody = document.querySelector("#recordTable tbody");
+  const rows = tableBody.querySelectorAll("tr");
+
+  let targetRow = null;
+  let returnBtn = null;
+
+  for (let tr of rows) {
+    if (
+      tr.children[0].innerText === record.借用人 &&
+      tr.children[1].innerText === record.車號 &&
+      tr.children[2].innerText === formatDate(record.借用時間)
+    ) {
+      targetRow = tr;
+      // 找到當前行的「🔁 歸還」按鈕
+      returnBtn = Array.from(tr.querySelectorAll("button")).find(btn =>
+        btn.innerText.includes("🔁")
+      );
+      break;
+    }
+  }
+
+  if (returnBtn) {
+    returnBtn.disabled = true;           // 🔒 禁用按鈕
+    returnBtn.innerText = "⏳ 處理中...";
+  }
+
+  if (targetRow) {
+    targetRow.style.transition = "background-color 0.3s ease";
+    targetRow.style.backgroundColor = "#d0f0ff"; // 🔄 執行中提示
+  }
+
   try {
     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/return", {
       method: "POST",
@@ -167,7 +199,6 @@ async function handleReturn(record) {
 
     const result = await res.json();
     if (result.success) {
-      // ✅ 從 API 重新抓該筆資料（使用 updatedAfter 查詢）
       const updatedURL = `https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection?updatedAfter=${record.借用時間}`;
       const res2 = await fetch(updatedURL, {
         headers: { Authorization: `Bearer ${token}` }
@@ -182,26 +213,39 @@ async function handleReturn(record) {
         );
 
         if (updatedRecord) {
-          // ✅ 更新 allRecords 裡的那筆
           const idx = allRecords.findIndex(r =>
             r.借用人 === updatedRecord.借用人 &&
             r.車號 === updatedRecord.車號 &&
             r.借用時間 === updatedRecord.借用時間
           );
           if (idx !== -1) allRecords[idx] = updatedRecord;
-
-          // ✅ 更新畫面上的那一列
           updateTableRow(updatedRecord);
+
+          // ✅ 成功動畫
+          if (targetRow) {
+            targetRow.style.backgroundColor = "#d4edda"; // ✅ 綠色
+            setTimeout(() => {
+              targetRow.style.backgroundColor = "";
+            }, 1000);
+          }
         }
       }
 
       alert("✅ 已成功標記歸還（已更新該筆資料）");
     } else {
       alert("❌ 歸還失敗");
+      if (targetRow) targetRow.style.backgroundColor = "#f8d7da"; // ❌ 紅色
     }
   } catch (err) {
     alert("⚠️ 伺服器錯誤");
     console.error(err);
+    if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+  } finally {
+    // ✅ 恢復按鈕狀態
+    if (returnBtn) {
+      returnBtn.disabled = false;
+      returnBtn.innerText = "🔁 歸還";
+    }
   }
 }
 
