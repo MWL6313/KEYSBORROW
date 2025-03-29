@@ -200,8 +200,8 @@ function renderRow(record, tbody) {
 
 
 
-// 初始化
-loadRecords();
+// // 初始化
+// loadRecords();
 
 
 async function handleReturn(record) {
