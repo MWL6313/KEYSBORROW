@@ -182,7 +182,6 @@ body {
     max-width: none;         /* 移除最大寬度限制 */
     padding: 2rem 1rem;      /* 左右內距保留 1rem，避免貼邊 */
     margin: 0;               /* 移除外距，確保貼齊 */
-/*     border-radius: 0;        /* 若希望滿版時沒有圓角，可加 */
     box-sizing: border-box; */
   }
 
