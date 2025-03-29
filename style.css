@@ -171,8 +171,8 @@ body {
 /* ✅ 手機專用調整 */
 @media (max-width: 768px) {
   body {
-    font-size: 4vw;
-    padding: 4vh 5vw;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
   .login-card {
