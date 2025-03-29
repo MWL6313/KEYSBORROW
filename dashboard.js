@@ -67,6 +67,8 @@ async function loadCarNumbers(defaultCar) {
     const select = document.getElementById("carNumber");
     if (select.tomselect) {
       select.tomselect.destroy();
+      delete select.tomselect;  // 加這行確保重建
+
     }
             
     select.innerHTML = "";
@@ -112,6 +114,8 @@ async function loadCarNumbers(defaultCar) {
       // ✅ 初始化 Tom Select（如已存在先 destroy 再初始化）
       if (select.tomselect) {
         select.tomselect.destroy();
+        delete select.tomselect;  // 加這行確保重建
+
       }
 
       new TomSelect("#carNumber", {
@@ -172,6 +176,8 @@ async function loadPhoneItems() {
       // 如果已有 tomselect 實例，先銷毀
       if (select.tomselect) {
         select.tomselect.destroy();
+        delete select.tomselect;  // 加這行確保重建
+
       }
 
       // 初始化 Tom Select（等資料都塞完再做）
