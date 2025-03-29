@@ -68,6 +68,10 @@ async function loadCarNumbers(defaultCar) {
 
     if (carData.success && unreturnedData.success) {
       const select = document.getElementById("carNumber");
+      if (select.tomselect) {
+        select.tomselect.destroy();
+      }
+      new TomSelect("#carNumber", { ... });
       select.innerHTML = "";
 
       const allCars = new Set(carData.data);
@@ -225,6 +229,13 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
         title: "✅ 借用成功！",
         text: `申請已送出，請至紀錄頁查詢`,
       });
+
+      if (document.getElementById("carNumber").tomselect) {
+        document.getElementById("carNumber").tomselect.clear();
+      }
+      if (document.getElementById("phoneItem").tomselect) {
+        document.getElementById("phoneItem").tomselect.clear();
+      }
 
       document.getElementById("carNumber").tomselect.clear();
       document.getElementById("phoneItem").tomselect.clear();
