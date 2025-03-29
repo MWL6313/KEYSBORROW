@@ -580,20 +580,42 @@ function updateTableRow(record) {
       }
 
       // ✅ 更新資料欄位
-      const cols = [
-        record.借用人,
-        record.車號,
-        formatDate(record.借用時間),
-        formatDate(record.歸還時間),
-        record.車頭 || "-",
-        record.尾車 || "-",
-        record.完成率 || "-",
-        formatDate(record.巡檢結束時間),
-        record.異常處置對策 || "-"
-      ];
-      cols.forEach((val, i) => {
-        tr.children[i].innerText = val || "";
-      });
+      const isPhone = record.type === '手機';
+      const cols = isPhone
+        ? [
+            record.借用人,
+            record.物品 || "-",
+            formatDate(record.借用時間),
+            formatDate(record.歸還時間),
+            "-", "-", "-", "-", "-"
+          ]
+        : [
+            record.借用人,
+            record.車號 || "-",
+            formatDate(record.借用時間),
+            formatDate(record.歸還時間),
+            record.車頭 || "-",
+            record.尾車 || "-",
+            record.完成率 || "-",
+            formatDate(record.巡檢結束時間),
+            record.異常處置對策 || "-"
+          ];
+
+      
+      // const cols = [
+      //   record.借用人,
+      //   record.車號,
+      //   formatDate(record.借用時間),
+      //   formatDate(record.歸還時間),
+      //   record.車頭 || "-",
+      //   record.尾車 || "-",
+      //   record.完成率 || "-",
+      //   formatDate(record.巡檢結束時間),
+      //   record.異常處置對策 || "-"
+      // ];
+      // cols.forEach((val, i) => {
+      //   tr.children[i].innerText = val || "";
+      // });
 
       // ✅ 更新操作按鈕欄位
       const actionTd = tr.children[9];
