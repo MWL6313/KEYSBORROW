@@ -193,11 +193,11 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrower = document.getElementById("borrower").value.trim();
   const carNumber = document.getElementById("carNumber").value.trim();
   const phoneItem = document.getElementById("phoneItem").value.trim();
-  
+
   const isCarBorrowed = carNumber && carNumber !== "none";
   const isPhoneBorrowed = phoneItem && phoneItem !== "none";
 
-  if (!borrower || (!carNumber && !phoneItem)) {
+  if (!borrower || (!isCarBorrowed && !isPhoneBorrowed)) {
     Swal.fire({
       icon: "warning",
       title: "請選擇至少一個借用項目",
@@ -210,15 +210,13 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
   const submitBtn = document.getElementById("submitBorrow");
   borrowMsg.innerText = "";
 
-  // 🔒 立即禁用按鈕，防止連點
   submitBtn.disabled = true;
   submitBtn.innerText = "處理中...";
 
   try {
     const promises = [];
 
-    // 車輛確認
-    if (carNumber) {
+    if (isCarBorrowed) {
       const resCheck = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/unreturned");
       const checkData = await resCheck.json();
       const borrowedCars = new Set(checkData.data);
@@ -243,8 +241,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       );
     }
 
-    // 手機送出
-    if (phoneItem) {
+    if (isPhoneBorrowed) {
       promises.push(
         fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/borrow", {
           method: "POST",
@@ -258,19 +255,10 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     const success = results.every(res => res.ok);
 
     if (success) {
-      const successList = [];
-      if (carNumber) {
-        successList.push(`🚗 車號：${carNumber}`);
-      } else {
-        successList.push(`🚗 車號：未借用`);
-      }
-      
-      if (phoneItem && phoneItem.trim() !== "") {
-        successList.push(`📱 手機：${phoneItem}`);
-      } else {
-        successList.push(`📱 手機：未借用`);
-      }
-
+      const successList = [
+        `🚗 車號：${isCarBorrowed ? carNumber : "未借用"}`,
+        `📱 手機：${isPhoneBorrowed ? phoneItem : "未借用"}`
+      ];
 
       borrowMsg.style.color = "green";
       borrowMsg.innerHTML = `
@@ -278,23 +266,14 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
         <b>${successList.join("<br>")}</b>
       `;
 
-      // 清空選項
-      if (document.getElementById("carNumber").tomselect) {
-        document.getElementById("carNumber").tomselect.clear();
-      }
-      if (document.getElementById("phoneItem").tomselect) {
-        document.getElementById("phoneItem").tomselect.clear();
-      }
+      document.getElementById("carNumber").tomselect?.clear();
+      document.getElementById("phoneItem").tomselect?.clear();
 
-      // 重新載入選單
       await loadCarNumbers(currentUser?.carNo || "");
       await loadPhoneItems();
 
-      // 🔒 鎖 20 秒內不能再點
       let countdown = 20;
-      const originalText = submitBtn.innerText;
       submitBtn.innerText = `請稍候 ${countdown} 秒`;
-
       const timer = setInterval(() => {
         countdown--;
         submitBtn.innerText = `請稍候 ${countdown} 秒`;
@@ -319,4 +298,5 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     submitBtn.innerText = "送出申請";
   }
 });
+
 
