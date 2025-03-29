@@ -53,7 +53,7 @@ function getCurrentDatetimeLocal() {
 }
 
 // === 載入車號選單（排除已借用）===
-async function loadCarNumbers(defaultCar) {
+async function loadCarNumbers(defaultCar = null) {
   try {
     const [carRes, unreturnedRes] = await Promise.all([
       fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno"),
@@ -63,76 +63,70 @@ async function loadCarNumbers(defaultCar) {
     const carData = await carRes.json();
     const unreturnedData = await unreturnedRes.json();
 
-    if (carData.success && unreturnedData.success) {
+    if (!carData.success || !unreturnedData.success) {
+      console.warn("❌ 車號資料取得失敗", carData, unreturnedData);
+      return;
+    }
+
+    const allCars = new Set(carData.data);
+    const borrowedCars = new Set(unreturnedData.data);
+    console.log("🚗 所有車號：", [...allCars]);
+    console.log("🚗 已借出車號：", [...borrowedCars]);
+
     const select = document.getElementById("carNumber");
     if (select.tomselect) {
       select.tomselect.destroy();
-      delete select.tomselect;  // 加這行確保重建
-
+      delete select.tomselect;
     }
-            
+
     select.innerHTML = "";
-    
-    // ➕ 插入「不借用」選項
+
     const noneOption = document.createElement("option");
     noneOption.value = "none";
     noneOption.textContent = "🚫 不借用車輛";
     select.appendChild(noneOption);
 
+    // 排除 defaultCar 外的借出項目
+    let availableCars = [...allCars].filter(car =>
+      !borrowedCars.has(car) || car === defaultCar
+    );
 
-
-      const allCars = new Set(carData.data);
-      const borrowedCars = new Set(unreturnedData.data);
-
-      let availableCars = [...allCars].filter(car =>
-        !borrowedCars.has(car) && car !== defaultCar
-      );
-
-      // 預設車號優先放前面（即使已借出）
-      if (defaultCar && allCars.has(defaultCar)) {
-        availableCars.unshift(defaultCar);
-      }
-
-      availableCars.forEach(car => {
-        const opt = document.createElement("option");
-        opt.value = car;
-
-        const isBorrowed = borrowedCars.has(car);
-        const isDefault = car === defaultCar;
-
-        // ✅ 顯示借出標示、並 disabled（除非是 defaultCar）
-        if (isBorrowed) {
-          opt.textContent = `${car} ⚠ 已借出`;
-          if (!isDefault) opt.disabled = true;
-        } else {
-          opt.textContent = car;
-        }
-
-        select.appendChild(opt);
-      });
-
-      // ✅ 初始化 Tom Select（如已存在先 destroy 再初始化）
-      if (select.tomselect) {
-        select.tomselect.destroy();
-        delete select.tomselect;  // 加這行確保重建
-
-      }
-
-      new TomSelect("#carNumber", {
-        create: false,
-        sortField: {
-          field: "text",
-          direction: "asc"
-        },
-        placeholder: "請輸入或選擇車號",
-      });
-
-      if (defaultCar) {
-        select.tomselect.setValue(defaultCar);
-      }
+    // 將 defaultCar 優先放最前
+    if (defaultCar && allCars.has(defaultCar)) {
+      availableCars = availableCars.filter(c => c !== defaultCar);
+      availableCars.unshift(defaultCar);
     }
+
+    availableCars.forEach(car => {
+      const opt = document.createElement("option");
+      opt.value = car;
+
+      const isBorrowed = borrowedCars.has(car);
+      const isDefault = car === defaultCar;
+
+      if (isBorrowed && !isDefault) {
+        opt.textContent = `${car} ⚠ 已借出`;
+        opt.disabled = true;
+      } else {
+        opt.textContent = car;
+      }
+
+      select.appendChild(opt);
+    });
+
+    const ts = new TomSelect(select, {
+      create: false,
+      sortField: { field: "text", direction: "asc" },
+      placeholder: "請輸入或選擇車號"
+    });
+
+    // 若有預設值 → 自動設定
+    if (defaultCar && allCars.has(defaultCar)) {
+      ts.setValue(defaultCar);
+    }
+
   } catch (err) {
-    console.error("🚨 載入車號錯誤", err);
+    console.error("🚨 載入車號失敗", err);
   }
 }
 
@@ -146,53 +140,48 @@ async function loadPhoneItems() {
     const dataItems = await resItems.json();
     const dataUnreturned = await resUnreturned.json();
 
-    if (dataItems.success && Array.isArray(dataItems.items) && dataUnreturned.success) {
-      const allItems = dataItems.items;
-      const unreturnedSet = new Set(dataUnreturned.data);
+    if (!dataItems.success || !Array.isArray(dataItems.items) || !dataUnreturned.success) {
+      console.warn("❌ 手機資料取得失敗", dataItems, dataUnreturned);
+      return;
+    }
 
-      const select = document.getElementById("phoneItem");
-      select.innerHTML = "";
+    const allItems = dataItems.items;
+    const unreturnedSet = new Set(dataUnreturned.data);
+    console.log("📱 所有手機：", allItems);
+    console.log("📱 已借出手機：", [...unreturnedSet]);
 
-      // ➕ 插入「不借用」選項
-      const noneOption = document.createElement("option");
-      noneOption.value = "none";
-      noneOption.textContent = "📵 不借用手機";
-      select.appendChild(noneOption);
+    const select = document.getElementById("phoneItem");
+    if (select.tomselect) {
+      select.tomselect.destroy();
+      delete select.tomselect;
+    }
 
-      allItems.forEach(item => {
-        const opt = document.createElement("option");
-        opt.value = item;
+    select.innerHTML = "";
 
-        if (unreturnedSet.has(item)) {
-          opt.textContent = `${item} ⚠ 已借出`;
-          opt.disabled = true;
-        } else {
-          opt.textContent = item;
-        }
+    const noneOption = document.createElement("option");
+    noneOption.value = "none";
+    noneOption.textContent = "📵 不借用手機";
+    select.appendChild(noneOption);
 
-        select.appendChild(opt);
-      });
+    allItems.forEach(item => {
+      const opt = document.createElement("option");
+      opt.value = item;
 
-      // 如果已有 tomselect 實例，先銷毀
-      if (select.tomselect) {
-        select.tomselect.destroy();
-        delete select.tomselect;  // 加這行確保重建
-
+      if (unreturnedSet.has(item)) {
+        opt.textContent = `${item} ⚠ 已借出`;
+        opt.disabled = true;
+      } else {
+        opt.textContent = item;
       }
 
-      // 初始化 Tom Select（等資料都塞完再做）
-      new TomSelect("#phoneItem", {
-        create: false,
-        sortField: {
-          field: "text",
-          direction: "asc"
-        },
-        placeholder: "請選擇手機"
-      });
+      select.appendChild(opt);
+    });
 
-    } else {
-      console.warn("⚠️ 手機資料載入錯誤", dataItems, dataUnreturned);
-    }
+    new TomSelect("#phoneItem", {
+      create: false,
+      sortField: { field: "text", direction: "asc" },
+      placeholder: "請選擇手機"
+    });
 
   } catch (err) {
     console.error("🚨 載入手機項目錯誤", err);
@@ -200,38 +189,134 @@ async function loadPhoneItems() {
 }
 
 
+// async function loadCarNumbers(defaultCar) {
+//   try {
+//     const [carRes, unreturnedRes] = await Promise.all([
+//       fetch("https://key-loan-api-978908472762.asia-east1.run.app/carno"),
+//       fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/unreturned")
+//     ]);
+
+//     const carData = await carRes.json();
+//     const unreturnedData = await unreturnedRes.json();
+
+//     if (carData.success && unreturnedData.success) {
+//     const select = document.getElementById("carNumber");
+//     if (select.tomselect) {
+//       select.tomselect.destroy();
+//       delete select.tomselect;  // 加這行確保重建
+
+//     }
+            
+//     select.innerHTML = "";
+    
+//     // ➕ 插入「不借用」選項
+//     const noneOption = document.createElement("option");
+//     noneOption.value = "none";
+//     noneOption.textContent = "🚫 不借用車輛";
+//     select.appendChild(noneOption);
+
+
+
+//       const allCars = new Set(carData.data);
+//       const borrowedCars = new Set(unreturnedData.data);
+
+//       let availableCars = [...allCars].filter(car =>
+//         !borrowedCars.has(car) && car !== defaultCar
+//       );
+
+//       // 預設車號優先放前面（即使已借出）
+//       if (defaultCar && allCars.has(defaultCar)) {
+//         availableCars.unshift(defaultCar);
+//       }
+
+//       availableCars.forEach(car => {
+//         const opt = document.createElement("option");
+//         opt.value = car;
+
+//         const isBorrowed = borrowedCars.has(car);
+//         const isDefault = car === defaultCar;
+
+//         // ✅ 顯示借出標示、並 disabled（除非是 defaultCar）
+//         if (isBorrowed) {
+//           opt.textContent = `${car} ⚠ 已借出`;
+//           if (!isDefault) opt.disabled = true;
+//         } else {
+//           opt.textContent = car;
+//         }
+
+//         select.appendChild(opt);
+//       });
+
+//       // ✅ 初始化 Tom Select（如已存在先 destroy 再初始化）
+//       if (select.tomselect) {
+//         select.tomselect.destroy();
+//         delete select.tomselect;  // 加這行確保重建
+
+//       }
+
+//       new TomSelect("#carNumber", {
+//         create: false,
+//         sortField: {
+//           field: "text",
+//           direction: "asc"
+//         },
+//         placeholder: "請輸入或選擇車號",
+//       });
+
+//       if (defaultCar) {
+//         select.tomselect.setValue(defaultCar);
+//       }
+//     }
+//   } catch (err) {
+//     console.error("🚨 載入車號錯誤", err);
+//   }
+// }
 
 // async function loadPhoneItems() {
 //   try {
-//     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/items");
-//     const data = await res.json();
+//     const [resItems, resUnreturned] = await Promise.all([
+//       fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/items"),
+//       fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/unreturned")
+//     ]);
 
-//     if (data.success && Array.isArray(data.items)) {
+//     const dataItems = await resItems.json();
+//     const dataUnreturned = await resUnreturned.json();
+
+//     if (dataItems.success && Array.isArray(dataItems.items) && dataUnreturned.success) {
+//       const allItems = dataItems.items;
+//       const unreturnedSet = new Set(dataUnreturned.data);
+
 //       const select = document.getElementById("phoneItem");
-
 //       select.innerHTML = "";
-      
+
 //       // ➕ 插入「不借用」選項
 //       const noneOption = document.createElement("option");
 //       noneOption.value = "none";
 //       noneOption.textContent = "📵 不借用手機";
 //       select.appendChild(noneOption);
 
-
-//       // 塞入新選項
-//       data.items.forEach(item => {
+//       allItems.forEach(item => {
 //         const opt = document.createElement("option");
 //         opt.value = item;
-//         opt.textContent = item;
+
+//         if (unreturnedSet.has(item)) {
+//           opt.textContent = `${item} ⚠ 已借出`;
+//           opt.disabled = true;
+//         } else {
+//           opt.textContent = item;
+//         }
+
 //         select.appendChild(opt);
 //       });
 
 //       // 如果已有 tomselect 實例，先銷毀
 //       if (select.tomselect) {
 //         select.tomselect.destroy();
+//         delete select.tomselect;  // 加這行確保重建
+
 //       }
 
-//       // 初始化 Tom Select（等資料都塞完再做！）
+//       // 初始化 Tom Select（等資料都塞完再做）
 //       new TomSelect("#phoneItem", {
 //         create: false,
 //         sortField: {
@@ -240,13 +325,18 @@ async function loadPhoneItems() {
 //         },
 //         placeholder: "請選擇手機"
 //       });
+
 //     } else {
-//       console.warn("📭 無手機資料", data);
+//       console.warn("⚠️ 手機資料載入錯誤", dataItems, dataUnreturned);
 //     }
+
 //   } catch (err) {
-//     console.error("載入手機項目錯誤", err);
+//     console.error("🚨 載入手機項目錯誤", err);
 //   }
 // }
+
+
+
 
 document.getElementById("refreshItemsBtn").addEventListener("click", async () => {
   showToast("正在更新可借用清單...", "🔄");
