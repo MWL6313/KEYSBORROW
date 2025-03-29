@@ -761,7 +761,6 @@ function updateTableRow(record) {
   }
 }
 
-
 function appendTableRow(record) {
   const tableBody = document.querySelector("#recordTable tbody");
   const tr = document.createElement("tr");
@@ -782,19 +781,20 @@ function appendTableRow(record) {
     }
   }
 
-  // ✅ 建立資料欄位（依照類型判斷）
   const isPhone = record.type === '手機';
+  const typeIcon = isPhone ? "📱" : "🚗";
+
   const cols = isPhone
     ? [
         record.借用人,
-        record.物品 || "-",
+        `${typeIcon} ${record.物品 || "-"}`,
         formatDate(record.借用時間),
         formatDate(record.歸還時間),
         "-", "-", "-", "-", "-"
       ]
     : [
         record.借用人,
-        record.車號 || "-",
+        `${typeIcon} ${record.車號 || "-"}`,
         formatDate(record.借用時間),
         formatDate(record.歸還時間),
         record.車頭 || "-",
@@ -810,9 +810,10 @@ function appendTableRow(record) {
     tr.appendChild(td);
   });
 
-  // ✅ 操作欄位
+  // ✅ 操作按鈕欄位
   const actionTd = document.createElement("td");
 
+  // 歸還按鈕
   if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
     const returnBtn = document.createElement("button");
     returnBtn.innerText = "🔁 歸還";
@@ -820,6 +821,7 @@ function appendTableRow(record) {
     actionTd.appendChild(returnBtn);
   }
 
+  // 刪除按鈕
   if (currentRole === "admin") {
     const deleteBtn = document.createElement("button");
     deleteBtn.innerText = "⛔ 刪除";
@@ -827,6 +829,7 @@ function appendTableRow(record) {
     actionTd.appendChild(deleteBtn);
   }
 
+  // 編輯異常按鈕（鑰匙限定）
   if (
     record.type !== '手機' &&
     (currentRole === 'admin' || currentRole === 'manager') &&
@@ -843,6 +846,3 @@ function appendTableRow(record) {
   tr.appendChild(actionTd);
   tableBody.appendChild(tr);
 }
-
-
-
