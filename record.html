@@ -39,7 +39,7 @@
       gap: 10px;
     }
 
-    .controls select {
+    .tab-buttons select {
       padding: 8px 12px;
       border-radius: 8px;
       border: 1px solid #ccc;
@@ -56,7 +56,7 @@
       padding-right: 30px;
     }
 
-    .controls select:focus {
+    .tab-buttons select:focus {
       outline: none;
       border-color: #5a9bd5;
       box-shadow: 0 0 5px rgba(90, 155, 213, 0.5);
@@ -197,16 +197,21 @@
         <button id="filterAbnormalBtn">🚨 僅顯示異常（逾時未巡檢）</button>
         <button id="sortTimeBtn">⏳ 借用時間排序</button>
         <button id="sortInspectionBtn">📅 巡檢時間排序</button>
-        <select id="typeFilter">
+<!--         <select id="typeFilter">
           <option value="all">🔍 顯示全部</option>
           <option value="鑰匙">🚗 顯示鑰匙</option>
           <option value="手機">📱 顯示手機</option>
-        </select>
+        </select> -->
       </div>
     </div>
   </div>
 
   <div class="tab-buttons">
+    <select id="typeFilter">
+      <option value="all">🔍 顯示全部</option>
+      <option value="鑰匙">🚗 顯示鑰匙</option>
+      <option value="手機">📱 顯示手機</option>
+    </select>
     <button id="tabReview" class="active">📝 審核區</button>
     <button id="tabHistory">📜 歷史紀錄區</button>
   </div>
