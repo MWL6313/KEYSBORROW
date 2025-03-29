@@ -500,7 +500,8 @@ async function handleEditAbnormal(record) {
 
     const result = await res.json();
     if (result.success) {
-      alert("✅ 已成功更新異常處置對策");
+      // alert("✅ 已成功更新異常處置對策");
+      showToast("✅ 已成功更新異常處置對策", "success");
 
       // 成功後重新抓 /borrow/withInspection，確保資料包含巡檢欄位
     const updatedRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
