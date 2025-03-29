@@ -408,6 +408,7 @@ async function handleEditAbnormal(record) {
           }, 1000);
         }
       }
+    }
     } else {
       alert("❌ 更新失敗：" + (result.message || ""));
       if (targetRow) targetRow.style.backgroundColor = "#f8d7da"; // 紅色錯誤提示
