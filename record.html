@@ -39,6 +39,49 @@
       gap: 10px;
     }
 
+    .filters select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      background-color: #fff;
+      color: #333;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease-in-out;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 14px;
+      padding-right: 30px;
+    }
+    
+    .filters select:focus {
+      outline: none;
+      border-color: #5a9bd5;
+      box-shadow: 0 0 5px rgba(90, 155, 213, 0.5);
+    }
+
+    
+    .filters input {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: border 0.2s;
+    }
+    
+    .filters input:focus {
+      border-color: #5a9bd5;
+      outline: none;
+      box-shadow: 0 0 5px rgba(90, 155, 213, 0.5);
+    }
+
     input[type="text"], input[type="date"] {
       padding: 8px 12px;
       font-size: 1rem;
