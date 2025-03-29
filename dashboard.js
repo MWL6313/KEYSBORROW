@@ -317,4 +317,16 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
   }
 });
 
+function showToast(message, icon = "✅") {
+  const toast = document.createElement("div");
+  toast.className = "custom-toast";
+  toast.innerHTML = `<span style="font-size:1.2rem">${icon}</span> ${message}`;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(-20px)";
+    setTimeout(() => toast.remove(), 800);
+  }, 2500);
+}
 
