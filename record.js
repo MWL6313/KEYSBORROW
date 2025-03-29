@@ -17,6 +17,30 @@ document.getElementById("searchUser").addEventListener("input", filterAndRender)
 document.getElementById("searchCar").addEventListener("input", filterAndRender);
 document.getElementById("typeFilter").addEventListener("change", filterAndRender);
 
+async function verifyToken(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ success: false, message: "未提供權杖" });
+  }
+
+  const token = authHeader.replace("Bearer ", "").trim();
+
+  try {
+    const userSheet = await getSheetRows('USER');
+    const matchedUser = userSheet.find(u => u.ID === token);
+    if (!matchedUser) {
+      return res.status(403).json({ success: false, message: "無效權限" });
+    }
+
+    req.user = matchedUser; // ⬅ 將使用者資訊傳入後續處理
+    next();
+  } catch (err) {
+    console.error("驗證錯誤:", err);
+    res.status(500).json({ success: false, message: "伺服器錯誤" });
+  }
+}
+
+
 // 取得資料
 async function loadRecords() {
   const statusMsg = document.getElementById("statusMsg");
