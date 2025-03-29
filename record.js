@@ -265,7 +265,8 @@ async function handleReturn(record) {
     const result = await res.json();
 
     if (result.success) {
-      alert("✅ 已成功標記為歸還");
+      // alert("✅ 已成功標記為歸還");
+      showSingleChange("✅ 已成功標記為歸還");
 
       // 📌 分流處理
       let updatedRecord = null;
@@ -747,6 +748,33 @@ async function checkLatestChanges() {
 
 
 setInterval(checkLatestChanges, 10 * 1000); // 每 10 秒檢查一次
+
+
+function showSingleChange(message) {
+  const container = document.getElementById("latestChanges");
+  const changesList = document.getElementById("changesList");
+
+  // 清空所有舊訊息
+  changesList.innerHTML = "";
+
+  const li = document.createElement("li");
+  li.textContent = message;
+  li.style.padding = "5px 0";
+  li.style.opacity = "1";
+  li.style.transition = "opacity 0.5s ease";
+
+  changesList.appendChild(li);
+  container.style.display = "block";
+
+  // 自動淡出
+  setTimeout(() => {
+    li.style.opacity = "0";
+    setTimeout(() => {
+      changesList.innerHTML = "";
+      container.style.display = "none";
+    }, 500); // 動畫完成後移除
+  }, 3000); // 3秒後開始淡出
+}
 
 
 function showChange(message) {
