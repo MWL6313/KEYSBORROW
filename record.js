@@ -129,17 +129,18 @@ function filterAndRender() {
 
     const isPhone = record.type === '手機';
 
+    const typeIcon = isPhone ? "📱" : "🚗";
     const cols = isPhone
       ? [
           record.借用人,
-          record.物品 || "-",
+          `${typeIcon} ${record.物品 || "-"}`,
           formatDate(record.借用時間),
           formatDate(record.歸還時間),
           "-", "-", "-", "-", "-"
         ]
       : [
           record.借用人,
-          record.車號 || "-",
+          `${typeIcon} ${record.車號 || "-"}`,
           formatDate(record.借用時間),
           formatDate(record.歸還時間),
           record.車頭 || "-",
@@ -663,17 +664,19 @@ function updateTableRow(record) {
 
       // ✅ 更新資料欄位
       const isPhone = record.type === '手機';
+      
+      const typeIcon = isPhone ? "📱" : "🚗";
       const cols = isPhone
         ? [
             record.借用人,
-            record.物品 || "-",
+            `${typeIcon} ${record.物品 || "-"}`,
             formatDate(record.借用時間),
             formatDate(record.歸還時間),
             "-", "-", "-", "-", "-"
           ]
         : [
             record.借用人,
-            record.車號 || "-",
+            `${typeIcon} ${record.車號 || "-"}`,
             formatDate(record.借用時間),
             formatDate(record.歸還時間),
             record.車頭 || "-",
@@ -682,6 +685,7 @@ function updateTableRow(record) {
             formatDate(record.巡檢結束時間),
             record.異常處置對策 || "-"
           ];
+
       cols.forEach((val, i) => {
         tr.children[i].innerText = val || "";
       });
