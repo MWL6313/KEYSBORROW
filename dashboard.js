@@ -151,7 +151,7 @@ async function loadPhoneItems() {
           field: "text",
           direction: "asc"
         },
-        placeholder: ""請選擇手機""
+        placeholder: "請選擇手機"
       });
 
 
