@@ -555,9 +555,13 @@ async function checkLatestChanges() {
       // 更新表格資料
       const idx = allRecords.findIndex(r =>
         r.借用人 === rec.借用人 &&
-        (r.車號 || r.物品) === (rec.車號 || rec.物品) &&
-        r.借用時間 === rec.借用時間
+        r.借用時間 === rec.借用時間 &&
+        (
+          (r.type === '手機' && r.物品 === rec.物品) ||
+          (r.type !== '手機' && r.車號 === rec.車號)
+        )
       );
+
 
       if (idx !== -1) {
         allRecords[idx] = rec;
