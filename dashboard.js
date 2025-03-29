@@ -195,11 +195,15 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
   const submitBtn = document.getElementById("submitBorrow");
   borrowMsg.innerText = "";
 
+  // 🔒 立即禁用按鈕，防止連點
+  submitBtn.disabled = true;
+  submitBtn.innerText = "處理中...";
+
   try {
     const promises = [];
 
+    // 車輛確認
     if (carNumber) {
-      // 確認車輛是否已被借出
       const resCheck = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/unreturned");
       const checkData = await resCheck.json();
       const borrowedCars = new Set(checkData.data);
@@ -210,6 +214,8 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
           title: "🚫 車輛仍在借用中",
           text: `【${carNumber}】尚未歸還，請選擇其他車輛。`,
         });
+        submitBtn.disabled = false;
+        submitBtn.innerText = "送出申請";
         return;
       }
 
@@ -222,6 +228,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       );
     }
 
+    // 手機送出
     if (phoneItem) {
       promises.push(
         fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/borrow", {
@@ -236,12 +243,17 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     const success = results.every(res => res.ok);
 
     if (success) {
-      Swal.fire({
-        icon: "success",
-        title: "✅ 借用成功！",
-        text: `申請已送出，請至紀錄頁查詢`,
-      });
+      const successList = [];
+      if (carNumber) successList.push(`🚗 車號：${carNumber}`);
+      if (phoneItem) successList.push(`📱 手機：${phoneItem}`);
 
+      borrowMsg.style.color = "green";
+      borrowMsg.innerHTML = `
+        ✅ 借用申請成功！<br>
+        <b>${successList.join("<br>")}</b>
+      `;
+
+      // 清空選項
       if (document.getElementById("carNumber").tomselect) {
         document.getElementById("carNumber").tomselect.clear();
       }
@@ -249,17 +261,37 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
         document.getElementById("phoneItem").tomselect.clear();
       }
 
-      document.getElementById("carNumber").tomselect.clear();
-      document.getElementById("phoneItem").tomselect.clear();
-      borrowMsg.innerText = "";
+      // 重新載入選單
       await loadCarNumbers(currentUser?.carNo || "");
       await loadPhoneItems();
+
+      // 🔒 鎖 20 秒內不能再點
+      let countdown = 20;
+      const originalText = submitBtn.innerText;
+      submitBtn.innerText = `請稍候 ${countdown} 秒`;
+
+      const timer = setInterval(() => {
+        countdown--;
+        submitBtn.innerText = `請稍候 ${countdown} 秒`;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          submitBtn.disabled = false;
+          submitBtn.innerText = "送出申請";
+          borrowMsg.innerText = "";
+        }
+      }, 1000);
     } else {
       borrowMsg.innerText = "❌ 借用失敗，請稍後再試。";
+      borrowMsg.style.color = "red";
+      submitBtn.disabled = false;
+      submitBtn.innerText = "送出申請";
     }
   } catch (err) {
     console.error("送出失敗", err);
     borrowMsg.innerText = "⚠️ 系統錯誤，請稍後再試。";
+    borrowMsg.style.color = "red";
+    submitBtn.disabled = false;
+    submitBtn.innerText = "送出申請";
   }
 });
 
