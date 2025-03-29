@@ -171,52 +171,54 @@ body {
 /* ✅ 手機專用調整 */
 @media (max-width: 860px) {
   body {
-    font-size: 1.95rem; /* 原 1.5rem × 1.3 倍 */
-    padding: 8vh 8vw;
+    font-size: 2.25rem; /* 原本 1.5rem × 1.5 放大 */
+    padding: 9vh 9vw;
   }
 
   .login-card {
-    padding: 3.4rem 3rem;
+    padding: 4rem 3.5rem;
   }
 
   .login-card h2 {
-    font-size: 3.38rem; /* 原 2.6 × 1.3 */
+    font-size: 3.9rem;
+    margin-bottom: 2.2rem;
   }
 
   .login-card p {
-    font-size: 2.1rem;
+    font-size: 2.6rem;
     margin-bottom: 2.6rem;
   }
 
   .login-card input {
-    font-size: 2.34rem;
-    padding: 2.34rem;
+    font-size: 2.6rem;
+    padding: 2.6rem;
+    margin-bottom: 2.5rem;
   }
 
   .login-card button {
-    font-size: 2.34rem;
-    padding: 2.34rem;
+    font-size: 2.6rem;
+    padding: 2.6rem;
   }
 
   .login-card .links {
-    font-size: 2.34rem;
-    gap: 2rem;
+    font-size: 2.4rem;
     flex-direction: column;
     align-items: center;
+    gap: 1.5rem;
   }
 
   .card {
-    padding: 3.25rem;
+    padding: 4rem;
   }
 
   .card h3 {
-    font-size: 2.6rem;
-    margin-bottom: 1.8rem;
+    font-size: 3rem;
+    margin-bottom: 2rem;
   }
 
   .card .info {
     flex-direction: column;
-    font-size: 1.95rem;
+    font-size: 2.4rem;
     gap: 2rem;
   }
 
@@ -227,15 +229,16 @@ body {
   .card .actions {
     flex-direction: column;
     align-items: stretch;
-    gap: 1.6rem;
+    gap: 2rem;
   }
 
   .card .action-btn {
-    font-size: 1.86rem;
-    padding: 1.56rem;
+    font-size: 2.2rem;
+    padding: 2rem;
     width: 100%;
   }
 }
+
 
 
 /* body {
