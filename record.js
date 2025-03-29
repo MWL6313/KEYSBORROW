@@ -529,8 +529,9 @@ async function checkLatestChanges() {
     const allData = await res.json();
 
     const newRecords = allData.filter(r => {
-      const updatedTime = new Date(r.歸還時間 || r.借用時間);
+      const updatedTime = new Date(r.最後更新時間 || r.歸還時間 || r.借用時間);
       return updatedTime > new Date(lastCheckTime);
+
     });
 
     if (newRecords.length === 0) return;
