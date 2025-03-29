@@ -35,6 +35,11 @@ async function loadRecords() {
 
     allRecords = data;
 
+    // ✅ 補上 type 欄位（手機/鑰匙）
+    allRecords.forEach(rec => {
+      if (!rec.type) rec.type = rec.物品 ? '手機' : '鑰匙';
+    });
+    
     // 🔐 再取得目前登入者的角色和完整巡檢資訊
     const res2 = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
       headers: { Authorization: `Bearer ${token}` }
@@ -463,59 +468,68 @@ reloadWithTimestamp();
 let lastCheckTime = new Date().toISOString();
 const shownKeys = new Set();  // 防止重複顯示
 
+
+
 // async function checkLatestChanges() {
 //   try {
-//     const res = await fetch(`https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection?updatedAfter=${lastCheckTime}`, {
+//     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
 //       headers: { Authorization: `Bearer ${token}` }
 //     });
-//     const data = await res.json();
-//     if (!data.success || !Array.isArray(data.records)) return;
-//     if (data.records.length === 0) return;
+//     const allData = await res.json();
+
+//     const newRecords = allData.filter(r => {
+//       const updatedTime = new Date(r.最後更新時間 || r.歸還時間 || r.借用時間);
+//       return updatedTime > new Date(lastCheckTime);
+
+//     });
+
+//     if (newRecords.length === 0) return;
 
 //     const ul = document.getElementById("changesList");
 //     const container = document.getElementById("latestChanges");
 //     container.style.display = "block";
 
-//     // 更新 allRecords 中的異動資料
-//     data.records.forEach(newRec => {
-//       const key = `${newRec.借用人}-${newRec.車號}-${newRec.借用時間}`;
-
-//       // ✅ 更新 allRecords 中對應那筆
-//       const index = allRecords.findIndex(r =>
-//         r.借用人 === newRec.借用人 &&
-//         r.車號 === newRec.車號 &&
-//         r.借用時間 === newRec.借用時間
-//       );
-
-//       if (index !== -1) {
-//         allRecords[index] = newRec;
-//         // ✅ 只更新這一列畫面
-//         updateTableRow(newRec);
-//       } else {
-//         // 若是新資料，加入 allRecords 並新增列
-//         allRecords.push(newRec);
-//         appendTableRow(newRec);
-//       }
-
-//       // 顯示異動提示
+//     newRecords.forEach(rec => {
+//       const key = `${rec.借用人}-${rec.車號 || rec.物品}-${rec.借用時間}`;
 //       if (!shownKeys.has(key)) {
 //         shownKeys.add(key);
+
 //         const li = document.createElement("li");
-//         li.innerText = `📌 ${newRec.借用人}  ${newRec.車號}🕓 ${formatDate(newRec.最後更新時間)}`;
+//         const typeIcon = rec.type === "手機" ? "📱" : "🚗";
+//         li.innerText = `${typeIcon} ${rec.借用人} - ${rec.車號 || rec.物品} 已有更新`;
 //         li.style.padding = "4px 0";
 //         ul.prepend(li);
 //       }
+
+//       // 更新表格資料
+//       const idx = allRecords.findIndex(r =>
+//         r.借用人 === rec.借用人 &&
+//         r.借用時間 === rec.借用時間 &&
+//         (
+//           (r.type === '手機' && r.物品 === rec.物品) ||
+//           (r.type !== '手機' && r.車號 === rec.車號)
+//         )
+//       );
+
+
+//       if (idx !== -1) {
+//         allRecords[idx] = rec;
+//         updateTableRow(rec);
+//       } else {
+//         allRecords.push(rec);
+//         appendTableRow(rec);
+//       }
 //     });
 
-//     // 限制 10 筆
 //     while (ul.children.length > 10) {
-//       const last = ul.lastChild;
-//       ul.removeChild(last);
+//       ul.removeChild(ul.lastChild);
 //     }
 
-//     const latestUpdate = data.records.map(r => r.最後更新時間).filter(Boolean).sort().pop();
-//     if (latestUpdate) lastCheckTime = latestUpdate;
-
+//     // 更新 lastCheckTime 為最新的借用時間或歸還時間
+//     const allTimes = newRecords.map(r => r.歸還時間 || r.借用時間).filter(Boolean);
+//     if (allTimes.length > 0) {
+//       lastCheckTime = new Date(Math.max(...allTimes.map(t => new Date(t).getTime()))).toISOString();
+//     }
 //   } catch (err) {
 //     console.error("checkLatestChanges 錯誤：", err);
 //   }
@@ -531,7 +545,6 @@ async function checkLatestChanges() {
     const newRecords = allData.filter(r => {
       const updatedTime = new Date(r.最後更新時間 || r.歸還時間 || r.借用時間);
       return updatedTime > new Date(lastCheckTime);
-
     });
 
     if (newRecords.length === 0) return;
@@ -541,6 +554,11 @@ async function checkLatestChanges() {
     container.style.display = "block";
 
     newRecords.forEach(rec => {
+      // 🔧 自動補上 type
+      if (!rec.type) {
+        rec.type = rec.物品 ? '手機' : '鑰匙';
+      }
+
       const key = `${rec.借用人}-${rec.車號 || rec.物品}-${rec.借用時間}`;
       if (!shownKeys.has(key)) {
         shownKeys.add(key);
@@ -552,16 +570,15 @@ async function checkLatestChanges() {
         ul.prepend(li);
       }
 
-      // 更新表格資料
+      // ✅ 找出資料在 allRecords 中的位置
       const idx = allRecords.findIndex(r =>
         r.借用人 === rec.借用人 &&
         r.借用時間 === rec.借用時間 &&
         (
-          (r.type === '手機' && r.物品 === rec.物品) ||
-          (r.type !== '手機' && r.車號 === rec.車號)
+          (rec.type === '手機' && r.物品 === rec.物品) ||
+          (rec.type !== '手機' && r.車號 === rec.車號)
         )
       );
-
 
       if (idx !== -1) {
         allRecords[idx] = rec;
@@ -572,17 +589,18 @@ async function checkLatestChanges() {
       }
     });
 
+    // 限制提示數量上限
     while (ul.children.length > 10) {
       ul.removeChild(ul.lastChild);
     }
 
-    // 更新 lastCheckTime 為最新的借用時間或歸還時間
-    const allTimes = newRecords.map(r => r.歸還時間 || r.借用時間).filter(Boolean);
+    // 更新 lastCheckTime 為最新的更新時間
+    const allTimes = newRecords.map(r => new Date(r.最後更新時間 || r.歸還時間 || r.借用時間).getTime());
     if (allTimes.length > 0) {
-      lastCheckTime = new Date(Math.max(...allTimes.map(t => new Date(t).getTime()))).toISOString();
+      lastCheckTime = new Date(Math.max(...allTimes)).toISOString();
     }
   } catch (err) {
-    console.error("checkLatestChanges 錯誤：", err);
+    console.error("❌ checkLatestChanges 發生錯誤：", err);
   }
 }
 
@@ -668,21 +686,6 @@ function updateTableRow(record) {
         tr.children[i].innerText = val || "";
       });
       
-      // const cols = [
-      //   record.借用人,
-      //   record.車號,
-      //   formatDate(record.借用時間),
-      //   formatDate(record.歸還時間),
-      //   record.車頭 || "-",
-      //   record.尾車 || "-",
-      //   record.完成率 || "-",
-      //   formatDate(record.巡檢結束時間),
-      //   record.異常處置對策 || "-"
-      // ];
-      // cols.forEach((val, i) => {
-      //   tr.children[i].innerText = val || "";
-      // });
-
       // ✅ 更新操作按鈕欄位
       const actionTd = tr.children[9];
       actionTd.innerHTML = "";
@@ -801,76 +804,5 @@ function appendTableRow(record) {
   tableBody.appendChild(tr);
 }
 
-
-// function appendTableRow(record) {
-//   const tableBody = document.querySelector("#recordTable tbody");
-//   const tr = document.createElement("tr");
-
-  
-//   // ✅ 背景色條件判斷
-//   const now = new Date();
-//   const borrowTime = new Date(record.借用時間);
-//   const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-//   const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-//   const noInspection = !inspectionTime;
-//   const hasAction = !!record.異常處置對策;
-
-//   if (noInspection && timeout && !hasAction) {
-//     tr.style.backgroundColor = "#ffdddd"; // 🔴 淺紅背景
-//   } else if (noInspection && timeout && hasAction) {
-//     tr.style.backgroundColor = "#eeeeee"; // ⚫ 灰色背景
-//   }
-
-//   // ✅ 建立資料欄位
-//   const cols = [
-//     record.借用人,
-//     record.車號,
-//     formatDate(record.借用時間),
-//     formatDate(record.歸還時間),
-//     record.車頭 || "-",
-//     record.尾車 || "-",
-//     record.完成率 || "-",
-//     formatDate(record.巡檢結束時間),
-//     record.異常處置對策 || "-"
-//   ];
-//   cols.forEach(val => {
-//     const td = document.createElement("td");
-//     td.innerText = val;
-//     tr.appendChild(td);
-//   });
-
-//   // ✅ 操作欄位
-//   const actionTd = document.createElement("td");
-
-//   if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
-//     const returnBtn = document.createElement("button");
-//     returnBtn.innerText = "🔁 歸還";
-//     returnBtn.onclick = () => handleReturn(record);
-//     actionTd.appendChild(returnBtn);
-//   }
-
-//   if (currentRole === "admin") {
-//     const deleteBtn = document.createElement("button");
-//     deleteBtn.innerText = "⛔ 刪除";
-//     deleteBtn.onclick = () => handleDelete(record);
-//     actionTd.appendChild(deleteBtn);
-//   }
-
-//   if (
-//     (currentRole === 'admin' || currentRole === 'manager') &&
-//     !record.巡檢結束時間 &&
-//     // record.歸還時間 &&
-//     timeout &&
-//     !hasAction
-//   ) {
-//     const editBtn = document.createElement("button");
-//     editBtn.innerText = "📝 編輯";
-//     editBtn.onclick = () => handleEditAbnormal(record);
-//     actionTd.appendChild(editBtn);
-//   }
-
-//   tr.appendChild(actionTd);
-//   tableBody.appendChild(tr);
-// }
 
 
