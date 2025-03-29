@@ -49,22 +49,19 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       transition: all 0.2s ease-in-out;
       appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
       background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
       background-repeat: no-repeat;
       background-position: right 10px center;
       background-size: 14px;
       padding-right: 30px;
     }
-    
+
     .filters select:focus {
       outline: none;
       border-color: #5a9bd5;
       box-shadow: 0 0 5px rgba(90, 155, 213, 0.5);
     }
 
-    
     .filters input {
       padding: 8px 12px;
       border-radius: 8px;
@@ -75,7 +72,7 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       transition: border 0.2s;
     }
-    
+
     .filters input:focus {
       border-color: #5a9bd5;
       outline: none;
@@ -135,12 +132,32 @@
     .fade-in {
       animation: fadeIn 0.6s ease forwards;
     }
-    
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .tab-buttons button {
+      padding: 8px 16px;
+      border: none;
+      background-color: #eee;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    .tab-buttons button.active {
+      background-color: #4CAF50;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -151,21 +168,8 @@
       <button onclick="location.href='dashboard.html'">返回首頁</button>
     </div>
   </header>
-  
-  <section id="latestChanges" style="
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 700px;
-    max-height: 400px;
-    overflow-y: auto;
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    z-index: 9999;
-    display: none; /* 預設隱藏，等有變動再顯示 */
-  ">
+
+  <section id="latestChanges" style="position: fixed; bottom: 20px; right: 20px; width: 700px; max-height: 400px; overflow-y: auto; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 10px; border: 1px solid #ccc; z-index: 9999; display: none;">
     <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
       <strong>📣 最新異動紀錄</strong>
       <button id="clearChangesBtn" style="font-size: 0.8rem; background: none; border: none; cursor: pointer;">🧹 清空</button>
@@ -173,96 +177,82 @@
     <ul id="changesList" style="list-style: none; margin: 0; padding: 10px;"></ul>
   </section>
 
-
-
- <div class="top-bar">
-  <div class="filters">
-    <input type="text" id="searchUser" placeholder="🔍 搜尋借用人">
-    <input type="text" id="searchCar" placeholder="🔍 搜尋車號">
-    <select id="typeFilter">
-      <option value="all">🔍 顯示全部</option>
-      <option value="鑰匙">🔍 顯示鑰匙</option>
-      <option value="手機">🔍 顯示手機</option>
-    </select>
-
-  </div>
-
-  <div class="controls">
-    <div style="margin-bottom: 10px;">
-      ⏱️ 最後更新時間：<span id="lastUpdateTime">尚未更新</span>
-      <button id="refreshBtn">🔄 手動更新</button>
+  <div class="top-bar">
+    <div class="filters">
+      <input type="text" id="searchUser" placeholder="🔍 搜尋借用人">
+      <input type="text" id="searchCar" placeholder="🔍 搜尋車號">
+      <select id="typeFilter">
+        <option value="all">🔍 顯示全部</option>
+        <option value="鑰匙">🔍 顯示鑰匙</option>
+        <option value="手機">🔍 顯示手機</option>
+      </select>
     </div>
-    <div>
-      <button id="filterAbnormalBtn">🚨 僅顯示異常（逾時未巡檢）</button>
-      <button id="sortTimeBtn">⏳ 借用時間排序</button>
-      <button id="sortInspectionBtn">📅 巡檢時間排序</button>
+
+    <div class="controls">
+      <div style="margin-bottom: 10px;">
+        ⏱️ 最後更新時間：<span id="lastUpdateTime">尚未更新</span>
+        <button id="refreshBtn">🔄 手動更新</button>
+      </div>
+      <div>
+        <button id="filterAbnormalBtn">🚨 僅顯示異常（逾時未巡檢）</button>
+        <button id="sortTimeBtn">⏳ 借用時間排序</button>
+        <button id="sortInspectionBtn">📅 巡檢時間排序</button>
+      </div>
     </div>
   </div>
 
-</div>
-
+  <div class="tab-buttons">
+    <button id="tabReview" class="active">📝 審核區</button>
+    <button id="tabHistory">📜 歷史紀錄區</button>
+  </div>
 
   <main>
-    <table id="recordTable">
-      <thead>
-        <tr>
-          <th>借用人</th>
-          <th>車號</th>
-          <th>借用時間</th>
-          <th>歸還時間</th>
-          <th>車頭</th>
-          <th>尾車</th>
-          <th>完成率</th>
-          <th>巡檢結束時間</th>
-          <th>異常處置對策</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div id="recordSection">
+      <table id="recordTable">
+        <thead>
+          <tr>
+            <th>借用人</th>
+            <th>車號</th>
+            <th>借用時間</th>
+            <th>歸還時間</th>
+            <th>車頭</th>
+            <th>尾車</th>
+            <th>完成率</th>
+            <th>巡檢結束時間</th>
+            <th>異常處置對策</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-    <h3 onclick="toggleHistory()" style="cursor:pointer; background:#eee; padding:10px; border-radius:6px;">📜 近期歷史紀錄區（點我展開/收合）</h3>
-    <table id="historyTable" style="display: none;">
-      <thead>
-        <tr>
-          <th>借用人</th>
-          <th>車號</th>
-          <th>借用時間</th>
-          <th>歸還時間</th>
-          <th>車頭</th>
-          <th>尾車</th>
-          <th>完成率</th>
-          <th>巡檢結束時間</th>
-          <th>異常處置對策</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div id="historySection" style="display:none;">
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>借用人</th>
+            <th>車號</th>
+            <th>借用時間</th>
+            <th>歸還時間</th>
+            <th>車頭</th>
+            <th>尾車</th>
+            <th>完成率</th>
+            <th>巡檢結束時間</th>
+            <th>異常處置對策</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-
-    
     <p id="statusMsg"></p>
   </main>
-  
+
   <!-- 📌 編輯異常處置對策用的彈窗 -->
-  <div id="abnormalModal" style="
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 10000;
-    justify-content: center;
-    align-items: center;
-  ">
-    <div style="
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    ">
+  <div id="abnormalModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 20px; border-radius: 8px; max-width: 500px; width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
       <h3>✏️ 輸入異常處置對策</h3>
       <textarea id="abnormalInput" rows="5" style="width: 100%; font-size: 1rem;"></textarea>
       <div style="margin-top: 15px; text-align: right;">
@@ -274,62 +264,20 @@
 
   <script type="module" src="record.js"></script>
   <script>
-  let currentEditingRecord = null;
+    document.getElementById("tabReview").addEventListener("click", () => {
+      document.getElementById("recordSection").style.display = "block";
+      document.getElementById("historySection").style.display = "none";
+      document.getElementById("tabReview").classList.add("active");
+      document.getElementById("tabHistory").classList.remove("active");
+    });
 
-  function openAbnormalModal(record) {
-    currentEditingRecord = record;
-    document.getElementById("abnormalInput").value = "";
-    document.getElementById("abnormalModal").style.display = "flex";
-  }
-
-  function closeAbnormalModal() {
-    document.getElementById("abnormalModal").style.display = "none";
-    currentEditingRecord = null;
-  }
-
-  document.getElementById("submitAbnormalBtn").addEventListener("click", async () => {
-    const input = document.getElementById("abnormalInput").value.trim();
-    if (!input) return alert("請輸入異常處置對策");
-    if (!currentEditingRecord) return;
-
-    try {
-      const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAbnormal", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`
-        },
-        body: JSON.stringify({
-          借用人: currentEditingRecord.借用人,
-          車號: currentEditingRecord.車號,
-          借用時間: currentEditingRecord.借用時間,
-          異常處置對策: input
-        })
-      });
-
-      const result = await res.json();
-      if (result.success) {
-        alert("✅ 已更新異常處置對策");
-        closeAbnormalModal();
-        await reloadWithTimestamp(); // 重新載入最新資料
-      } else {
-        alert("❌ 更新失敗：" + (result.message || ""));
-      }
-    } catch (err) {
-      alert("⚠️ 伺服器錯誤");
-      console.error(err);
-    }
-  });
-
-  function toggleHistory() {
-  const table = document.getElementById("historyTable");
-  if (!table) return;
-
-  const isHidden = table.style.display === "none";
-  table.style.display = isHidden ? "table" : "none";
-}
-</script>
-
+    document.getElementById("tabHistory").addEventListener("click", () => {
+      document.getElementById("recordSection").style.display = "none";
+      document.getElementById("historySection").style.display = "block";
+      document.getElementById("tabReview").classList.remove("active");
+      document.getElementById("tabHistory").classList.add("active");
+    });
+  </script>
 </body>
 </html>
 
