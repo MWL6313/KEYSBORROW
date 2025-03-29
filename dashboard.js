@@ -24,9 +24,7 @@ if (!token) {
 
         // 載入車號下拉選單
         loadCarNumbers(data.user.carNo);
-        
-        await loadPhoneItems();
-
+      
 
 
 
