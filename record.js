@@ -204,7 +204,6 @@ function renderRow(record, tbody) {
 loadRecords();
 
 
-
 async function handleReturn(record) {
   if (!confirm("確定要標記為歸還嗎？")) return;
 
@@ -268,39 +267,54 @@ async function handleReturn(record) {
     if (result.success) {
       alert("✅ 已成功標記為歸還");
 
-      // ✅ 改從 withInspection 取得最新資料，確保含巡檢資訊
-      const updatedRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await updatedRes.json();
+      // 📌 分流處理
+      let updatedRecord = null;
 
-      if (data.success && Array.isArray(data.records)) {
-        const updatedRecord = data.records.find(r =>
+      if (record.type === '手機') {
+        // ✅ 手機改用 /borrow/all
+        const resAll = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const dataAll = await resAll.json();
+
+        updatedRecord = dataAll.find(r =>
           r.借用人 === record.借用人 &&
           r.借用時間 === record.借用時間 &&
+          r.物品 === record.物品
+        );
+
+      } else {
+        // ✅ 鑰匙使用 withInspection
+        const resInspect = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const dataInspect = await resInspect.json();
+
+        if (dataInspect.success && Array.isArray(dataInspect.records)) {
+          updatedRecord = dataInspect.records.find(r =>
+            r.借用人 === record.借用人 &&
+            r.借用時間 === record.借用時間 &&
+            r.車號 === record.車號
+          );
+        }
+      }
+
+      if (updatedRecord) {
+        if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
+
+        const idx = allRecords.findIndex(r =>
+          r.借用人 === updatedRecord.借用人 &&
+          r.借用時間 === updatedRecord.借用時間 &&
           (
-            (record.type === '手機' && r.物品 === record.物品) ||
-            (record.type !== '手機' && r.車號 === record.車號)
+            (updatedRecord.type === '手機' && r.物品 === updatedRecord.物品) ||
+            (updatedRecord.type !== '手機' && r.車號 === updatedRecord.車號)
           )
         );
 
-        if (updatedRecord) {
-          if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
+        if (idx !== -1) allRecords[idx] = updatedRecord;
+        else allRecords.push(updatedRecord);
 
-          const idx = allRecords.findIndex(r =>
-            r.借用人 === updatedRecord.借用人 &&
-            r.借用時間 === updatedRecord.借用時間 &&
-            (
-              (record.type === '手機' && r.物品 === updatedRecord.物品) ||
-              (record.type !== '手機' && r.車號 === updatedRecord.車號)
-            )
-          );
-
-          if (idx !== -1) allRecords[idx] = updatedRecord;
-          else allRecords.push(updatedRecord);
-
-          updateTableRow(updatedRecord);
-        }
+        updateTableRow(updatedRecord);
       }
 
     } else {
@@ -319,6 +333,7 @@ async function handleReturn(record) {
     }
   }
 }
+
 
 
 // async function handleReturn(record) {
