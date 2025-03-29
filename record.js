@@ -364,33 +364,41 @@ async function handleEditAbnormal(record) {
     if (result.success) {
       alert("✅ 已成功更新異常處置對策");
 
-      // 使用 /borrow/all 重新取得該筆資料
-      const updatedRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const updatedData = await updatedRes.json();
-
-      const updatedRecord = updatedData.find(r =>
+      // 成功後重新抓 /borrow/withInspection，確保資料包含巡檢欄位
+    const updatedRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await updatedRes.json();
+    
+    if (data.success && Array.isArray(data.records)) {
+      const updatedRecord = data.records.find(r =>
         r.借用人 === record.借用人 &&
         r.借用時間 === record.借用時間 &&
-        ((record.type === '手機' && r.物品 === record.物品) ||
-         (record.type !== '手機' && r.車號 === record.車號))
+        (
+          (record.type === '手機' && r.物品 === record.物品) ||
+          (record.type !== '手機' && r.車號 === record.車號)
+        )
       );
-
+    
       if (updatedRecord) {
+        // 保底補 type 欄位
         if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
-
+    
         const idx = allRecords.findIndex(r =>
           r.借用人 === updatedRecord.借用人 &&
           r.借用時間 === updatedRecord.借用時間 &&
-          ((record.type === '手機' && r.物品 === updatedRecord.物品) ||
-           (record.type !== '手機' && r.車號 === updatedRecord.車號))
+          (
+            (record.type === '手機' && r.物品 === updatedRecord.物品) ||
+            (record.type !== '手機' && r.車號 === updatedRecord.車號)
+          )
         );
-
+    
         if (idx !== -1) allRecords[idx] = updatedRecord;
         else allRecords.push(updatedRecord);
-
+    
         updateTableRow(updatedRecord);
+
+
 
         // ✅ 成功動畫
         if (targetRow) {
