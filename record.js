@@ -755,7 +755,7 @@ export function showToast(message, type = "success") {
   const toast = document.getElementById("toast");
   toast.innerText = message;
 
-  // 色彩分類
+  // 設定邊框顏色（根據提示類型）
   const colors = {
     success: "#4caf50",
     error: "#f44336",
@@ -768,18 +768,19 @@ export function showToast(message, type = "success") {
   toast.style.display = "block";
   requestAnimationFrame(() => {
     toast.style.opacity = "1";
-    toast.style.transform = "translateY(0)";
+    toast.style.transform = "translate(-50%, -50%) scale(1)";
   });
 
   // 自動淡出
   setTimeout(() => {
     toast.style.opacity = "0";
-    toast.style.transform = "translateY(30px)";
+    toast.style.transform = "translate(-50%, -50%) scale(0.9)";
     setTimeout(() => {
       toast.style.display = "none";
-    }, 500);
+    }, 400);
   }, 5000);
 }
+
 
 
 // function showSingleChange(message) {
