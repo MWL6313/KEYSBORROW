@@ -23,7 +23,6 @@ async function loadRecords() {
   const statusMsg = document.getElementById("statusMsg");
 
   try {
-    // 取得所有借用紀錄（手機＋鑰匙）
     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -36,7 +35,7 @@ async function loadRecords() {
 
     allRecords = data;
 
-    // 🔐 再取得目前登入者的角色
+    // 🔐 再取得目前登入者的角色和完整巡檢資訊
     const res2 = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -48,12 +47,28 @@ async function loadRecords() {
 
     currentRole = data2.role || "";
     document.getElementById("currentUserName").innerText = `${data2.user?.name || data2.user?.id || "(未知)"}`;
+
+    // ✅ 將巡檢資料合併進 allRecords
+    if (Array.isArray(data2.records)) {
+      data2.records.forEach(updated => {
+        const index = allRecords.findIndex(r =>
+          r.借用人 === updated.借用人 &&
+          r.車號 === updated.車號 &&
+          r.借用時間 === updated.借用時間
+        );
+        if (index !== -1) {
+          allRecords[index] = { ...allRecords[index], ...updated };
+        }
+      });
+    }
+
     filterAndRender();
   } catch (err) {
     console.error("載入失敗", err);
     statusMsg.innerText = "無法連線伺服器。";
   }
 }
+
 
 
 function formatDate(str) {
