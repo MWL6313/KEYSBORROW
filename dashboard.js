@@ -23,7 +23,8 @@ if (!token) {
         document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
 
         // 載入車號下拉選單
-        loadCarNumbers(data.user.carNo);
+        await loadCarNumbers(data.user.carNo);
+        await loadPhoneItems();
       
 
 
@@ -71,16 +72,10 @@ async function loadCarNumbers(defaultCar) {
     if (select.tomselect) {
       select.tomselect.destroy();
     }
-    new TomSelect("#carNumber", {
-      create: false,
-      sortField: {
-        field: "text",
-        direction: "asc"
-      },
-      placeholder: "請輸入或選擇車號"
-    });
+            
+    select.innerHTML = "";
 
-      select.innerHTML = "";
+
 
       const allCars = new Set(carData.data);
       const borrowedCars = new Set(unreturnedData.data);
@@ -145,6 +140,9 @@ async function loadPhoneItems() {
       if (select.tomselect) {
         select.tomselect.destroy();
       }
+
+      select.innerHTML = "";
+
       new TomSelect("#phoneItem", {
         create: false,
         sortField: {
@@ -156,7 +154,6 @@ async function loadPhoneItems() {
 
 
       
-      select.innerHTML = "";
 
       data.items.forEach(item => {
         const opt = document.createElement("option");
