@@ -133,12 +133,24 @@ async function loadPhoneItems() {
 
     if (data.success && Array.isArray(data.items)) {
       const select = document.getElementById("phoneItem");
+
+      // 先清空原始選項
+      select.innerHTML = "";
+
+      // 塞入新選項
+      data.items.forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item;
+        opt.textContent = item;
+        select.appendChild(opt);
+      });
+
+      // 如果已有 tomselect 實例，先銷毀
       if (select.tomselect) {
         select.tomselect.destroy();
       }
 
-      select.innerHTML = "";
-
+      // 初始化 Tom Select（等資料都塞完再做！）
       new TomSelect("#phoneItem", {
         create: false,
         sortField: {
@@ -147,29 +159,14 @@ async function loadPhoneItems() {
         },
         placeholder: "請選擇手機"
       });
-
-
-      
-
-      data.items.forEach(item => {
-        const opt = document.createElement("option");
-        opt.value = item;
-        opt.textContent = item;
-        select.appendChild(opt);
-      });
-
-      if (select.tomselect) select.tomselect.destroy();
-
-      new TomSelect("#phoneItem", {
-        create: false,
-        sortField: { field: "text", direction: "asc" },
-        placeholder: "請選擇手機",
-      });
+    } else {
+      console.warn("📭 無手機資料", data);
     }
   } catch (err) {
     console.error("載入手機項目錯誤", err);
   }
 }
+
 
 
 
