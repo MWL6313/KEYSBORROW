@@ -179,12 +179,12 @@ async function loadPhoneItems() {
   }
 }
 
-
-
-
-
-
-
+document.getElementById("refreshItemsBtn").addEventListener("click", async () => {
+  showToast("正在更新可借用清單...", "🔄");
+  await loadCarNumbers(currentUser?.carNo || "");
+  await loadPhoneItems();
+  showToast("清單已更新！");
+});
 
 
 
