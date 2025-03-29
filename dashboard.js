@@ -451,7 +451,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       await loadCarNumbers(currentUser?.carNo || "");
       await loadPhoneItems();
 
-      let countdown = 20;
+      let countdown = 60;
       submitBtn.innerText = `請稍候 ${countdown} 秒`;
       const timer = setInterval(() => {
         countdown--;
