@@ -318,16 +318,15 @@ async function handleEditAbnormal(record) {
   let editBtn = null;
 
   for (let tr of rows) {
-  const tdUser = tr.children[0].innerText.trim();
-  const tdItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
-  const tdTime = tr.children[2].innerText.trim();
-  
-  if (
-    tdUser === record.借用人 &&
-    tdItem === (record.車號 || record.物品 || "-") &&
-    tdTime === formatDate(record.借用時間)
-  )
- {
+    const tdUser = tr.children[0].innerText.trim();
+    const tdItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
+    const tdTime = tr.children[2].innerText.trim();
+
+    if (
+      tdUser === record.借用人 &&
+      tdItem === (record.車號 || record.物品 || "-") &&
+      tdTime === formatDate(record.借用時間)
+    ) {
       targetRow = tr;
       const actionTd = tr.children[9]; // 第 10 欄為按鈕欄
       editBtn = Array.from(actionTd.querySelectorAll("button"))
@@ -365,36 +364,40 @@ async function handleEditAbnormal(record) {
     if (result.success) {
       alert("✅ 已成功更新異常處置對策");
 
-      // 抓更新後資料
-      const updatedURL = `https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection?updatedAfter=${record.借用時間}`;
-      const res2 = await fetch(updatedURL, {
+      // 使用 /borrow/all 重新取得該筆資料
+      const updatedRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res2.json();
+      const updatedData = await updatedRes.json();
 
-      if (data.success && Array.isArray(data.records)) {
-        const updatedRecord = data.records.find(r =>
-          r.借用人 === record.借用人 &&
-          r.車號 === record.車號 &&
-          r.借用時間 === record.借用時間
+      const updatedRecord = updatedData.find(r =>
+        r.借用人 === record.借用人 &&
+        r.借用時間 === record.借用時間 &&
+        ((record.type === '手機' && r.物品 === record.物品) ||
+         (record.type !== '手機' && r.車號 === record.車號))
+      );
+
+      if (updatedRecord) {
+        if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
+
+        const idx = allRecords.findIndex(r =>
+          r.借用人 === updatedRecord.借用人 &&
+          r.借用時間 === updatedRecord.借用時間 &&
+          ((record.type === '手機' && r.物品 === updatedRecord.物品) ||
+           (record.type !== '手機' && r.車號 === updatedRecord.車號))
         );
 
-        if (updatedRecord) {
-          const idx = allRecords.findIndex(r =>
-            r.借用人 === updatedRecord.借用人 &&
-            r.車號 === updatedRecord.車號 &&
-            r.借用時間 === updatedRecord.借用時間
-          );
-          if (idx !== -1) allRecords[idx] = updatedRecord;
-          updateTableRow(updatedRecord);
+        if (idx !== -1) allRecords[idx] = updatedRecord;
+        else allRecords.push(updatedRecord);
 
-          // ✅ 成功動畫
-          if (targetRow) {
-            targetRow.style.backgroundColor = "#d4edda"; // 綠色背景
-            setTimeout(() => {
-              targetRow.style.backgroundColor = "";
-            }, 1000);
-          }
+        updateTableRow(updatedRecord);
+
+        // ✅ 成功動畫
+        if (targetRow) {
+          targetRow.style.backgroundColor = "#d4edda"; // 綠色背景
+          setTimeout(() => {
+            targetRow.style.backgroundColor = "";
+          }, 1000);
         }
       }
     } else {
@@ -412,6 +415,7 @@ async function handleEditAbnormal(record) {
     }
   }
 }
+
 
 
 async function handleDelete(record) {
