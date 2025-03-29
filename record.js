@@ -317,11 +317,16 @@ async function handleEditAbnormal(record) {
   let editBtn = null;
 
   for (let tr of rows) {
-    if (
-      tr.children[0].innerText === record.借用人 &&
-      tr.children[1].innerText === record.車號 &&
-      tr.children[2].innerText === formatDate(record.借用時間)
-    ) {
+  const tdUser = tr.children[0].innerText.trim();
+  const tdItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
+  const tdTime = tr.children[2].innerText.trim();
+  
+  if (
+    tdUser === record.借用人 &&
+    tdItem === (record.車號 || record.物品 || "-") &&
+    tdTime === formatDate(record.借用時間)
+  )
+ {
       targetRow = tr;
       const actionTd = tr.children[9]; // 第 10 欄為按鈕欄
       editBtn = Array.from(actionTd.querySelectorAll("button"))
@@ -669,12 +674,15 @@ function updateTableRow(record) {
   const rows = tableBody.querySelectorAll("tr");
 
   for (let tr of rows) {
+    const tdUser = tr.children[0].innerText.trim();
+    const tdItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
+    const tdTime = tr.children[2].innerText.trim();
+
     if (
-      tr.children[0].innerText === record.借用人 &&
-      tr.children[1].innerText === (record.車號 || record.物品 || "-") &&
-      tr.children[2].innerText === formatDate(record.借用時間)
+      tdUser === record.借用人 &&
+      tdItem === (record.車號 || record.物品 || "-") &&
+      tdTime === formatDate(record.借用時間)
     ) {
-      // ✅ 更新背景色判斷邏輯
       const now = new Date();
       const borrowTime = new Date(record.借用時間);
       const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
@@ -682,17 +690,17 @@ function updateTableRow(record) {
       const noInspection = !inspectionTime;
       const hasAction = !!record.異常處置對策;
 
-      if (noInspection && timeout && !hasAction) {
-        tr.style.backgroundColor = "#ffdddd"; // 淺紅背景
-      } else if (noInspection && timeout && hasAction) {
-        tr.style.backgroundColor = "#eeeeee"; // 灰色背景
-      } else {
-        tr.style.backgroundColor = ""; // 清除背景（若無條件）
+      if (record.type !== '手機') {
+        if (noInspection && timeout && !hasAction) {
+          tr.style.backgroundColor = "#ffdddd";
+        } else if (noInspection && timeout && hasAction) {
+          tr.style.backgroundColor = "#eeeeee";
+        } else {
+          tr.style.backgroundColor = "";
+        }
       }
 
-      // ✅ 更新資料欄位
       const isPhone = record.type === '手機';
-      
       const typeIcon = isPhone ? "📱" : "🚗";
       const cols = isPhone
         ? [
@@ -717,8 +725,7 @@ function updateTableRow(record) {
       cols.forEach((val, i) => {
         tr.children[i].innerText = val || "";
       });
-      
-      // ✅ 更新操作按鈕欄位
+
       const actionTd = tr.children[9];
       actionTd.innerHTML = "";
 
@@ -737,9 +744,9 @@ function updateTableRow(record) {
       }
 
       if (
+        record.type !== '手機' &&
         (currentRole === 'admin' || currentRole === 'manager') &&
         !record.巡檢結束時間 &&
-        // record.歸還時間 &&
         timeout &&
         !hasAction
       ) {
@@ -753,6 +760,7 @@ function updateTableRow(record) {
     }
   }
 }
+
 
 function appendTableRow(record) {
   const tableBody = document.querySelector("#recordTable tbody");
