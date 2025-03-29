@@ -43,6 +43,8 @@ body {
   border: 1px solid #ccc;
   background-color: #eaf1ff;
   font-size: 1.1rem;
+  box-sizing: border-box;  /* ✅ 加上這行就能避免寬度爆出 */
+
 }
 
 .login-card button {
