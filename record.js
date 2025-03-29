@@ -21,8 +21,8 @@ document.getElementById("typeFilter").addEventListener("change", filterAndRender
 
 // 取得資料
 async function loadRecords() {
-  statusMsg.innerText = "📡 資料載入中...";
   const statusMsg = document.getElementById("statusMsg");
+  statusMsg.innerText = "📡 資料載入中...";
 
   try {
     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
