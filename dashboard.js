@@ -216,6 +216,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
   try {
     const promises = [];
 
+    // ✅ 先檢查車是否被借出
     if (isCarBorrowed) {
       const resCheck = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/unreturned");
       const checkData = await resCheck.json();
@@ -224,7 +225,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       if (borrowedCars.has(carNumber)) {
         Swal.fire({
           icon: "warning",
-          title: "🚫 車輛仍在借用中",
+          title: "🚗 車輛仍在借用中",
           text: `【${carNumber}】尚未歸還，請選擇其他車輛。`,
         });
         submitBtn.disabled = false;
@@ -241,7 +242,23 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       );
     }
 
+    // ✅ 檢查手機是否已借出
     if (isPhoneBorrowed) {
+      const resCheckPhone = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/unreturned");
+      const checkDataPhone = await resCheckPhone.json();
+      const borrowedPhones = new Set(checkDataPhone.data);
+
+      if (borrowedPhones.has(phoneItem)) {
+        Swal.fire({
+          icon: "warning",
+          title: "📱 手機仍在借用中",
+          text: `【${phoneItem}】尚未歸還，請選擇其他手機。`,
+        });
+        submitBtn.disabled = false;
+        submitBtn.innerText = "送出申請";
+        return;
+      }
+
       promises.push(
         fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/borrow", {
           method: "POST",
@@ -251,6 +268,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       );
     }
 
+    // 發送申請
     const results = await Promise.all(promises);
     const success = results.every(res => res.ok);
 
