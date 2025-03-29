@@ -518,6 +518,7 @@ const shownKeys = new Set();  // 防止重複顯示
 
 
 
+
 // async function checkLatestChanges() {
 //   try {
 //     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
@@ -528,7 +529,6 @@ const shownKeys = new Set();  // 防止重複顯示
 //     const newRecords = allData.filter(r => {
 //       const updatedTime = new Date(r.最後更新時間 || r.歸還時間 || r.借用時間);
 //       return updatedTime > new Date(lastCheckTime);
-
 //     });
 
 //     if (newRecords.length === 0) return;
@@ -538,6 +538,11 @@ const shownKeys = new Set();  // 防止重複顯示
 //     container.style.display = "block";
 
 //     newRecords.forEach(rec => {
+//       // 🔧 自動補上 type
+//       if (!rec.type) {
+//         rec.type = rec.物品 ? '手機' : '鑰匙';
+//       }
+
 //       const key = `${rec.借用人}-${rec.車號 || rec.物品}-${rec.借用時間}`;
 //       if (!shownKeys.has(key)) {
 //         shownKeys.add(key);
@@ -549,16 +554,15 @@ const shownKeys = new Set();  // 防止重複顯示
 //         ul.prepend(li);
 //       }
 
-//       // 更新表格資料
+//       // ✅ 找出資料在 allRecords 中的位置
 //       const idx = allRecords.findIndex(r =>
 //         r.借用人 === rec.借用人 &&
 //         r.借用時間 === rec.借用時間 &&
 //         (
-//           (r.type === '手機' && r.物品 === rec.物品) ||
-//           (r.type !== '手機' && r.車號 === rec.車號)
+//           (rec.type === '手機' && r.物品 === rec.物品) ||
+//           (rec.type !== '手機' && r.車號 === rec.車號)
 //         )
 //       );
-
 
 //       if (idx !== -1) {
 //         allRecords[idx] = rec;
@@ -569,28 +573,56 @@ const shownKeys = new Set();  // 防止重複顯示
 //       }
 //     });
 
+//     // 限制提示數量上限
 //     while (ul.children.length > 10) {
 //       ul.removeChild(ul.lastChild);
 //     }
 
-//     // 更新 lastCheckTime 為最新的借用時間或歸還時間
-//     const allTimes = newRecords.map(r => r.歸還時間 || r.借用時間).filter(Boolean);
+//     // 更新 lastCheckTime 為最新的更新時間
+//     const allTimes = newRecords.map(r => new Date(r.最後更新時間 || r.歸還時間 || r.借用時間).getTime());
 //     if (allTimes.length > 0) {
-//       lastCheckTime = new Date(Math.max(...allTimes.map(t => new Date(t).getTime()))).toISOString();
+//       lastCheckTime = new Date(Math.max(...allTimes)).toISOString();
 //     }
 //   } catch (err) {
-//     console.error("checkLatestChanges 錯誤：", err);
+//     console.error("❌ checkLatestChanges 發生錯誤：", err);
 //   }
 // }
 
+
 async function checkLatestChanges() {
   try {
-    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const allData = await res.json();
+    const [resPhone, resKey] = await Promise.all([
+      fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
+      fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+    ]);
 
-    const newRecords = allData.filter(r => {
+    const phoneData = await resPhone.json();
+    const keyData = await resKey.json();
+
+    const combinedRecords = [];
+
+    // 📱 手機資料處理
+    if (Array.isArray(phoneData)) {
+      phoneData.forEach(r => {
+        if (!r.type) r.type = r.物品 ? '手機' : '鑰匙';
+        if (r.type === '手機') combinedRecords.push(r);
+      });
+    }
+
+    // 🚗 鑰匙資料處理
+    if (keyData.success && Array.isArray(keyData.records)) {
+      keyData.records.forEach(r => {
+        if (!r.type) r.type = r.物品 ? '手機' : '鑰匙';
+        if (r.type !== '手機') combinedRecords.push(r);
+      });
+    }
+
+    // 篩選新資料
+    const newRecords = combinedRecords.filter(r => {
       const updatedTime = new Date(r.最後更新時間 || r.歸還時間 || r.借用時間);
       return updatedTime > new Date(lastCheckTime);
     });
@@ -602,11 +634,6 @@ async function checkLatestChanges() {
     container.style.display = "block";
 
     newRecords.forEach(rec => {
-      // 🔧 自動補上 type
-      if (!rec.type) {
-        rec.type = rec.物品 ? '手機' : '鑰匙';
-      }
-
       const key = `${rec.借用人}-${rec.車號 || rec.物品}-${rec.借用時間}`;
       if (!shownKeys.has(key)) {
         shownKeys.add(key);
@@ -618,7 +645,7 @@ async function checkLatestChanges() {
         ul.prepend(li);
       }
 
-      // ✅ 找出資料在 allRecords 中的位置
+      // 比對並更新 allRecords
       const idx = allRecords.findIndex(r =>
         r.借用人 === rec.借用人 &&
         r.借用時間 === rec.借用時間 &&
@@ -642,13 +669,16 @@ async function checkLatestChanges() {
       ul.removeChild(ul.lastChild);
     }
 
-    // 更新 lastCheckTime 為最新的更新時間
-    const allTimes = newRecords.map(r => new Date(r.最後更新時間 || r.歸還時間 || r.借用時間).getTime());
+    // 更新時間
+    const allTimes = newRecords.map(r =>
+      new Date(r.最後更新時間 || r.歸還時間 || r.借用時間).getTime()
+    );
     if (allTimes.length > 0) {
       lastCheckTime = new Date(Math.max(...allTimes)).toISOString();
     }
+
   } catch (err) {
-    console.error("❌ checkLatestChanges 發生錯誤：", err);
+    console.error("❌ checkLatestChanges 錯誤：", err);
   }
 }
 
