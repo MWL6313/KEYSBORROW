@@ -13,28 +13,24 @@ if (!token) {
     body: JSON.stringify({ token }),
   })
     .then(res => res.json())
-    .then(data => {
+    .then(async data => {
       if (data.success) {
         currentUser = data.user;
         document.getElementById("welcome").innerText = `Hi, ${data.user.name}`;
         document.getElementById("borrower").value = data.user.name;
-
-        // 顯示目前時間（畫面用途）
+    
+        // 顯示目前時間
         document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
-
-        // 載入車號下拉選單
+    
         await loadCarNumbers(data.user.carNo);
         await loadPhoneItems();
-      
-
-
-
-        
       } else {
         localStorage.removeItem("authToken");
         location.href = "index.html";
       }
     })
+
+
     .catch(err => {
       console.error("Token validation error:", err);
       localStorage.removeItem("authToken");
