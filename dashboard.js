@@ -118,6 +118,43 @@ async function loadCarNumbers(defaultCar) {
   }
 }
 
+async function loadPhoneItems() {
+  try {
+    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/items");
+    const data = await res.json();
+
+    if (data.success && Array.isArray(data.items)) {
+      const select = document.getElementById("phoneItem");
+      select.innerHTML = "";
+
+      data.items.forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item;
+        opt.textContent = item;
+        select.appendChild(opt);
+      });
+
+      if (select.tomselect) select.tomselect.destroy();
+
+      new TomSelect("#phoneItem", {
+        create: false,
+        sortField: { field: "text", direction: "asc" },
+        placeholder: "請選擇手機",
+      });
+    }
+  } catch (err) {
+    console.error("載入手機項目錯誤", err);
+  }
+}
+
+
+
+
+
+
+
+
+
 // === 送出借用申請（防重複）===
 document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrower = document.getElementById("borrower").value.trim();
