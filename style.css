@@ -178,11 +178,7 @@ body {
   }
 
   .login-card {
-    width: 100%;
-    max-width: none;         /* 移除最大寬度限制 */
-    padding: 2rem 1rem;      /* 左右內距保留 1rem，避免貼邊 */
-    margin: 0;               /* 移除外距，確保貼齊 */
-    box-sizing: border-box; */
+    padding: 2rem 1.5rem;
   }
 
   .card .info {
