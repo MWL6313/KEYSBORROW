@@ -134,35 +134,42 @@ async function loadCarNumbers(defaultCar) {
 
 async function loadPhoneItems() {
   try {
-    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/items");
-    const data = await res.json();
+    const [resAll, resUnreturned] = await Promise.all([
+      fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/items"),
+      fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/unreturned")
+    ]);
 
-    if (data.success && Array.isArray(data.items)) {
+    const allData = await resAll.json();
+    const unreturnedData = await resUnreturned.json();
+
+    if (allData.success && Array.isArray(allData.items) && unreturnedData.success) {
+      const allItems = allData.items;
+      const unreturnedSet = new Set(unreturnedData.data);
+
       const select = document.getElementById("phoneItem");
-
       select.innerHTML = "";
-      
+
       // ➕ 插入「不借用」選項
       const noneOption = document.createElement("option");
       noneOption.value = "none";
       noneOption.textContent = "📵 不借用手機";
       select.appendChild(noneOption);
 
+      // 📌 排除未歸還手機
+      const availableItems = allItems.filter(item => !unreturnedSet.has(item));
 
-      // 塞入新選項
-      data.items.forEach(item => {
+      availableItems.forEach(item => {
         const opt = document.createElement("option");
         opt.value = item;
         opt.textContent = item;
         select.appendChild(opt);
       });
 
-      // 如果已有 tomselect 實例，先銷毀
+      // 🔁 如果已有 tomselect 實例，先銷毀再初始化
       if (select.tomselect) {
         select.tomselect.destroy();
       }
 
-      // 初始化 Tom Select（等資料都塞完再做！）
       new TomSelect("#phoneItem", {
         create: false,
         sortField: {
@@ -172,12 +179,60 @@ async function loadPhoneItems() {
         placeholder: "請選擇手機"
       });
     } else {
-      console.warn("📭 無手機資料", data);
+      console.warn("📭 無手機資料或資料格式錯誤", allData);
     }
   } catch (err) {
     console.error("載入手機項目錯誤", err);
   }
 }
+
+
+// async function loadPhoneItems() {
+//   try {
+//     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/items");
+//     const data = await res.json();
+
+//     if (data.success && Array.isArray(data.items)) {
+//       const select = document.getElementById("phoneItem");
+
+//       select.innerHTML = "";
+      
+//       // ➕ 插入「不借用」選項
+//       const noneOption = document.createElement("option");
+//       noneOption.value = "none";
+//       noneOption.textContent = "📵 不借用手機";
+//       select.appendChild(noneOption);
+
+
+//       // 塞入新選項
+//       data.items.forEach(item => {
+//         const opt = document.createElement("option");
+//         opt.value = item;
+//         opt.textContent = item;
+//         select.appendChild(opt);
+//       });
+
+//       // 如果已有 tomselect 實例，先銷毀
+//       if (select.tomselect) {
+//         select.tomselect.destroy();
+//       }
+
+//       // 初始化 Tom Select（等資料都塞完再做！）
+//       new TomSelect("#phoneItem", {
+//         create: false,
+//         sortField: {
+//           field: "text",
+//           direction: "asc"
+//         },
+//         placeholder: "請選擇手機"
+//       });
+//     } else {
+//       console.warn("📭 無手機資料", data);
+//     }
+//   } catch (err) {
+//     console.error("載入手機項目錯誤", err);
+//   }
+// }
 
 document.getElementById("refreshItemsBtn").addEventListener("click", async () => {
   showToast("正在更新可借用清單...", "🔄");
