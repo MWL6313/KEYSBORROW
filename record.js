@@ -117,6 +117,7 @@ function filterAndRender() {
 function renderRow(record, tbody) {
   const tr = document.createElement("tr");
   tr.dataset.borrowTime = record.借用時間;
+  tr.classList.add("fade-in");
 
   const now = new Date();
   const borrowTime = new Date(record.借用時間);
@@ -192,12 +193,10 @@ function renderRow(record, tbody) {
 
   tr.appendChild(actionTd);
   tbody.appendChild(tr);
+
+  return tr; // ✅ 回傳 <tr> 供 update/append 使用
 }
 
-function toggleHistory() {
-  const table = document.getElementById("historyTable");
-  table.style.display = table.style.display === "none" ? "table" : "none";
-}
 
 
 // 初始化
@@ -644,182 +643,44 @@ document.getElementById("clearChangesBtn").addEventListener("click", () => {
   document.getElementById("latestChanges").style.display = "none";
 });
 
+
+
 //🔧 更新單一列（by 資料）
 function updateTableRow(record) {
-  const tableBody = document.querySelector("#recordTable tbody");
-  const rows = tableBody.querySelectorAll("tr");
+  const allRows = document.querySelectorAll("#recordTable tbody tr, #historyTable tbody tr");
 
-  for (let tr of rows) {
+  for (const tr of allRows) {
     const rUser = tr.children[0].innerText;
     const rItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
-    const rTime = tr.dataset.borrowTime; // ✅ 使用 data 屬性比對原始時間
+    const rTime = tr.dataset.borrowTime;
 
     if (
       rUser === record.借用人 &&
       rItem === (record.車號 || record.物品 || "-") &&
       rTime === record.借用時間
     ) {
-      // ✅ 更新背景色
-      const now = new Date();
-      const borrowTime = new Date(record.借用時間);
-      const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-      const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-      const noInspection = !inspectionTime;
-      const hasAction = !!record.異常處置對策;
+      const parent = tr.parentElement;
+      parent.removeChild(tr);
 
-      if (record.type !== '手機') {
-        if (noInspection && timeout && !hasAction) {
-          tr.style.backgroundColor = "#ffdddd";
-        } else if (noInspection && timeout && hasAction) {
-          tr.style.backgroundColor = "#eeeeee";
-        } else {
-          tr.style.backgroundColor = "";
-        }
-      }
-
-      // ✅ 更新資料欄位
       const isPhone = record.type === '手機';
-      const typeIcon = isPhone ? "📱" : "🚗";
-      const cols = isPhone
-        ? [
-            record.借用人,
-            `${typeIcon} ${record.物品 || "-"}`,
-            formatDate(record.借用時間),
-            formatDate(record.歸還時間),
-            "-", "-", "-", "-", "-"
-          ]
-        : [
-            record.借用人,
-            `${typeIcon} ${record.車號 || "-"}`,
-            formatDate(record.借用時間),
-            formatDate(record.歸還時間),
-            record.車頭 || "-",
-            record.尾車 || "-",
-            record.完成率 || "-",
-            formatDate(record.巡檢結束時間),
-            record.異常處置對策 || "-"
-          ];
+      const isDone = (isPhone && record.歸還時間) || (!isPhone && record.歸還時間 && record.巡檢結束時間);
+      const targetBody = isDone
+        ? document.querySelector("#historyTable tbody")
+        : document.querySelector("#recordTable tbody");
 
-      cols.forEach((val, i) => {
-        tr.children[i].innerText = val || "";
-      });
-
-      // ✅ 更新操作欄
-      const actionTd = tr.children[9];
-      actionTd.innerHTML = "";
-
-      if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
-        const returnBtn = document.createElement("button");
-        returnBtn.innerText = "🔁 歸還";
-        returnBtn.onclick = () => handleReturn(record);
-        actionTd.appendChild(returnBtn);
-      }
-
-      if (currentRole === "admin") {
-        const deleteBtn = document.createElement("button");
-        deleteBtn.innerText = "⛔ 刪除";
-        deleteBtn.onclick = () => handleDelete(record);
-        actionTd.appendChild(deleteBtn);
-      }
-
-      if (
-        record.type !== '手機' &&
-        (currentRole === 'admin' || currentRole === 'manager') &&
-        !record.巡檢結束時間 &&
-        timeout &&
-        !hasAction
-      ) {
-        const editBtn = document.createElement("button");
-        editBtn.innerText = "📝 編輯";
-        editBtn.onclick = () => handleEditAbnormal(record);
-        actionTd.appendChild(editBtn);
-      }
-
+      renderRow(record, targetBody);
       return;
     }
   }
 }
 
-
 function appendTableRow(record) {
-  const tableBody = document.querySelector("#recordTable tbody");
-  const tr = document.createElement("tr");
-
-  tr.dataset.borrowTime = record.借用時間; // ✅ 存入原始時間字串供比對
-
-  const now = new Date();
-  const borrowTime = new Date(record.借用時間);
-  const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
-  const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
-  const noInspection = !inspectionTime;
-  const hasAction = !!record.異常處置對策;
-
-  if (record.type !== '手機') {
-    if (noInspection && timeout && !hasAction) {
-      tr.style.backgroundColor = "#ffdddd";
-    } else if (noInspection && timeout && hasAction) {
-      tr.style.backgroundColor = "#eeeeee";
-    }
-  }
-
   const isPhone = record.type === '手機';
-  const typeIcon = isPhone ? "📱" : "🚗";
-  const cols = isPhone
-    ? [
-        record.借用人,
-        `${typeIcon} ${record.物品 || "-"}`,
-        formatDate(record.借用時間),
-        formatDate(record.歸還時間),
-        "-", "-", "-", "-", "-"
-      ]
-    : [
-        record.借用人,
-        `${typeIcon} ${record.車號 || "-"}`,
-        formatDate(record.借用時間),
-        formatDate(record.歸還時間),
-        record.車頭 || "-",
-        record.尾車 || "-",
-        record.完成率 || "-",
-        formatDate(record.巡檢結束時間),
-        record.異常處置對策 || "-"
-      ];
+  const isDone = (isPhone && record.歸還時間) || (!isPhone && record.歸還時間 && record.巡檢結束時間);
+  const targetBody = isDone
+    ? document.querySelector("#historyTable tbody")
+    : document.querySelector("#recordTable tbody");
 
-  cols.forEach(val => {
-    const td = document.createElement("td");
-    td.innerText = val;
-    tr.appendChild(td);
-  });
-
-  const actionTd = document.createElement("td");
-
-  if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
-    const returnBtn = document.createElement("button");
-    returnBtn.innerText = "🔁 歸還";
-    returnBtn.onclick = () => handleReturn(record);
-    actionTd.appendChild(returnBtn);
-  }
-
-  if (currentRole === "admin") {
-    const deleteBtn = document.createElement("button");
-    deleteBtn.innerText = "⛔ 刪除";
-    deleteBtn.onclick = () => handleDelete(record);
-    actionTd.appendChild(deleteBtn);
-  }
-
-  if (
-    record.type !== '手機' &&
-    (currentRole === 'admin' || currentRole === 'manager') &&
-    !record.巡檢結束時間 &&
-    timeout &&
-    !hasAction
-  ) {
-    const editBtn = document.createElement("button");
-    editBtn.innerText = "📝 編輯";
-    editBtn.onclick = () => handleEditAbnormal(record);
-    actionTd.appendChild(editBtn);
-  }
-
-  tr.appendChild(actionTd);
-  tableBody.appendChild(tr);
+  renderRow(record, targetBody);
 }
 
