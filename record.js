@@ -15,60 +15,62 @@ document.getElementById("filterAbnormalBtn").addEventListener("click", () => {
 
 document.getElementById("searchUser").addEventListener("input", filterAndRender);
 document.getElementById("searchCar").addEventListener("input", filterAndRender);
+document.getElementById("typeFilter").addEventListener("change", filterAndRender);
 
-// 載入資料
+// 取得資料
 async function loadRecords() {
-  const tableBody = document.querySelector("#recordTable tbody");
-  tableBody.innerHTML = "";
   const statusMsg = document.getElementById("statusMsg");
-
   try {
-    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
+    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
 
-    if (!data.success || !Array.isArray(data.records)) {
+    if (!Array.isArray(data)) {
       statusMsg.innerText = "資料載入失敗，請稍後再試。";
       return;
     }
 
-    // ✅ 顯示登入帳號
-    const currentUser = data.user?.id || "(未知)";
-    document.getElementById("currentUser").innerText = currentUser;
-
-    allRecords = data.records;
-    currentRole = data.role;
+    allRecords = data;
+    currentRole = "admin"; // 或從登入資訊取回
     filterAndRender();
-
   } catch (err) {
     console.error("載入失敗", err);
     statusMsg.innerText = "無法連線伺服器。";
   }
 }
 
+function formatDate(str) {
+  if (!str) return "";
+  const d = new Date(str);
+  return isNaN(d) ? str : d.toLocaleString("zh-TW");
+}
 
 function filterAndRender() {
   const searchUser = document.getElementById("searchUser").value.toLowerCase();
   const searchCar = document.getElementById("searchCar").value.toLowerCase();
+  const typeFilter = document.getElementById("typeFilter").value;
+
   const tableBody = document.querySelector("#recordTable tbody");
   tableBody.innerHTML = "";
 
   const filtered = allRecords.filter(r => {
     const matchUser = !searchUser || r.借用人.toLowerCase().includes(searchUser);
-    const matchCar = !searchCar || r.車號.toLowerCase().includes(searchCar);
+    const carOrItem = r.車號 || r.物品 || "";
+    const matchCar = !searchCar || carOrItem.toLowerCase().includes(searchCar);
+    const matchType = typeFilter === "all" || r.type === typeFilter;
 
-    if (showOnlyAbnormal) {
+    if (showOnlyAbnormal && r.type !== '手機') {
       const now = new Date();
       const borrowTime = new Date(r.借用時間);
       const inspectionTime = r.巡檢結束時間 ? new Date(r.巡檢結束時間) : null;
       const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
       const noInspection = !inspectionTime;
       const noAction = !r.異常處置對策;
-      return matchUser && matchCar && timeout && noInspection && noAction;
+      return matchUser && matchCar && matchType && timeout && noInspection && noAction;
     }
 
-    return matchUser && matchCar;
+    return matchUser && matchCar && matchType;
   });
 
   filtered.forEach(record => {
@@ -81,24 +83,35 @@ function filterAndRender() {
     const noInspection = !inspectionTime;
     const hasAction = !!record.異常處置對策;
 
-    // ✅ 判斷背景顏色
-    if (noInspection && timeout && !hasAction) {
-      tr.style.backgroundColor = "#ffdddd"; // 淺紅
-    } else if (noInspection && timeout && hasAction) {
-      tr.style.backgroundColor = "#eeeeee"; // 灰色
+    if (record.type !== '手機') {
+      if (noInspection && timeout && !hasAction) {
+        tr.style.backgroundColor = "#ffdddd";
+      } else if (noInspection && timeout && hasAction) {
+        tr.style.backgroundColor = "#eeeeee";
+      }
     }
 
-    const cols = [
-      record.借用人,
-      record.車號,
-      formatDate(record.借用時間),
-      formatDate(record.歸還時間),
-      record.車頭 || "-",
-      record.尾車 || "-",
-      record.完成率 || "-",
-      formatDate(record.巡檢結束時間),
-      record.異常處置對策 || "-"
-    ];
+    const isPhone = record.type === '手機';
+
+    const cols = isPhone
+      ? [
+          record.借用人,
+          record.物品 || "-",
+          formatDate(record.借用時間),
+          formatDate(record.歸還時間),
+          "-", "-", "-", "-", "-"
+        ]
+      : [
+          record.借用人,
+          record.車號 || "-",
+          formatDate(record.借用時間),
+          formatDate(record.歸還時間),
+          record.車頭 || "-",
+          record.尾車 || "-",
+          record.完成率 || "-",
+          formatDate(record.巡檢結束時間),
+          record.異常處置對策 || "-"
+        ];
 
     cols.forEach(val => {
       const td = document.createElement("td");
@@ -108,6 +121,7 @@ function filterAndRender() {
 
     const actionTd = document.createElement("td");
 
+    // 歸還按鈕
     if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
       const returnBtn = document.createElement("button");
       returnBtn.innerText = "🔁 歸還";
@@ -115,6 +129,7 @@ function filterAndRender() {
       actionTd.appendChild(returnBtn);
     }
 
+    // 刪除按鈕
     if (currentRole === "admin") {
       const deleteBtn = document.createElement("button");
       deleteBtn.innerText = "⛔ 刪除";
@@ -122,10 +137,11 @@ function filterAndRender() {
       actionTd.appendChild(deleteBtn);
     }
 
+    // 編輯異常（鑰匙資料限定）
     if (
+      record.type !== '手機' &&
       (currentRole === 'admin' || currentRole === 'manager') &&
       !record.巡檢結束時間 &&
-      // record.歸還時間 &&
       timeout &&
       !hasAction
     ) {
@@ -140,11 +156,9 @@ function filterAndRender() {
   });
 }
 
-function formatDate(str) {
-  if (!str) return "";
-  const d = new Date(str);
-  return isNaN(d) ? str : d.toLocaleString("zh-TW");
-}
+// 初始化
+loadRecords();
+
 
 
 
