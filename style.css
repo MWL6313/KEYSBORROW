@@ -171,73 +171,65 @@ body {
 /* ✅ 手機專用調整 */
 @media (max-width: 860px) {
   body {
-    font-size: 2.25rem; /* 原本 1.5rem × 1.5 放大 */
-    padding: 9vh 9vw;
+    font-size: 2.25rem;
+    padding: 10vh 7vw; /* ✅ 加大上下 padding */
   }
 
   .login-card {
-    padding: 4rem 3.5rem;
+    padding: 5rem 3rem;      /* ✅ 加大登入區塊內間距 */
+    margin-bottom: 6vh;      /* ✅ 與下方區塊的距離 */
   }
 
   .login-card h2 {
-    font-size: 3.9rem;
-    margin-bottom: 2.2rem;
+    font-size: 3.6rem;
+    margin-bottom: 2.4rem;   /* ✅ 標題與下方文字的間距 */
   }
 
   .login-card p {
-    font-size: 2.6rem;
-    margin-bottom: 2.6rem;
+    margin-bottom: 3rem;     /* ✅ 提示文字與輸入框距離 */
   }
 
   .login-card input {
-    font-size: 2.6rem;
-    padding: 2.6rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2.8rem;   /* ✅ 每個 input 之間的距離 */
+    padding: 2.5rem;
   }
 
   .login-card button {
-    font-size: 2.6rem;
     padding: 2.6rem;
+    margin-top: 2rem;        /* ✅ 按鈕與 input 間距 */
   }
 
   .login-card .links {
-    font-size: 2.4rem;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
+    margin-top: 3rem;        /* ✅ 與按鈕的距離 */
+    gap: 2rem;
   }
 
   .card {
     padding: 4rem;
+    margin-bottom: 3rem;     /* ✅ 每張卡片間距 */
   }
 
   .card h3 {
-    font-size: 3rem;
-    margin-bottom: 2rem;
+    font-size: 2.8rem;
+    margin-bottom: 2.2rem;
   }
 
   .card .info {
-    flex-direction: column;
-    font-size: 2.4rem;
-    gap: 2rem;
-  }
-
-  .card .info span {
-    min-width: unset;
+    font-size: 2.2rem;
+    gap: 2.5rem;
+    margin-bottom: 2.2rem;   /* ✅ info 區塊與按鈕區距離 */
   }
 
   .card .actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2rem;
+    gap: 2.5rem;
   }
 
   .card .action-btn {
-    font-size: 2.2rem;
     padding: 2rem;
-    width: 100%;
+    font-size: 2.1rem;
   }
 }
+
 
 
 
