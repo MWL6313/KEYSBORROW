@@ -719,13 +719,10 @@ function updateTableRow(record) {
   }
 }
 
-
-
 function appendTableRow(record) {
   const tableBody = document.querySelector("#recordTable tbody");
   const tr = document.createElement("tr");
 
-  
   // ✅ 背景色條件判斷
   const now = new Date();
   const borrowTime = new Date(record.借用時間);
@@ -734,24 +731,36 @@ function appendTableRow(record) {
   const noInspection = !inspectionTime;
   const hasAction = !!record.異常處置對策;
 
-  if (noInspection && timeout && !hasAction) {
-    tr.style.backgroundColor = "#ffdddd"; // 🔴 淺紅背景
-  } else if (noInspection && timeout && hasAction) {
-    tr.style.backgroundColor = "#eeeeee"; // ⚫ 灰色背景
+  if (record.type !== '手機') {
+    if (noInspection && timeout && !hasAction) {
+      tr.style.backgroundColor = "#ffdddd"; // 🔴 淺紅背景
+    } else if (noInspection && timeout && hasAction) {
+      tr.style.backgroundColor = "#eeeeee"; // ⚫ 灰色背景
+    }
   }
 
-  // ✅ 建立資料欄位
-  const cols = [
-    record.借用人,
-    record.車號,
-    formatDate(record.借用時間),
-    formatDate(record.歸還時間),
-    record.車頭 || "-",
-    record.尾車 || "-",
-    record.完成率 || "-",
-    formatDate(record.巡檢結束時間),
-    record.異常處置對策 || "-"
-  ];
+  // ✅ 建立資料欄位（依照類型判斷）
+  const isPhone = record.type === '手機';
+  const cols = isPhone
+    ? [
+        record.借用人,
+        record.物品 || "-",
+        formatDate(record.借用時間),
+        formatDate(record.歸還時間),
+        "-", "-", "-", "-", "-"
+      ]
+    : [
+        record.借用人,
+        record.車號 || "-",
+        formatDate(record.借用時間),
+        formatDate(record.歸還時間),
+        record.車頭 || "-",
+        record.尾車 || "-",
+        record.完成率 || "-",
+        formatDate(record.巡檢結束時間),
+        record.異常處置對策 || "-"
+      ];
+
   cols.forEach(val => {
     const td = document.createElement("td");
     td.innerText = val;
@@ -776,9 +785,9 @@ function appendTableRow(record) {
   }
 
   if (
+    record.type !== '手機' &&
     (currentRole === 'admin' || currentRole === 'manager') &&
     !record.巡檢結束時間 &&
-    // record.歸還時間 &&
     timeout &&
     !hasAction
   ) {
@@ -791,5 +800,77 @@ function appendTableRow(record) {
   tr.appendChild(actionTd);
   tableBody.appendChild(tr);
 }
+
+
+// function appendTableRow(record) {
+//   const tableBody = document.querySelector("#recordTable tbody");
+//   const tr = document.createElement("tr");
+
+  
+//   // ✅ 背景色條件判斷
+//   const now = new Date();
+//   const borrowTime = new Date(record.借用時間);
+//   const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
+//   const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+//   const noInspection = !inspectionTime;
+//   const hasAction = !!record.異常處置對策;
+
+//   if (noInspection && timeout && !hasAction) {
+//     tr.style.backgroundColor = "#ffdddd"; // 🔴 淺紅背景
+//   } else if (noInspection && timeout && hasAction) {
+//     tr.style.backgroundColor = "#eeeeee"; // ⚫ 灰色背景
+//   }
+
+//   // ✅ 建立資料欄位
+//   const cols = [
+//     record.借用人,
+//     record.車號,
+//     formatDate(record.借用時間),
+//     formatDate(record.歸還時間),
+//     record.車頭 || "-",
+//     record.尾車 || "-",
+//     record.完成率 || "-",
+//     formatDate(record.巡檢結束時間),
+//     record.異常處置對策 || "-"
+//   ];
+//   cols.forEach(val => {
+//     const td = document.createElement("td");
+//     td.innerText = val;
+//     tr.appendChild(td);
+//   });
+
+//   // ✅ 操作欄位
+//   const actionTd = document.createElement("td");
+
+//   if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
+//     const returnBtn = document.createElement("button");
+//     returnBtn.innerText = "🔁 歸還";
+//     returnBtn.onclick = () => handleReturn(record);
+//     actionTd.appendChild(returnBtn);
+//   }
+
+//   if (currentRole === "admin") {
+//     const deleteBtn = document.createElement("button");
+//     deleteBtn.innerText = "⛔ 刪除";
+//     deleteBtn.onclick = () => handleDelete(record);
+//     actionTd.appendChild(deleteBtn);
+//   }
+
+//   if (
+//     (currentRole === 'admin' || currentRole === 'manager') &&
+//     !record.巡檢結束時間 &&
+//     // record.歸還時間 &&
+//     timeout &&
+//     !hasAction
+//   ) {
+//     const editBtn = document.createElement("button");
+//     editBtn.innerText = "📝 編輯";
+//     editBtn.onclick = () => handleEditAbnormal(record);
+//     actionTd.appendChild(editBtn);
+//   }
+
+//   tr.appendChild(actionTd);
+//   tableBody.appendChild(tr);
+// }
 
 
