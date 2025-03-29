@@ -175,7 +175,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     const data = await res.json();
     if (data.success) {
       borrowMsg.style.color = "green";
-      borrowMsg.innerText = "✅ 借用申請送出成功！";
+      borrowMsg.innerText = "✅ 【${carNumber}】借用申請送出成功！";
 
       // ✅ 重新載入車號選單
       await loadCarNumbers(currentUser?.carNo || "");
