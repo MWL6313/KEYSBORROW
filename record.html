@@ -320,6 +320,14 @@
       console.error(err);
     }
   });
+
+  function toggleHistory() {
+  const table = document.getElementById("historyTable");
+  if (!table) return;
+
+  const isHidden = table.style.display === "none";
+  table.style.display = isHidden ? "table" : "none";
+}
 </script>
 
 </body>
