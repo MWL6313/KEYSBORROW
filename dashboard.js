@@ -134,17 +134,17 @@ async function loadCarNumbers(defaultCar) {
 
 async function loadPhoneItems() {
   try {
-    const [resAll, resUnreturned] = await Promise.all([
+    const [resItems, resUnreturned] = await Promise.all([
       fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/items"),
       fetch("https://key-loan-api-978908472762.asia-east1.run.app/phone/unreturned")
     ]);
 
-    const allData = await resAll.json();
-    const unreturnedData = await resUnreturned.json();
+    const dataItems = await resItems.json();
+    const dataUnreturned = await resUnreturned.json();
 
-    if (allData.success && Array.isArray(allData.items) && unreturnedData.success) {
-      const allItems = allData.items;
-      const unreturnedSet = new Set(unreturnedData.data);
+    if (dataItems.success && Array.isArray(dataItems.items) && dataUnreturned.success) {
+      const allItems = dataItems.items;
+      const unreturnedSet = new Set(dataUnreturned.data);
 
       const select = document.getElementById("phoneItem");
       select.innerHTML = "";
@@ -155,21 +155,26 @@ async function loadPhoneItems() {
       noneOption.textContent = "📵 不借用手機";
       select.appendChild(noneOption);
 
-      // 📌 排除未歸還手機
-      const availableItems = allItems.filter(item => !unreturnedSet.has(item));
-
-      availableItems.forEach(item => {
+      allItems.forEach(item => {
         const opt = document.createElement("option");
         opt.value = item;
-        opt.textContent = item;
+
+        if (unreturnedSet.has(item)) {
+          opt.textContent = `${item} ⚠ 已借出`;
+          opt.disabled = true;
+        } else {
+          opt.textContent = item;
+        }
+
         select.appendChild(opt);
       });
 
-      // 🔁 如果已有 tomselect 實例，先銷毀再初始化
+      // 如果已有 tomselect 實例，先銷毀
       if (select.tomselect) {
         select.tomselect.destroy();
       }
 
+      // 初始化 Tom Select（等資料都塞完再做）
       new TomSelect("#phoneItem", {
         create: false,
         sortField: {
@@ -178,13 +183,16 @@ async function loadPhoneItems() {
         },
         placeholder: "請選擇手機"
       });
+
     } else {
-      console.warn("📭 無手機資料或資料格式錯誤", allData);
+      console.warn("⚠️ 手機資料載入錯誤", dataItems, dataUnreturned);
     }
+
   } catch (err) {
-    console.error("載入手機項目錯誤", err);
+    console.error("🚨 載入手機項目錯誤", err);
   }
 }
+
 
 
 // async function loadPhoneItems() {
