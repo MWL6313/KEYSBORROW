@@ -283,6 +283,26 @@
       document.getElementById("tabHistory").classList.add("active");
     });
   </script>
+  <!-- ✅ Toast 提示 -->
+  <div id="toast" style="
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #ffffff;
+    border-left: 6px solid #4caf50;
+    padding: 14px 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    display: none;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  "></div>
+
 </body>
 </html>
 
