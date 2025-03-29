@@ -169,9 +169,9 @@ body {
 }
 
 /* ✅ 手機專用調整 */
-@media (max-width: 768px) {
+@media (max-width: 860px) {
   body {
-    font-size: 4vw;
+    font-size: 5vw;
     padding: 4vh 5vw;
   }
 
