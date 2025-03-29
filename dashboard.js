@@ -67,11 +67,19 @@ async function loadCarNumbers(defaultCar) {
     const unreturnedData = await unreturnedRes.json();
 
     if (carData.success && unreturnedData.success) {
-      const select = document.getElementById("carNumber");
-      if (select.tomselect) {
-        select.tomselect.destroy();
-      }
-      new TomSelect("#carNumber", { ... });
+    const select = document.getElementById("carNumber");
+    if (select.tomselect) {
+      select.tomselect.destroy();
+    }
+    new TomSelect("#carNumber", {
+      create: false,
+      sortField: {
+        field: "text",
+        direction: "asc"
+      },
+      placeholder: "請輸入或選擇車號"
+    });
+
       select.innerHTML = "";
 
       const allCars = new Set(carData.data);
@@ -134,6 +142,20 @@ async function loadPhoneItems() {
 
     if (data.success && Array.isArray(data.items)) {
       const select = document.getElementById("phoneItem");
+      if (select.tomselect) {
+        select.tomselect.destroy();
+      }
+      new TomSelect("#phoneItem", {
+        create: false,
+        sortField: {
+          field: "text",
+          direction: "asc"
+        },
+        placeholder: ""請選擇手機""
+      });
+
+
+      
       select.innerHTML = "";
 
       data.items.forEach(item => {
