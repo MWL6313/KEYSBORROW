@@ -276,15 +276,13 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       const successList = [
         `🚗 車號：${isCarBorrowed ? carNumber : "未借用"}`,
         `📱 手機：${isPhoneBorrowed ? phoneItem : "未借用"}`
-      // ];
+      ];
 
-      // borrowMsg.style.color = "green";
-      // borrowMsg.innerHTML = `
-      //   ✅ 借用申請成功！<br>
-      //   <b>${successList.join("<br>")}</b>
-      // `;
-
-      ].filter(Boolean).join("、");
+      borrowMsg.style.color = "green";
+      borrowMsg.innerHTML = `
+        ✅ 借用申請成功！<br>
+        <b>${successList.join("<br>")}</b>
+      `;
     
       showToast(`借用成功：${successList}`);
         
