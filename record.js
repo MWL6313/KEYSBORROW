@@ -210,7 +210,7 @@ async function handleReturn(record) {
   let returnBtn = null;
   for (let tr of rows) {
     const rUser = tr.children[0].innerText;
-    const rItem = tr.children[1].innerText;
+    const rItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim(); // 移除 icon 比對
     const rTime = tr.children[2].innerText;
     if (rUser === record.借用人 && rItem === (record.車號 || record.物品 || "-") && rTime === formatDate(record.借用時間)) {
       targetRow = tr;
@@ -257,9 +257,33 @@ async function handleReturn(record) {
 
     if (result.success) {
       alert("✅ 已成功標記為歸還！");
-      // 手動更新畫面
-      record.歸還時間 = new Date().toISOString();
-      updateTableRow(record);
+
+      // ⏬ 加：重新取得該筆更新後資料
+      const refreshed = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const refreshedData = await refreshed.json();
+
+      const updatedRecord = refreshedData.find(r =>
+        r.借用人 === record.借用人 &&
+        r.借用時間 === record.借用時間 &&
+        ((record.type === '手機' && r.物品 === record.物品) ||
+         (record.type !== '手機' && r.車號 === record.車號))
+      );
+
+      if (updatedRecord) {
+        if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
+        const idx = allRecords.findIndex(r =>
+          r.借用人 === updatedRecord.借用人 &&
+          r.借用時間 === updatedRecord.借用時間 &&
+          ((record.type === '手機' && r.物品 === updatedRecord.物品) ||
+           (record.type !== '手機' && r.車號 === updatedRecord.車號))
+        );
+        if (idx !== -1) allRecords[idx] = updatedRecord;
+        else allRecords.push(updatedRecord);
+
+        updateTableRow(updatedRecord);
+      }
     } else {
       alert("❌ 歸還失敗");
       if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
@@ -275,6 +299,7 @@ async function handleReturn(record) {
     }
   }
 }
+
 
 
 async function handleEditAbnormal(record) {
