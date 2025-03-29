@@ -211,12 +211,12 @@
       <tbody></tbody>
     </table>
 
-    <h3 style="margin-top: 40px;">📜 近期歷史紀錄</h3>
-    <table id="historyTable">
+    <h3 onclick="toggleHistory()" style="cursor:pointer; background:#eee; padding:10px; border-radius:6px;">📜 近期歷史紀錄區（點我展開/收合）</h3>
+    <table id="historyTable" style="display: none;">
       <thead>
         <tr>
           <th>借用人</th>
-          <th>車號 / 物品</th>
+          <th>車號</th>
           <th>借用時間</th>
           <th>歸還時間</th>
           <th>車頭</th>
@@ -229,6 +229,7 @@
       </thead>
       <tbody></tbody>
     </table>
+
 
     
     <p id="statusMsg"></p>
