@@ -111,6 +111,7 @@ function filterAndRender() {
 
   filtered.forEach(record => {
     const tr = document.createElement("tr");
+    tr.dataset.borrowTime = record.借用時間; // ✅ 確保能正確比對更新
 
     const now = new Date();
     const borrowTime = new Date(record.借用時間);
