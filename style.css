@@ -1,6 +1,169 @@
 body {
   font-family: "Noto Sans TC", "Segoe UI", sans-serif;
   margin: 0;
+  padding: 5vh 4vw;
+  background: linear-gradient(to bottom, #fefcea, #f1daae);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-size: 4vw; /* 手機字體彈性縮放 */
+}
+
+.login-card {
+  background: #fff;
+  border: 2px solid #a73232;
+  border-radius: 16px;
+  padding: 8vh 6vw;
+  width: 100%;
+  max-width: 540px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  text-align: center;
+  margin-bottom: 6vh;
+}
+
+.login-card h2 {
+  margin-bottom: 2vh;
+  font-size: 6vw;
+}
+
+.login-card p {
+  font-weight: bold;
+  margin-bottom: 4vh;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 5vw;
+  margin-bottom: 4vh;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #eaf1ff;
+  font-size: 4vw;
+  box-sizing: border-box;
+}
+
+.login-card button {
+  width: 100%;
+  background: linear-gradient(to right, #a73232, #7a320f);
+  color: white;
+  padding: 5vw;
+  font-size: 4.2vw;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-card button:hover {
+  background: #912020;
+}
+
+.login-card .links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3vh;
+  font-size: 3.5vw;
+}
+
+.login-card .links a {
+  color: #a73232;
+  text-decoration: none;
+}
+
+#cardContainer {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  border-left: 6px solid #a73232;
+  padding: 6vw 4vw;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 3vw;
+  color: #7a320f;
+  font-size: 5vw;
+}
+
+.card .info {
+  display: flex;
+  flex-direction: column;
+  gap: 3vw;
+  font-size: 4vw;
+  margin-bottom: 3vw;
+}
+
+.card .info span {
+  display: block;
+  word-break: break-all;
+}
+
+.card .actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3vw;
+}
+
+.card .action-btn {
+  padding: 3vw 5vw;
+  font-size: 4vw;
+  background: linear-gradient(to right, #a73232, #7a320f);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background 0.3s ease;
+}
+
+.card .action-btn:hover {
+  background: #912020;
+}
+
+/* 動畫區塊保持一致 */
+.success-pulse {
+  animation: buttonSuccessPulse 1s ease-in-out 2;
+}
+.shake {
+  animation: shake 0.3s ease-in-out;
+}
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
+
+@keyframes buttonSuccessPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,0,0.3); }
+  50% { transform: scale(1.05); box-shadow: 0 0 10px rgba(0,255,0,0.6); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,0,0.3); }
+}
+
+/* body {
+  font-family: "Noto Sans TC", "Segoe UI", sans-serif;
+  margin: 0;
   padding: 60px 30px; /* padding 放大 */
   background: linear-gradient(to bottom, #fefcea, #f1daae);
   display: flex;
@@ -392,4 +555,5 @@ body {
     align-items: flex-end;
   }
 }
+ */
  */
