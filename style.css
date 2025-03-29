@@ -1,3 +1,4 @@
+/* ✅ 全域設定 */
 body {
   font-family: "Noto Sans TC", "Segoe UI", sans-serif;
   margin: 0;
@@ -8,48 +9,48 @@ body {
   align-items: center;
   min-height: 100vh;
   box-sizing: border-box;
-  font-size: 4vw; /* 手機字體彈性縮放 */
+  font-size: 1.1rem;
 }
 
+/* ✅ 登入卡片樣式 */
 .login-card {
   background: #fff;
   border: 2px solid #a73232;
   border-radius: 16px;
-  padding: 8vh 6vw;
+  padding: 2rem;
   width: 100%;
-  max-width: 540px;
+  max-width: 600px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.1);
   text-align: center;
-  margin-bottom: 6vh;
+  margin-bottom: 4vh;
 }
 
 .login-card h2 {
-  margin-bottom: 2vh;
-  font-size: 6vw;
+  margin-bottom: 1rem;
+  font-size: 2rem;
 }
 
 .login-card p {
   font-weight: bold;
-  margin-bottom: 4vh;
+  margin-bottom: 2rem;
 }
 
 .login-card input {
   width: 100%;
-  padding: 5vw;
-  margin-bottom: 4vh;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #eaf1ff;
-  font-size: 4vw;
-  box-sizing: border-box;
+  font-size: 1.1rem;
 }
 
 .login-card button {
   width: 100%;
   background: linear-gradient(to right, #a73232, #7a320f);
   color: white;
-  padding: 5vw;
-  font-size: 4.2vw;
+  padding: 1rem;
+  font-size: 1.2rem;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -63,8 +64,8 @@ body {
 .login-card .links {
   display: flex;
   justify-content: space-between;
-  margin-top: 3vh;
-  font-size: 3.5vw;
+  margin-top: 1.5rem;
+  font-size: 1rem;
 }
 
 .login-card .links a {
@@ -72,63 +73,69 @@ body {
   text-decoration: none;
 }
 
+.login-card .links a:hover {
+  text-decoration: underline;
+}
+
+/* ✅ 卡片清單樣式 */
 #cardContainer {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1100px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 2rem;
 }
 
 .card {
   background: #fff;
-  border-left: 6px solid #a73232;
-  padding: 6vw 4vw;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  border-left: 8px solid #a73232;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
   transition: transform 0.2s ease;
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
 }
 
 .card h3 {
   margin-top: 0;
-  margin-bottom: 3vw;
+  margin-bottom: 1rem;
   color: #7a320f;
-  font-size: 5vw;
+  font-size: 1.5rem;
 }
 
 .card .info {
   display: flex;
-  flex-direction: column;
-  gap: 3vw;
-  font-size: 4vw;
-  margin-bottom: 3vw;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
 }
 
 .card .info span {
-  display: block;
-  word-break: break-all;
+  min-width: 180px;
+  display: inline-block;
+  word-break: break-word;
 }
 
 .card .actions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3vw;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 1rem;
 }
 
 .card .action-btn {
-  padding: 3vw 5vw;
-  font-size: 4vw;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
   background: linear-gradient(to right, #a73232, #7a320f);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
   transition: background 0.3s ease;
 }
 
@@ -136,7 +143,7 @@ body {
   background: #912020;
 }
 
-/* 動畫區塊保持一致 */
+/* ✅ 動畫與互動效果 */
 .success-pulse {
   animation: buttonSuccessPulse 1s ease-in-out 2;
 }
@@ -160,6 +167,43 @@ body {
   50% { transform: scale(1.05); box-shadow: 0 0 10px rgba(0,255,0,0.6); }
   100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,0,0.3); }
 }
+
+/* ✅ 手機專用調整 */
+@media (max-width: 768px) {
+  body {
+    font-size: 4vw;
+    padding: 4vh 5vw;
+  }
+
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .card .info {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .card .info span {
+    min-width: unset;
+  }
+
+  .card .actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .card h3 {
+    font-size: 1.4rem;
+  }
+
+  .card .action-btn {
+    font-size: 1rem;
+    padding: 1rem;
+    width: 100%;
+  }
+}
+
 
 /* body {
   font-family: "Noto Sans TC", "Segoe UI", sans-serif;
