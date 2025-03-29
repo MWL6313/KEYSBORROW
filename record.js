@@ -674,15 +674,16 @@ function updateTableRow(record) {
   const rows = tableBody.querySelectorAll("tr");
 
   for (let tr of rows) {
-    const tdUser = tr.children[0].innerText.trim();
-    const tdItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
-    const tdTime = tr.children[2].innerText.trim();
+    const rUser = tr.children[0].innerText;
+    const rItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
+    const rTime = tr.dataset.borrowTime; // ✅ 使用 data 屬性比對原始時間
 
     if (
-      tdUser === record.借用人 &&
-      tdItem === (record.車號 || record.物品 || "-") &&
-      tdTime === formatDate(record.借用時間)
+      rUser === record.借用人 &&
+      rItem === (record.車號 || record.物品 || "-") &&
+      rTime === record.借用時間
     ) {
+      // ✅ 更新背景色
       const now = new Date();
       const borrowTime = new Date(record.借用時間);
       const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
@@ -700,6 +701,7 @@ function updateTableRow(record) {
         }
       }
 
+      // ✅ 更新資料欄位
       const isPhone = record.type === '手機';
       const typeIcon = isPhone ? "📱" : "🚗";
       const cols = isPhone
@@ -726,6 +728,7 @@ function updateTableRow(record) {
         tr.children[i].innerText = val || "";
       });
 
+      // ✅ 更新操作欄
       const actionTd = tr.children[9];
       actionTd.innerHTML = "";
 
@@ -760,6 +763,7 @@ function updateTableRow(record) {
     }
   }
 }
+
 
 function appendTableRow(record) {
   const tableBody = document.querySelector("#recordTable tbody");
