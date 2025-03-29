@@ -68,10 +68,11 @@ async function loadCarNumbers(defaultCar) {
       const allCars = new Set(carData.data);
       const borrowedCars = new Set(unreturnedData.data);
 
-      const availableCars = [...allCars].filter(car => !borrowedCars.has(car));
+      let availableCars = [...allCars].filter(car => !borrowedCars.has(car));
 
-      // 預設車號優先
-      if (defaultCar && allCars.has(defaultCar)) {
+      // ✅ 若 defaultCar 未被借出，優先放第一筆
+      if (defaultCar && allCars.has(defaultCar) && !borrowedCars.has(defaultCar)) {
+        availableCars = availableCars.filter(c => c !== defaultCar);
         availableCars.unshift(defaultCar);
       }
 
@@ -82,7 +83,6 @@ async function loadCarNumbers(defaultCar) {
         select.appendChild(opt);
       });
 
-      // 初始化 Tom Select
       new TomSelect("#carNumber", {
         create: false,
         sortField: {
@@ -92,7 +92,7 @@ async function loadCarNumbers(defaultCar) {
         placeholder: "請輸入或選擇車號",
       });
 
-      if (defaultCar) {
+      if (defaultCar && !borrowedCars.has(defaultCar)) {
         select.value = defaultCar;
       }
     }
@@ -100,6 +100,7 @@ async function loadCarNumbers(defaultCar) {
     console.error("🚨 載入車號錯誤", err);
   }
 }
+
 
 
 // === 送出借用申請（防重複）===
