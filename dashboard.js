@@ -68,20 +68,37 @@ async function loadCarNumbers(defaultCar) {
       const allCars = new Set(carData.data);
       const borrowedCars = new Set(unreturnedData.data);
 
-      let availableCars = [...allCars].filter(car => !borrowedCars.has(car));
+      let availableCars = [...allCars].filter(car =>
+        !borrowedCars.has(car) && car !== defaultCar
+      );
 
-      // ✅ 若 defaultCar 未被借出，優先放第一筆
-      if (defaultCar && allCars.has(defaultCar) && !borrowedCars.has(defaultCar)) {
-        availableCars = availableCars.filter(c => c !== defaultCar);
+      // 預設車號優先放前面（即使已借出）
+      if (defaultCar && allCars.has(defaultCar)) {
         availableCars.unshift(defaultCar);
       }
 
       availableCars.forEach(car => {
         const opt = document.createElement("option");
         opt.value = car;
-        opt.textContent = car;
+
+        const isBorrowed = borrowedCars.has(car);
+        const isDefault = car === defaultCar;
+
+        // ✅ 顯示借出標示、並 disabled（除非是 defaultCar）
+        if (isBorrowed) {
+          opt.textContent = `${car} ⚠ 已借出`;
+          if (!isDefault) opt.disabled = true;
+        } else {
+          opt.textContent = car;
+        }
+
         select.appendChild(opt);
       });
+
+      // ✅ 初始化 Tom Select（如已存在先 destroy 再初始化）
+      if (select.tomselect) {
+        select.tomselect.destroy();
+      }
 
       new TomSelect("#carNumber", {
         create: false,
@@ -92,16 +109,14 @@ async function loadCarNumbers(defaultCar) {
         placeholder: "請輸入或選擇車號",
       });
 
-      if (defaultCar && !borrowedCars.has(defaultCar)) {
-        select.value = defaultCar;
+      if (defaultCar) {
+        select.tomselect.setValue(defaultCar);
       }
     }
   } catch (err) {
     console.error("🚨 載入車號錯誤", err);
   }
 }
-
-
 
 // === 送出借用申請（防重複）===
 document.getElementById("submitBorrow").addEventListener("click", async () => {
@@ -162,6 +177,10 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
       borrowMsg.style.color = "green";
       borrowMsg.innerText = "✅ 借用申請送出成功！";
 
+      // ✅ 重新載入車號選單
+      await loadCarNumbers(currentUser?.carNo || "");
+
+      
       submitBtn.disabled = true;
       submitBtn.classList.add("success-pulse");
       let countdown = 20;
