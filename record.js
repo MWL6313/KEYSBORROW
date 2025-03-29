@@ -21,7 +21,9 @@ document.getElementById("typeFilter").addEventListener("change", filterAndRender
 // 取得資料
 async function loadRecords() {
   const statusMsg = document.getElementById("statusMsg");
+
   try {
+    // 取得所有借用紀錄（手機＋鑰匙）
     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -33,13 +35,26 @@ async function loadRecords() {
     }
 
     allRecords = data;
-    currentRole = "admin"; // 或從登入資訊取回
+
+    // 🔐 再取得目前登入者的角色
+    const res2 = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data2 = await res2.json();
+    if (!data2.success) {
+      statusMsg.innerText = "無法取得使用者資訊。";
+      return;
+    }
+
+    currentRole = data2.role || "";
+
     filterAndRender();
   } catch (err) {
     console.error("載入失敗", err);
     statusMsg.innerText = "無法連線伺服器。";
   }
 }
+
 
 function formatDate(str) {
   if (!str) return "";
