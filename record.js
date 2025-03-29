@@ -600,7 +600,9 @@ function updateTableRow(record) {
             formatDate(record.巡檢結束時間),
             record.異常處置對策 || "-"
           ];
-
+      cols.forEach((val, i) => {
+        tr.children[i].innerText = val || "";
+      });
       
       // const cols = [
       //   record.借用人,
