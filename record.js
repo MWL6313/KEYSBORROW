@@ -158,6 +158,7 @@ function filterAndRender() {
       record.type !== '手機' &&
       (currentRole === 'admin' || currentRole === 'manager') &&
       !record.巡檢結束時間 &&
+      !record.異常處置對策 &&
       timeout &&
       !hasAction
     ) {
