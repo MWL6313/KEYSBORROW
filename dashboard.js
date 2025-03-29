@@ -70,6 +70,12 @@ async function loadCarNumbers(defaultCar) {
     }
             
     select.innerHTML = "";
+    
+    // ➕ 插入「不借用」選項
+    const noneOption = document.createElement("option");
+    noneOption.value = "none";
+    noneOption.textContent = "🚫 不借用車輛";
+    select.appendChild(noneOption);
 
 
 
@@ -134,8 +140,14 @@ async function loadPhoneItems() {
     if (data.success && Array.isArray(data.items)) {
       const select = document.getElementById("phoneItem");
 
-      // 先清空原始選項
       select.innerHTML = "";
+      
+      // ➕ 插入「不借用」選項
+      const noneOption = document.createElement("option");
+      noneOption.value = "none";
+      noneOption.textContent = "📵 不借用手機";
+      select.appendChild(noneOption);
+
 
       // 塞入新選項
       data.items.forEach(item => {
@@ -181,6 +193,9 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
   const borrower = document.getElementById("borrower").value.trim();
   const carNumber = document.getElementById("carNumber").value.trim();
   const phoneItem = document.getElementById("phoneItem").value.trim();
+  
+  const isCarBorrowed = carNumber && carNumber !== "none";
+  const isPhoneBorrowed = phoneItem && phoneItem !== "none";
 
   if (!borrower || (!carNumber && !phoneItem)) {
     Swal.fire({
@@ -305,93 +320,3 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
   }
 });
 
-
-// document.getElementById("submitBorrow").addEventListener("click", async () => {
-//   const borrower = document.getElementById("borrower").value.trim();
-//   const carNumber = document.getElementById("carNumber").value;
-//   const borrowMsg = document.getElementById("borrowMsg");
-//   const submitBtn = document.getElementById("submitBorrow");
-
-//   if (!borrower || !carNumber) {
-//     borrowMsg.innerText = "請完整填寫必填欄位";
-//     borrowMsg.style.color = "red";
-//     return;
-//   }
-
-//   // 再次確認是否已借用
-//   try {
-//     const resCheck = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/unreturned");
-//     const checkData = await resCheck.json();
-//     const borrowedCars = new Set(checkData.data);
-
-//     if (borrowedCars.has(carNumber)) {
-//       Swal.fire({
-//         icon: "warning",
-//         title: "🚫 車輛仍在借用中",
-//         text: `【${carNumber}】尚未歸還，請選擇其他車輛。`,
-//         confirmButtonText: "我知道了"
-//       }).then(() => {
-//         const carSelect = document.querySelector("#carNumber");
-//         if (carSelect.tomselect) {
-//           carSelect.tomselect.clear();
-//           carSelect.tomselect.focus();
-//         } else {
-//           carSelect.value = "";
-//           carSelect.focus();
-//         }
-//       });
-//       return;
-//     }
-//   } catch (err) {
-//     console.error("檢查借用錯誤：", err);
-//     borrowMsg.innerText = "⚠️ 系統錯誤，請稍後再試。";
-//     borrowMsg.style.color = "red";
-//     return;
-//   }
-
-//   // 🚀 繼續送出申請
-//   const borrowData = { borrower, carNumber };
-
-//   try {
-//     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(borrowData)
-//     });
-
-//     const data = await res.json();
-//     if (data.success) {
-//       borrowMsg.style.color = "green";
-//       borrowMsg.innerText = `✅ ${carNumber} 借用申請送出成功！`;
-
-//       // ✅ 重新載入車號選單
-//       await loadCarNumbers(currentUser?.carNo || "");
-
-      
-//       submitBtn.disabled = true;
-//       submitBtn.classList.add("success-pulse");
-//       let countdown = 20;
-//       const originalText = submitBtn.innerText;
-//       submitBtn.innerText = `請稍候 ${countdown} 秒`;
-
-//       const timer = setInterval(() => {
-//         countdown--;
-//         submitBtn.innerText = `請稍候 ${countdown} 秒`;
-//         if (countdown <= 0) {
-//           clearInterval(timer);
-//           submitBtn.disabled = false;
-//           submitBtn.innerText = originalText;
-//           submitBtn.classList.remove("success-pulse");
-//           borrowMsg.innerText = "";
-//         }
-//       }, 1000);
-//     } else {
-//       borrowMsg.innerText = "❌ 申請送出失敗，請再試一次。";
-//       borrowMsg.style.color = "red";
-//     }
-//   } catch (err) {
-//     console.error("送出失敗", err);
-//     borrowMsg.innerText = "⚠️ 系統錯誤，請稍後再試。";
-//     borrowMsg.style.color = "red";
-//   }
-// });
