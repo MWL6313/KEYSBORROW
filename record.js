@@ -215,10 +215,14 @@ async function handleReturn(record) {
   let returnBtn = null;
   for (let tr of rows) {
     const rUser = tr.children[0].innerText;
-    const rItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim(); // 清除 icon
-    const rTime = tr.children[2].innerText;
+    const rItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
+    const rTime = tr.dataset.borrowTime;
 
-    if (rUser === record.借用人 && rItem === (record.車號 || record.物品 || "-") && rTime === formatDate(record.借用時間)) {
+    if (
+      rUser === record.借用人 &&
+      rItem === (record.車號 || record.物品 || "-") &&
+      rTime === record.借用時間
+    ) {
       targetRow = tr;
       returnBtn = Array.from(tr.querySelectorAll("button")).find(btn => btn.innerText.includes("🔁"));
       break;
@@ -264,38 +268,46 @@ async function handleReturn(record) {
     if (result.success) {
       alert("✅ 已成功標記為歸還");
 
-      // ⏬ 重新抓最新資料（單筆）
-      const updatedRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
+      // ✅ 改從 withInspection 取得最新資料，確保含巡檢資訊
+      const updatedRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const updatedData = await updatedRes.json();
+      const data = await updatedRes.json();
 
-      const updatedRecord = updatedData.find(r =>
-        r.借用人 === record.借用人 &&
-        r.借用時間 === record.借用時間 &&
-        ((record.type === '手機' && r.物品 === record.物品) ||
-         (record.type !== '手機' && r.車號 === record.車號))
-      );
-
-      if (updatedRecord) {
-        if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
-
-        const idx = allRecords.findIndex(r =>
-          r.借用人 === updatedRecord.借用人 &&
-          r.借用時間 === updatedRecord.借用時間 &&
-          ((record.type === '手機' && r.物品 === updatedRecord.物品) ||
-           (record.type !== '手機' && r.車號 === updatedRecord.車號))
+      if (data.success && Array.isArray(data.records)) {
+        const updatedRecord = data.records.find(r =>
+          r.借用人 === record.借用人 &&
+          r.借用時間 === record.借用時間 &&
+          (
+            (record.type === '手機' && r.物品 === record.物品) ||
+            (record.type !== '手機' && r.車號 === record.車號)
+          )
         );
 
-        if (idx !== -1) allRecords[idx] = updatedRecord;
-        else allRecords.push(updatedRecord);
+        if (updatedRecord) {
+          if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
 
-        updateTableRow(updatedRecord);
+          const idx = allRecords.findIndex(r =>
+            r.借用人 === updatedRecord.借用人 &&
+            r.借用時間 === updatedRecord.借用時間 &&
+            (
+              (record.type === '手機' && r.物品 === updatedRecord.物品) ||
+              (record.type !== '手機' && r.車號 === updatedRecord.車號)
+            )
+          );
+
+          if (idx !== -1) allRecords[idx] = updatedRecord;
+          else allRecords.push(updatedRecord);
+
+          updateTableRow(updatedRecord);
+        }
       }
+
     } else {
       alert("❌ 歸還失敗：" + (result.message || ""));
       if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
     }
+
   } catch (err) {
     alert("⚠️ 無法連線伺服器");
     console.error(err);
@@ -307,6 +319,110 @@ async function handleReturn(record) {
     }
   }
 }
+
+
+// async function handleReturn(record) {
+//   if (!confirm("確定要標記為歸還嗎？")) return;
+
+//   const tableBody = document.querySelector("#recordTable tbody");
+//   const rows = tableBody.querySelectorAll("tr");
+
+//   let targetRow = null;
+//   let returnBtn = null;
+//   for (let tr of rows) {
+//     const rUser = tr.children[0].innerText;
+//     const rItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim(); // 清除 icon
+//     const rTime = tr.children[2].innerText;
+
+//     if (rUser === record.借用人 && rItem === (record.車號 || record.物品 || "-") && rTime === formatDate(record.借用時間)) {
+//       targetRow = tr;
+//       returnBtn = Array.from(tr.querySelectorAll("button")).find(btn => btn.innerText.includes("🔁"));
+//       break;
+//     }
+//   }
+
+//   if (returnBtn) {
+//     returnBtn.disabled = true;
+//     returnBtn.innerText = "⏳ 處理中...";
+//   }
+//   if (targetRow) {
+//     targetRow.style.backgroundColor = "#d0f0ff";
+//   }
+
+//   try {
+//     const endpoint = record.type === '手機'
+//       ? "https://key-loan-api-978908472762.asia-east1.run.app/phone/return"
+//       : "https://key-loan-api-978908472762.asia-east1.run.app/borrow/return";
+
+//     const payload = record.type === '手機'
+//       ? {
+//           借用人: record.借用人,
+//           物品: record.物品,
+//           借用時間: record.借用時間
+//         }
+//       : {
+//           借用人: record.借用人,
+//           車號: record.車號,
+//           借用時間: record.借用時間
+//         };
+
+//     const res = await fetch(endpoint, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${token}`
+//       },
+//       body: JSON.stringify(payload)
+//     });
+
+//     const result = await res.json();
+
+//     if (result.success) {
+//       alert("✅ 已成功標記為歸還");
+
+//       // ⏬ 重新抓最新資料（單筆）
+//       const updatedRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
+//         headers: { Authorization: `Bearer ${token}` }
+//       });
+//       const updatedData = await updatedRes.json();
+
+//       const updatedRecord = updatedData.find(r =>
+//         r.借用人 === record.借用人 &&
+//         r.借用時間 === record.借用時間 &&
+//         ((record.type === '手機' && r.物品 === record.物品) ||
+//          (record.type !== '手機' && r.車號 === record.車號))
+//       );
+
+//       if (updatedRecord) {
+//         if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
+
+//         const idx = allRecords.findIndex(r =>
+//           r.借用人 === updatedRecord.借用人 &&
+//           r.借用時間 === updatedRecord.借用時間 &&
+//           ((record.type === '手機' && r.物品 === updatedRecord.物品) ||
+//            (record.type !== '手機' && r.車號 === updatedRecord.車號))
+//         );
+
+//         if (idx !== -1) allRecords[idx] = updatedRecord;
+//         else allRecords.push(updatedRecord);
+
+//         updateTableRow(updatedRecord);
+//       }
+//     } else {
+//       alert("❌ 歸還失敗：" + (result.message || ""));
+//       if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+//     }
+//   } catch (err) {
+//     alert("⚠️ 無法連線伺服器");
+//     console.error(err);
+//     if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+//   } finally {
+//     if (returnBtn) {
+//       returnBtn.disabled = false;
+//       returnBtn.innerText = "🔁 歸還";
+//     }
+//   }
+// }
 
 
 
