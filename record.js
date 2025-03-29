@@ -198,13 +198,6 @@ function renderRow(record, tbody) {
   return tr; // ✅ 回傳 <tr> 供 update/append 使用
 }
 
-function toggleHistory() {
-  const table = document.getElementById("historyTable");
-  if (!table) return;
-
-  const isHidden = table.style.display === "none";
-  table.style.display = isHidden ? "table" : "none";
-}
 
 
 // 初始化
