@@ -169,7 +169,7 @@ body {
 }
 
 /* ✅ 手機專用調整 */
-@media (max-width: 760px) {
+@media (max-width: 600px) {
   body {
     font-size: 2.25rem;
     padding: 10vh 7vw; /* ✅ 加大上下 padding */
