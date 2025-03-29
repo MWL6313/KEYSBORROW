@@ -329,6 +329,6 @@ function showToast(message, icon = "✅") {
     toast.style.opacity = "0";
     toast.style.transform = "translateY(-20px)";
     setTimeout(() => toast.remove(), 800);
-  }, 2500);
+  }, 5000);
 }
 
