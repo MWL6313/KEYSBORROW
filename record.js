@@ -47,7 +47,7 @@ async function loadRecords() {
     }
 
     currentRole = data2.role || "";
-    document.getElementById("currentUserName").innerText = data2.user?.id || "(未知)";
+    document.getElementById("currentUserName").innerText = `${data2.user?.name || data2.user?.id || "(未知)"}（${currentRole}）`;
     filterAndRender();
   } catch (err) {
     console.error("載入失敗", err);
