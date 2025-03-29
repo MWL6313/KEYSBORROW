@@ -244,8 +244,18 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
 
     if (success) {
       const successList = [];
-      if (carNumber) successList.push(`🚗 車號：${carNumber}`);
-      if (phoneItem) successList.push(`📱 手機：${phoneItem}`);
+      if (carNumber) {
+        successList.push(`🚗 車號：${carNumber}`);
+      } else {
+        successList.push(`🚗 車號：未借用`);
+      }
+      
+      if (phoneItem && phoneItem.trim() !== "") {
+        successList.push(`📱 手機：${phoneItem}`);
+      } else {
+        successList.push(`📱 手機：未借用`);
+      }
+
 
       borrowMsg.style.color = "green";
       borrowMsg.innerHTML = `
