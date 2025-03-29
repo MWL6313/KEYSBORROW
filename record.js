@@ -266,7 +266,8 @@ async function handleReturn(record) {
 
     if (result.success) {
       // alert("✅ 已成功標記為歸還");
-      showSingleChange("✅ 已成功標記為歸還");
+      // showSingleChange("✅ 已成功標記為歸還");
+      showToast("✅ 已成功標記為歸還", "success");
 
       // 📌 分流處理
       let updatedRecord = null;
@@ -750,31 +751,62 @@ async function checkLatestChanges() {
 setInterval(checkLatestChanges, 10 * 1000); // 每 10 秒檢查一次
 
 
-function showSingleChange(message) {
-  const container = document.getElementById("latestChanges");
-  const changesList = document.getElementById("changesList");
+export function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  toast.innerText = message;
 
-  // 清空所有舊訊息
-  changesList.innerHTML = "";
+  // 色彩分類
+  const colors = {
+    success: "#4caf50",
+    error: "#f44336",
+    info: "#2196f3",
+    warning: "#ff9800"
+  };
+  toast.style.borderLeftColor = colors[type] || "#333";
 
-  const li = document.createElement("li");
-  li.textContent = message;
-  li.style.padding = "5px 0";
-  li.style.opacity = "1";
-  li.style.transition = "opacity 0.5s ease";
-
-  changesList.appendChild(li);
-  container.style.display = "block";
+  // 顯示動畫
+  toast.style.display = "block";
+  requestAnimationFrame(() => {
+    toast.style.opacity = "1";
+    toast.style.transform = "translateY(0)";
+  });
 
   // 自動淡出
   setTimeout(() => {
-    li.style.opacity = "0";
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(30px)";
     setTimeout(() => {
-      changesList.innerHTML = "";
-      container.style.display = "none";
-    }, 500); // 動畫完成後移除
-  }, 3000); // 3秒後開始淡出
+      toast.style.display = "none";
+    }, 500);
+  }, 5000);
 }
+
+
+// function showSingleChange(message) {
+//   const container = document.getElementById("latestChanges");
+//   const changesList = document.getElementById("changesList");
+
+//   // 清空所有舊訊息
+//   changesList.innerHTML = "";
+
+//   const li = document.createElement("li");
+//   li.textContent = message;
+//   li.style.padding = "5px 0";
+//   li.style.opacity = "1";
+//   li.style.transition = "opacity 0.5s ease";
+
+//   changesList.appendChild(li);
+//   container.style.display = "block";
+
+//   // 自動淡出
+//   setTimeout(() => {
+//     li.style.opacity = "0";
+//     setTimeout(() => {
+//       changesList.innerHTML = "";
+//       container.style.display = "none";
+//     }, 500); // 動畫完成後移除
+//   }, 3000); // 3秒後開始淡出
+// }
 
 
 function showChange(message) {
