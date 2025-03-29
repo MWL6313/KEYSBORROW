@@ -765,7 +765,8 @@ function appendTableRow(record) {
   const tableBody = document.querySelector("#recordTable tbody");
   const tr = document.createElement("tr");
 
-  // ✅ 背景色條件判斷
+  tr.dataset.borrowTime = record.借用時間; // ✅ 存入原始時間字串供比對
+
   const now = new Date();
   const borrowTime = new Date(record.借用時間);
   const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
@@ -775,15 +776,14 @@ function appendTableRow(record) {
 
   if (record.type !== '手機') {
     if (noInspection && timeout && !hasAction) {
-      tr.style.backgroundColor = "#ffdddd"; // 🔴 淺紅背景
+      tr.style.backgroundColor = "#ffdddd";
     } else if (noInspection && timeout && hasAction) {
-      tr.style.backgroundColor = "#eeeeee"; // ⚫ 灰色背景
+      tr.style.backgroundColor = "#eeeeee";
     }
   }
 
   const isPhone = record.type === '手機';
   const typeIcon = isPhone ? "📱" : "🚗";
-
   const cols = isPhone
     ? [
         record.借用人,
@@ -810,10 +810,8 @@ function appendTableRow(record) {
     tr.appendChild(td);
   });
 
-  // ✅ 操作按鈕欄位
   const actionTd = document.createElement("td");
 
-  // 歸還按鈕
   if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
     const returnBtn = document.createElement("button");
     returnBtn.innerText = "🔁 歸還";
@@ -821,7 +819,6 @@ function appendTableRow(record) {
     actionTd.appendChild(returnBtn);
   }
 
-  // 刪除按鈕
   if (currentRole === "admin") {
     const deleteBtn = document.createElement("button");
     deleteBtn.innerText = "⛔ 刪除";
@@ -829,7 +826,6 @@ function appendTableRow(record) {
     actionTd.appendChild(deleteBtn);
   }
 
-  // 編輯異常按鈕（鑰匙限定）
   if (
     record.type !== '手機' &&
     (currentRole === 'admin' || currentRole === 'manager') &&
@@ -846,3 +842,4 @@ function appendTableRow(record) {
   tr.appendChild(actionTd);
   tableBody.appendChild(tr);
 }
+
