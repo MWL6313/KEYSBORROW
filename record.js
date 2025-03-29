@@ -560,7 +560,7 @@ function updateTableRow(record) {
   for (let tr of rows) {
     if (
       tr.children[0].innerText === record.借用人 &&
-      tr.children[1].innerText === record.車號 &&
+      tr.children[1].innerText === (record.車號 || record.物品 || "-") &&
       tr.children[2].innerText === formatDate(record.借用時間)
     ) {
       // ✅ 更新背景色判斷邏輯
