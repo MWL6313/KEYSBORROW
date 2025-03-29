@@ -283,25 +283,29 @@
       document.getElementById("tabHistory").classList.add("active");
     });
   </script>
-  <!-- ✅ Toast 提示 -->
+  <!-- ✅ Toast 提示（中間版） -->
   <div id="toast" style="
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
     background: #ffffff;
     border-left: 6px solid #4caf50;
-    padding: 14px 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    border-radius: 10px;
-    font-size: 16px;
+    padding: 16px 24px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    font-size: 17px;
     font-weight: 500;
     color: #333;
     display: none;
     z-index: 9999;
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: all 0.4s ease;
+    max-width: 80%;
+    text-align: center;
+    white-space: pre-line;
   "></div>
+
 
 </body>
 </html>
