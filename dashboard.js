@@ -502,7 +502,7 @@ function resetIdleTimer() {
       icon: "info",
       title: "自動登出",
       text: "您已閒置 5 分鐘，系統將自動登出。",
-      timer: 3000,
+      timer: 60000,
       timerProgressBar: true,
       didClose: () => {
         localStorage.removeItem("authToken");
