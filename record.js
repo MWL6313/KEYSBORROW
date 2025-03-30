@@ -749,7 +749,7 @@ async function checkLatestChanges() {
 }
 
 
-setInterval(checkLatestChanges, 20 * 1000); // 每 20 秒檢查一次
+setInterval(checkLatestChanges, 30 * 1000); // 每 30 秒檢查一次
 
 
 export function showToast(message, type = "success") {
