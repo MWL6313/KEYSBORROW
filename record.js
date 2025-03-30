@@ -190,14 +190,15 @@ function renderRow(record, tbody) {
     deleteBtn.onclick = () => handleDelete(record);
     actionTd.appendChild(deleteBtn);
   }
-
+  
   if (
     record.type !== '手機' &&
     (currentRole === 'admin' || currentRole === 'manager') &&
-    !record.巡檢結束時間 &&
-    timeout &&
-    !hasAction
-  ) {
+    // !record.巡檢結束時間 &&
+    // timeout &&
+    // !hasAction
+    ((noInspection && timeout && !hasAction) || (incomplete && timeout && !hasAction))
+    ) {
     const editBtn = document.createElement("button");
     editBtn.innerText = "📝 編輯";
     editBtn.onclick = () => handleEditAbnormal(record);
