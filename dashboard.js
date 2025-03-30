@@ -491,3 +491,32 @@ function showToast(message, icon = "✅") {
   }, 5000);
 }
 
+// ✅ 閒置登出邏輯（5 分鐘）
+let idleTimer;
+const idleLimit = 5 * 60 * 1000; // 5 分鐘
+
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    Swal.fire({
+      icon: "info",
+      title: "自動登出",
+      text: "您已閒置 5 分鐘，系統將自動登出。",
+      timer: 3000,
+      timerProgressBar: true,
+      didClose: () => {
+        localStorage.removeItem("authToken");
+        location.href = "index.html";
+      }
+    });
+  }, idleLimit);
+}
+
+// ✅ 監聽常見操作以重置計時器
+["click", "mousemove", "keydown", "scroll", "touchstart"].forEach(evt => {
+  document.addEventListener(evt, resetIdleTimer);
+});
+
+resetIdleTimer(); // 初始啟動
+
+
