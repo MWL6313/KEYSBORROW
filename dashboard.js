@@ -316,7 +316,7 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
           clearInterval(timer);
           submitBtn.disabled = false;
           submitBtn.innerText = "送出申請";
-          borrowMsg.innerText = "";
+          // borrowMsg.innerText = "";
         }
       }, 1000);
     } else {
