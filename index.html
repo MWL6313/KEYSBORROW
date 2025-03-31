@@ -12,9 +12,11 @@
     <h2>借用系統</h2>
     <p>帳號登入</p>
 
-    <input type="text" id="account" placeholder="請輸入帳號" />
-    <input type="password" id="password" placeholder="請輸入密碼" />
+    <!-- 將帳號輸入欄改為 datalist -->
+    <input type="text" id="account" list="accountList" placeholder="請輸入或選擇帳號" />
+    <datalist id="accountList"></datalist>
 
+    <input type="password" id="password" placeholder="請輸入密碼(GPS登入的4碼數字)" />
     <button id="loginBtn">登入</button>
     <div id="loading" style="display:none; margin-top:10px;">🔄 登入中，請稍候...</div>
     <p id="msg" style="color:red;"></p>
