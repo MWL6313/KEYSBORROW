@@ -48,11 +48,12 @@ loginBtn.addEventListener("click", async () => {
   }
 });
 
-
-// 初始化帳號下拉選單
+// 初始化帳號下拉選單，使用 auth.js 中的 dic 資料
 const accountList = document.getElementById("accountList");
-Object.keys(localAccounts).forEach((acc) => {
+Object.keys(dic).forEach((acc) => {
   const option = document.createElement("option");
   option.value = acc;
+  // 若需要顯示 dic 的對應說明，可設定 textContent
+  option.textContent = dic[acc];
   accountList.appendChild(option);
 });
