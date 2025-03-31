@@ -352,9 +352,9 @@ function showToast(message, icon = "✅") {
   }, 5000);
 }
 
-// ✅ 閒置登出邏輯（5 分鐘）
+// ✅ 閒置登出邏輯（60 分鐘）
 let idleTimer;
-const idleLimit = 5 * 60 * 1000; // 5 分鐘
+const idleLimit = 60 * 60 * 1000; // 60 分鐘
 
 function resetIdleTimer() {
   clearTimeout(idleTimer);
@@ -362,7 +362,7 @@ function resetIdleTimer() {
     Swal.fire({
       icon: "info",
       title: "自動登出",
-      text: "您已閒置 5 分鐘，系統將自動登出。",
+      text: "您已閒置 60 分鐘，系統將自動登出。",
       timer: 60000,
       timerProgressBar: true,
       didClose: () => {
