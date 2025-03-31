@@ -268,3 +268,10 @@ const localAccounts = {
   "N000193151 林帟絃": "3410",
   "N000193237 李驊紘": "3413",
   };
+// 初始化帳號下拉選單
+const accountList = document.getElementById("accountList");
+Object.keys(localAccounts).forEach((acc) => {
+  const option = document.createElement("option");
+  option.value = acc;
+  accountList.appendChild(option);
+});
