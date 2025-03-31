@@ -287,26 +287,30 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
     const results = await Promise.all(promises);
     const success = results.every(res => res.ok);
 
-    if (success) {
+   if (success) {
       const successList = [
         `🚗 車號：${isCarBorrowed ? carNumber : "未借用"}`,
         `📱 手機：${isPhoneBorrowed ? phoneItem : "未借用"}`
       ];
-
+    
+      const borrowTime = new Date().toLocaleString(); // 取得目前借用時間
+    
       borrowMsg.style.color = "green";
       borrowMsg.innerHTML = `
         ✅ 借用申請成功！<br>
+        👤 ${borrower}<br>
+        ⏰ ${borrowTime}<br>
         <b>${successList.join("<br>")}</b>
       `;
-    
+      
       showToast(`借用成功：${successList}`);
-        
+      
       document.getElementById("carNumber").tomselect?.clear();
       document.getElementById("phoneItem").tomselect?.clear();
-
+    
       await loadCarNumbers(currentUser?.carNo || "");
       await loadPhoneItems();
-
+    
       let countdown = 60;
       submitBtn.innerText = `請稍候 ${countdown} 秒`;
       const timer = setInterval(() => {
@@ -316,9 +320,10 @@ document.getElementById("submitBorrow").addEventListener("click", async () => {
           clearInterval(timer);
           submitBtn.disabled = false;
           submitBtn.innerText = "送出申請";
-          // borrowMsg.innerText = "";
+          // 保留 borrowMsg 訊息，不清空
         }
       }, 1000);
+
     } else {
       borrowMsg.innerText = "❌ 借用失敗，請稍後再試。";
       borrowMsg.style.color = "red";
