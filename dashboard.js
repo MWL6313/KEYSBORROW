@@ -1,12 +1,23 @@
-// dashboard.js
-
 let currentUser = null;
 const token = localStorage.getItem("authToken");
 
-// 驗證 Token
 if (!token) {
   location.href = "index.html";
+} else if (token.startsWith("local-")) {
+  // 白名單登入 (前端驗證)
+  const account = token.substring("local-".length);
+  // 這裡我們沒有額外資料，所以只設定使用者名稱（可根據需要補上預設車號等資訊）
+  currentUser = { name: account, carNo: "" };
+  document.getElementById("welcome").innerText = `Hi, ${account}`;
+  document.getElementById("borrower").value = account;
+  document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
+
+  // 由於白名單帳號可能沒有預設車號，這裡傳空字串
+  loadCarNumbers("").then(() => {
+    loadPhoneItems();
+  });
 } else {
+  // 後端驗證 Token (例如 admin/manager)
   fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -18,10 +29,7 @@ if (!token) {
         currentUser = data.user;
         document.getElementById("welcome").innerText = `Hi, ${data.user.name}`;
         document.getElementById("borrower").value = data.user.name;
-    
-        // 顯示目前時間
         document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
-    
         await loadCarNumbers(data.user.carNo);
         await loadPhoneItems();
       } else {
@@ -29,8 +37,6 @@ if (!token) {
         location.href = "index.html";
       }
     })
-
-
     .catch(err => {
       console.error("Token validation error:", err);
       localStorage.removeItem("authToken");
