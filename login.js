@@ -77,6 +77,8 @@ new TomSelect("#account", {
       this.clear(true); // 清除所有已選項目，但保留 options 不變
       this.addItem(last);
     }
+  // 當選擇後自動將焦點移到密碼欄
+  document.getElementById("password").focus();
   }
 });
 
