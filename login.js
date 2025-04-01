@@ -51,15 +51,16 @@ loginBtn.addEventListener("click", async () => {
 });
 
 // 準備選項資料：dic 為 auth.js 中定義的全域變數
+// 準備選項資料：dic 為 auth.js 中定義的全域變數
 const accountOptions = Object.keys(dic).map(acc => ({
   value: acc,
-  text: dic[acc]
+  text: `${acc} (提示: ${dic[acc]})`
 }));
 
-// 初始化 Tom Select
+// 初始化 Tom Select，讓使用者可關鍵字搜尋並選擇帳號（帳號為 dic 的 key）
 new TomSelect("#account", {
   options: accountOptions,
-  maxOptions: 100,
+  maxOptions: 300,
   searchField: ["value", "text"],
   placeholder: "請輸入或選擇帳號",
   create: false
