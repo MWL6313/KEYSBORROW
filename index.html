@@ -6,16 +6,15 @@
   <title>借用系統 - 登入</title>
   <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png">
   <link rel="stylesheet" href="style.css">
+  <!-- 引入 Tom Select CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
 </head>
 <body>
   <div class="login-card">
     <h2>借用系統</h2>
     <p>帳號登入</p>
-
-    <!-- 將帳號輸入欄改為 datalist -->
-    <input type="text" id="account" list="accountList" placeholder="請輸入或選擇帳號" />
-    <datalist id="accountList"></datalist>
-
+    <!-- 使用 input，不再使用 datalist -->
+    <input type="text" id="account" placeholder="請輸入或選擇帳號" />
     <input type="password" id="password" placeholder="請輸入密碼(GPS登入的4碼數字)" />
     <button id="loginBtn">登入</button>
     <div id="loading" style="display:none; margin-top:10px;">🔄 登入中，請稍候...</div>
@@ -24,6 +23,8 @@
 
   <!-- 先引入 auth.js 確保 dic 全域變數存在 -->
   <script src="auth.js"></script>
+  <!-- 引入 Tom Select JS -->
+  <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
   <script type="module" src="login.js"></script>
 </body>
 </html>
