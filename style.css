@@ -234,7 +234,10 @@ body {
   align-items: center;
 }
 
-
+html body .ts-wrapper.tomselect .ts-dropdown,
+html body .ts-wrapper.tomselect .ts-dropdown .option {
+  font-size: 2rem !important;
+}
 
 
 
