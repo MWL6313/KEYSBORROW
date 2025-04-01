@@ -51,9 +51,9 @@ body {
 }
 
 #password {
-  padding: 1.2rem;         /* ✅ 原本可能是 2.5rem，這樣會比較適中 */
+  padding: 0.5rem;         /* ✅ 原本可能是 2.5rem，這樣會比較適中 */
   font-size: 1rem;       /* ✅ 比帳號欄稍小，但還是清楚可輸入 */
-  margin-bottom: 1rem;   /* ✅ 與下方按鈕保有空間 */
+  margin-bottom: 0.5rem;   /* ✅ 與下方按鈕保有空間 */
 }
 
 .login-card button {
@@ -65,6 +65,9 @@ body {
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transition: background 0.3s ease;
   height: 2rem;
 }
