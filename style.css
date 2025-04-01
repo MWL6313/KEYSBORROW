@@ -208,6 +208,21 @@ body {
   font-size: 2rem;
 }
 
+/* 強化 Tom Select 內部 input 的樣式 */
+.tomselect .ts-control,
+.tomselect .ts-control input {
+  font-size: 2rem !important;
+  padding: 2.5rem !important;
+  height: auto !important;
+}
+
+/* 強化選取後顯示區的 item */
+.tomselect .ts-control .item {
+  font-size: 2rem !important;
+  padding: 0.5rem 1rem;
+}
+
+
 /* ✅ 手機專用調整 */
 @media (max-width: 768px) {
   body {
