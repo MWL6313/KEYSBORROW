@@ -76,8 +76,8 @@ body {
 .login-card .links {
   display: flex;
   justify-content: space-between;
-  margin-top: 1rem;
-  font-size: 1rem;
+/*   margin-top: 1rem;*/
+  font-size: 1rem; 
 }
 
 .login-card .links a {
