@@ -79,3 +79,6 @@ new TomSelect("#account", {
     }
   }
 });
+
+// 清除可能殘留的選項（不記錄之前的資料）
+ts.clear();
