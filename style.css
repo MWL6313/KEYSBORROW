@@ -171,31 +171,28 @@ body {
   100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,0,0.3); }
 }
 
-/* ✅ Tom Select 控制項：初始、選擇中、已選擇通通一致 */
-.ts-wrapper.single .ts-control,
-.ts-wrapper.single.input-active .ts-control,
-.ts-wrapper.single.has-items .ts-control {
-  width: 100%;
-  padding: 2.5rem !important;
-  font-size: 1.5rem !important;
-  border-radius: 10px !important;
-  border: 1px solid #ccc !important;
-  background-color: #eaf1ff !important;
-  color: #333;
-  box-sizing: border-box;
-  min-height: 5.5rem !important;
-  height: auto !important;
-  line-height: 1.5;
-}
-
-/* ✅ Tom Select 包裹容器，加上底部間距 */
+/* ✅ 帳號欄容器的下方間距 */
 .login-card .ts-wrapper {
   margin-bottom: 2.8rem !important;
 }
 
-/* ✅ 選擇後顯示的項目字級 */
+/* ✅ 通用樣式：控制輸入框尺寸與風格 */
+.ts-wrapper.single .ts-control {
+  width: 100%;
+  padding: 2.5rem !important;
+  font-size: 1.6rem !important;
+  border-radius: 10px !important;
+  border: 1px solid #ccc !important;
+  background-color: #eaf1ff !important;
+  box-sizing: border-box;
+  color: #333 !important;
+  min-height: 6rem !important;
+  line-height: 1.5;
+}
+
+/* ✅ 選擇後的項目字體也保持一致 */
 .ts-control .item {
-  font-size: 1.5rem !important;
+  font-size: 1.6rem !important;
 }
 
 /* ✅ 下拉選單樣式 */
@@ -203,14 +200,14 @@ body {
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   background-color: #fff;
 }
 
-/* ✅ 下拉選單每個選項 */
+/* ✅ 下拉選單中的選項 */
 .tomselect .ts-dropdown .option {
-  padding: 1rem;
-  font-size: 1.5rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.6rem;
   cursor: pointer;
 }
 
