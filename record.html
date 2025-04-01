@@ -174,6 +174,26 @@
     .modal-close:focus {
       color: #000;
     }
+    
+    /* ✅ 固定比例 iframe 容器（16:9） */
+    .responsive-iframe {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 比例 */
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* ✅ 讓 iframe 充滿整個容器 */
+    .responsive-iframe iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
   </style>
 </head>
 <body>
@@ -277,14 +297,20 @@
     </div>
   </div>
 
-  <!-- 新增 Google Sheets 彈窗 -->
+  <!-- 🆕 固定比例 iframe 區塊 -->
   <div id="sheetModal" class="modal">
     <div class="modal-content">
       <span class="modal-close">&times;</span>
-      <!-- 將 YOUR_GOOGLE_SHEET_EMBED_URL 換成您的嵌入連結 -->
-      <iframe id="sheetIframe" src="https://docs.google.com/spreadsheets/d/1W69cmG7xEqp2vGAhpM435_Sb8_Si5CUh4RWVm2tsbLg/edit?gid=0#gid=0" width="100%" height="600" frameborder="0"></iframe>
+      <!-- 固定比例容器，維持 16:9 -->
+      <div class="responsive-iframe">
+        <iframe id="sheetIframe"
+                src="https://docs.google.com/spreadsheets/d/1W69cmG7xEqp2vGAhpM435_Sb8_Si5CUh4RWVm2tsbLg/edit?gid=0#gid=0"
+                frameborder="0"
+                allowfullscreen></iframe>
+      </div>
     </div>
   </div>
+
 
   <script type="module" src="record.js"></script>
   <script>
