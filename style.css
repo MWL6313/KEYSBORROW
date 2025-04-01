@@ -302,11 +302,11 @@ body {
  
    .login-card h2 {
      font-size: 3.6rem;
-     margin-bottom: 2.4rem;   /* ✅ 標題與下方文字的間距 */
+     margin-bottom: 0.5rem;   /* ✅ 標題與下方文字的間距 */
    }
  
    .login-card p {
-     margin-bottom: 3rem;     /* ✅ 提示文字與輸入框距離 */
+     margin-bottom: 0.5rem;     /* ✅ 提示文字與輸入框距離 */
    }
  
    .login-card input {
