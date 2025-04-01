@@ -1,3 +1,5 @@
+import TomSelect from "tom-select";  // 若使用 module 載入，否則全域 TomSelect 可直接使用
+
 const loginBtn = document.getElementById("loginBtn");
 const msg = document.getElementById("msg");
 const loading = document.getElementById("loading");
@@ -48,12 +50,17 @@ loginBtn.addEventListener("click", async () => {
   }
 });
 
-// 初始化帳號下拉選單，使用 auth.js 中的 dic 資料
-const accountList = document.getElementById("accountList");
-Object.keys(dic).forEach((acc) => {
-  const option = document.createElement("option");
-  option.value = acc;
-  // 若需要顯示 dic 的對應說明，可設定 textContent
-  option.textContent = dic[acc];
-  accountList.appendChild(option);
+// 準備選項資料：dic 為 auth.js 中定義的全域變數
+const accountOptions = Object.keys(dic).map(acc => ({
+  value: acc,
+  text: dic[acc]
+}));
+
+// 初始化 Tom Select
+new TomSelect("#account", {
+  options: accountOptions,
+  maxOptions: 100,
+  searchField: ["value", "text"],
+  placeholder: "請輸入或選擇帳號",
+  create: false
 });
