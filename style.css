@@ -45,7 +45,12 @@ body {
   background-color: #eaf1ff;
   font-size: 2rem;
   box-sizing: border-box;  /* ✅ 加上這行就能避免寬度爆出 */
+}
 
+#password {
+  padding: 1.2rem;         /* ✅ 原本可能是 2.5rem，這樣會比較適中 */
+  font-size: 1.6rem;       /* ✅ 比帳號欄稍小，但還是清楚可輸入 */
+  margin-bottom: 2.5rem;   /* ✅ 與下方按鈕保有空間 */
 }
 
 .login-card button {
