@@ -198,6 +198,14 @@ body {
   background-color: #eaf1ff;
 }
 
+/* 調整 TomSelect 包裹容器與下方密碼欄的間距 */
+.login-card .ts-wrapper {
+  margin-bottom: 2.8rem;  /* 可依實際畫面微調 */
+}
+.login-card .ts-wrapper {
+  margin-bottom: 2.8rem;
+  font-size: 1.3rem;
+}
 
 /* ✅ 手機專用調整 */
 @media (max-width: 768px) {
