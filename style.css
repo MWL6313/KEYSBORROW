@@ -1,3 +1,6 @@
+html {
+  font-size: 1.5em; /* ✅ 整體放大 */
+}
 /* ✅ 全域設定 */
 body {
   font-family: "Noto Sans TC", "Segoe UI", sans-serif;
