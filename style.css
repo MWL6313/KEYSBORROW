@@ -241,13 +241,10 @@ body {
 .ts-control,
 .ts-control .item,
 .ts-control input {
-  font-size: 1rem !important;
+  font-size: 1.5rem !important;
 }
 
-/* ✅ 下拉選單完整調整（高權重版）*/
-.ts-dropdown-content,{
-  font-size: 1.1rem !important;
-}
+
 
 
 /* ✅ 手機專用調整 */
