@@ -201,7 +201,7 @@ body {
 
 /* ✅ 選擇後顯示的文字 */
 .ts-control .item {
-  font-size: 1.5rem !important;
+  font-size: 2rem !important;
 }
 
 /* ✅ 下拉選單樣式 */
@@ -238,6 +238,18 @@ body {
   min-height: 2.5rem !important;
   display: flex;
   align-items: center;
+}
+
+/* ✅ 下拉選單整體字體大小 */
+.tomselect .ts-dropdown {
+  font-size: 2rem !important;  /* 調大整體下拉字體 */
+}
+
+/* ✅ 單一選項字體大小 */
+.tomselect .ts-dropdown .option {
+  font-size: 2rem !important;  /* ✅ 明確定義選項文字大小 */
+  padding: 1.2rem 1.5rem;
+  cursor: pointer;
 }
 
 
