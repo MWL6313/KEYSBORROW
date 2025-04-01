@@ -61,6 +61,7 @@ const accountOptions = Object.keys(dic).map(acc => ({
 new TomSelect("#account", {
   options: accountOptions, // 固定清單資料，格式 { value, text }
   maxOptions: 300,
+  maxItem: 1, //只允許單選
   searchField: ["value", "text"],
   placeholder: "請輸入或選擇帳號",
   create: function(input, callback) {
