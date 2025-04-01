@@ -94,13 +94,13 @@ body {
   max-width: 1100px;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .card {
   background: #fff;
   border-left: 8px solid #a73232;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 16px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.08);
   transition: transform 0.2s ease;
@@ -121,7 +121,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem 2rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin-bottom: 1rem;
 }
 
