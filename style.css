@@ -180,7 +180,7 @@ body {
 /* ✅ 下拉輸入框樣式（未選擇前/選擇後統一） */
 .ts-wrapper.single .ts-control {
   width: 100%;
-  padding: 2.5rem !important;
+  padding: 1rem !important;
   font-size: 1.5rem !important;
   border-radius: 10px !important;
   border: 1px solid #ccc !important;
@@ -222,7 +222,7 @@ body {
 
 /* ✅ 調整 TomSelect 內部 input 高度與樣式 */
 .ts-wrapper.single input[type="text"] {
-  height: 5.5rem !important;
+  height: 2.5rem !important;
   font-size: 1.5rem !important;
   padding: 0 1rem !important;
   box-sizing: border-box;
@@ -230,7 +230,7 @@ body {
 
 /* ✅ 確保外層控制容器也有一致樣式 */
 .ts-wrapper.single .ts-control {
-  min-height: 5.5rem !important;
+  min-height: 2.5rem !important;
   display: flex;
   align-items: center;
 }
