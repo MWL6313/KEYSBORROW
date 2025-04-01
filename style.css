@@ -301,8 +301,8 @@ body {
    }
  
    .login-card h2 {
-     font-size: 2.5rem;
-     margin-bottom: 0.5rem;   /* ✅ 標題與下方文字的間距 */
+     font-size: 2rem;
+     margin-bottom: 0.3rem;   /* ✅ 標題與下方文字的間距 */
    }
  
    .login-card p {
@@ -311,12 +311,12 @@ body {
  
    .login-card input {
      margin-bottom: 2.8rem;   /* ✅ 每個 input 之間的距離 */
-     padding: 2.5rem;
+     padding: 2rem;
    }
  
    .login-card button {
-     padding: 2.6rem;
-     margin-top: 2rem;        /* ✅ 按鈕與 input 間距 */
+     padding: 0.5rem;
+     margin-top: 1rem;        /* ✅ 按鈕與 input 間距 */
    }
  
    .login-card .links {
