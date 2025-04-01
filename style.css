@@ -209,8 +209,10 @@ body {
 }
 
 /* ✅ 確保帳號欄位真正套用大字與大高度樣式 */
-.ts-wrapper.single .ts-control {
+.ts-wrapper.single.input-active .ts-control,
+.ts-wrapper.single.has-items .ts-control {
   padding: 2.5rem !important;
+  min-height: 5.5rem !important;  /* 可依需求微調，例如 6rem */
   font-size: 1.5rem !important;
   background-color: #eaf1ff !important;
   border-radius: 10px !important;
