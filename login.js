@@ -14,7 +14,8 @@ window.addEventListener("load", () => {
 // ✅ 建立帳號選單資料：dic 來自 auth.js
 const accountOptions = Object.keys(dic).map(acc => ({
   value: acc,
-  text: `${acc} (提示: ${dic[acc]})`
+  // text: `${acc} (提示: ${dic[acc]})`
+  text: `${acc} (${dic[acc]})`
 }));
 
 // ✅ 初始化 TomSelect，並保留實例到 window.ts
