@@ -39,6 +39,7 @@ const ts = new TomSelect("#account", {
     } else {
       callback({ value: input, text: input });
     }
+  },
 
   
   persist: false,
