@@ -13,9 +13,9 @@
   <div class="login-card">
     <h2>借用系統</h2>
     <p>帳號登入</p>
-    <!-- 使用 input，不再使用 datalist -->
-    <input type="text" id="account" placeholder="請輸入或選擇帳號" />
-    <input type="password" id="password" placeholder="請輸入密碼(GPS登入的4碼數字)" />
+    <!-- 在 input 上加上 autocomplete="off" -->
+    <input type="text" id="account" placeholder="請輸入或選擇帳號" autocomplete="off" />
+    <input type="password" id="password" placeholder="請輸入密碼(GPS登入的4碼數字)" autocomplete="off" />
     <button id="loginBtn">登入</button>
     <div id="loading" style="display:none; margin-top:10px;">🔄 登入中，請稍候...</div>
     <p id="msg" style="color:red;"></p>
