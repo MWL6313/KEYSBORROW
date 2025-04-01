@@ -170,6 +170,45 @@ body {
   100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,0,0.3); }
 }
 
+/* 自訂 Tom Select 控制項樣式，讓它與 .login-card input 風格一致 */
+.tomselect,
+.tomselect .ts-control {
+  width: 100%;
+  padding: 2.5rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #eaf1ff;
+  font-size: 1.1rem;
+  box-sizing: border-box;
+  color: #333;
+}
+
+/* 下拉選單選項的樣式 */
+.tomselect .ts-dropdown {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  font-size: 1.1rem;
+  background-color: #fff;
+}
+
+/* 每個選項的樣式 */
+.tomselect .ts-dropdown .option {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+/* 當滑鼠懸停時的效果 */
+.tomselect .ts-dropdown .option:hover {
+  background-color: #eaf1ff;
+}
+
+/* 若有搜尋框，設定其樣式 */
+.tomselect .ts-control .item {
+  margin-right: 0.5rem;
+}
+
+
 /* ✅ 手機專用調整 */
 @media (max-width: 768px) {
   body {
