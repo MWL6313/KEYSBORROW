@@ -38,12 +38,12 @@ body {
 
 .login-card input {
   width: 100%;
-  padding: 2.5rem;
+  padding: 2rem;
   margin-bottom: 2.5rem;
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #eaf1ff;
-  font-size: 1.5rem;
+  font-size: 2rem;
   box-sizing: border-box;  /* ✅ 加上這行就能避免寬度爆出 */
 
 }
