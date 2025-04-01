@@ -25,9 +25,22 @@ const ts = new TomSelect("#account", {
   maxItems: 1,
   searchField: ["value", "text"],
   placeholder: "選擇帳號",
+  // create: (input, callback) => {
+  //   callback({ value: input, text: input });
+  // },
   create: (input, callback) => {
-    callback({ value: input, text: input });
-  },
+    if (!whitelist.includes(input)) {
+      // 顯示確認彈窗（你可換成 SweetAlert）
+      if (confirm(`⚠ 帳號 "${input}" 不在預設清單中，是否要新增？`)) {
+        callback({ value: input, text: input });
+      } else {
+        callback(null); // 取消新增
+      }
+    } else {
+      callback({ value: input, text: input });
+    }
+
+  
   persist: false,
   onItemAdd: () => {
     document.getElementById("password").focus(); // 選擇後跳至密碼
