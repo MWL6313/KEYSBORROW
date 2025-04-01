@@ -29,19 +29,19 @@ const ts = new TomSelect("#account", {
   //   callback({ value: input, text: input });
   // },
   create: (input, callback) => {
-    if (!whitelist.includes(input)) {
-      // 顯示確認彈窗（你可換成 SweetAlert）
-      if (confirm(`⚠ 帳號 "${input}" 不在預設清單中，是否要新增？`)) {
-        callback({ value: input, text: input });
-      } else {
-        callback(null); // 取消新增
-      }
-    } else {
+  const whitelist = Object.keys(dic); // ✅ 使用 dic 當白名單
+
+  if (!whitelist.includes(input)) {
+    if (confirm(`⚠ 帳號 "${input}" 不在預設清單中，我覺得很可能操作錯誤，你應該是要用選擇已建檔的資料，請確定是否要新增？`)) {
       callback({ value: input, text: input });
+    } else {
+      callback(null); // 取消新增
     }
+  } else {
+    callback({ value: input, text: `${input} (新增)` }); // 可自訂顯示文字
+  }
   },
 
-  
   persist: false,
   onItemAdd: () => {
     document.getElementById("password").focus(); // 選擇後跳至密碼
