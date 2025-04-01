@@ -76,7 +76,7 @@ body {
   display: flex;
   justify-content: space-between;
   margin-top: 1.5rem;
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 .login-card .links a {
@@ -189,7 +189,7 @@ body {
 .ts-wrapper.single .ts-control {
   width: 100%;
   padding: 1rem !important;
-  font-size: 2rem !important;
+  font-size: 1rem !important;
   border-radius: 10px !important;
   border: 1px solid #ccc !important;
   background-color: #eaf1ff !important;
