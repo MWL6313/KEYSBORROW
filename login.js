@@ -1,4 +1,4 @@
-import TomSelect from "tom-select";  // 若使用 module 載入，否則全域 TomSelect 可直接使用
+ // 若使用 module 載入，否則全域 TomSelect 可直接使用
 
 const loginBtn = document.getElementById("loginBtn");
 const msg = document.getElementById("msg");
