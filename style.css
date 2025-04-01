@@ -51,7 +51,7 @@ body {
 }
 
 #password {
-  padding: 0.5rem;         /* ✅ 原本可能是 2.5rem，這樣會比較適中 */
+  padding: 1rem;         /* ✅ 原本可能是 2.5rem，這樣會比較適中 */
   font-size: 1rem;       /* ✅ 比帳號欄稍小，但還是清楚可輸入 */
   margin-bottom: 0.3rem;   /* ✅ 與下方按鈕保有空間 */
 }
