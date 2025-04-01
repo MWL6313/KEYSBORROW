@@ -59,9 +59,14 @@ const accountOptions = Object.keys(dic).map(acc => ({
 
 // 初始化 Tom Select，讓使用者可關鍵字搜尋並選擇帳號（帳號為 dic 的 key）
 new TomSelect("#account", {
-  options: accountOptions,
+  options: accountOptions, // 固定清單資料，格式 { value, text }
   maxOptions: 300,
   searchField: ["value", "text"],
   placeholder: "請輸入或選擇帳號",
-  create: false
+  create: function(input, callback) {
+    // 當輸入的帳號不在預設選項中時，建立一個新的選項
+    callback({ value: input, text: input });
+  },
+  // 如果不希望新建立的選項被永久存留在清單中，可設定 persist: false
+  persist: false // 若希望新選項存留，設 true；若希望只用於當次，設 false
 });
