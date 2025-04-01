@@ -53,7 +53,7 @@ body {
 #password {
   padding: 1.2rem;         /* ✅ 原本可能是 2.5rem，這樣會比較適中 */
   font-size: 1rem;       /* ✅ 比帳號欄稍小，但還是清楚可輸入 */
-  margin-bottom: 2.5rem;   /* ✅ 與下方按鈕保有空間 */
+  margin-bottom: 1rem;   /* ✅ 與下方按鈕保有空間 */
 }
 
 .login-card button {
@@ -66,7 +66,7 @@ body {
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.3s ease;
-  height: 3rem;
+  height: 2rem;
 }
 
 .login-card button:hover {
