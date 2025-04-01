@@ -183,6 +183,8 @@ async function loadCarNumbers(defaultCar) {
           direction: "asc"
         },
         placeholder: "請輸入或選擇車號",
+        maxOptions: null // ✅ 顯示所有選項，無上限
+
       });
 
       if (defaultCar) {
