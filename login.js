@@ -88,5 +88,6 @@ new TomSelect("#account", {
   }
 });
 
-// 清除可能殘留的選項（不記錄之前的資料）
-ts.clear();
+// ✅ 頁面載入後清除欄位值
+ts.clear(); // 清空帳號選項
+document.getElementById("password").value = "";
