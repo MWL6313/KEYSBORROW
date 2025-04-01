@@ -10,6 +10,7 @@ body {
   min-height: 100vh;
   box-sizing: border-box;
   font-size: 1.1rem;
+  min-height: 100vh;
 }
 
 /* ✅ 登入卡片樣式 */
