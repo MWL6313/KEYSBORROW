@@ -60,7 +60,7 @@ body {
   width: 100%;
   background: linear-gradient(to right, #a73232, #7a320f);
   color: white;
-  padding: 0.2rem 0.2rem; /* ✅ 減少上下 padding，高度就會變矮 */
+  padding: 0.1rem 0.1rem; /* ✅ 減少上下 padding，高度就會變矮 */
   font-size: 1.5rem;
   border: none;
   border-radius: 10px;
