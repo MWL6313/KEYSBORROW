@@ -234,10 +234,17 @@ body {
   align-items: center;
 }
 
-html body .ts-wrapper.tomselect .ts-dropdown,
-html body .ts-wrapper.tomselect .ts-dropdown .option {
+/* ✅ 下拉選單完整調整（高權重版）*/
+.ts-dropdown,
+.ts-dropdown-content,
+.ts-dropdown-content .option,
+.ts-control,
+.ts-control .item,
+.ts-control input {
   font-size: 2rem !important;
+  padding: 1rem 1.5rem !important;
 }
+
 
 
 
