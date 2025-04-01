@@ -43,7 +43,7 @@ body {
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #eaf1ff;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   box-sizing: border-box;  /* ✅ 加上這行就能避免寬度爆出 */
 
 }
@@ -53,7 +53,7 @@ body {
   background: linear-gradient(to right, #a73232, #7a320f);
   color: white;
   padding: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -68,7 +68,7 @@ body {
   display: flex;
   justify-content: space-between;
   margin-top: 1.5rem;
-  font-size: 1rem;
+  font-size: 1.5rem;
 }
 
 .login-card .links a {
