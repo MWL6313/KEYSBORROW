@@ -69,7 +69,7 @@ body {
   justify-content: center;
   align-items: center;
   transition: background 0.3s ease;
-  height: 2rem;
+  height: 1.5rem;
 }
 
 .login-card button:hover {
