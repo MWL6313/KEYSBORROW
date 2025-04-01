@@ -209,7 +209,7 @@ body {
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-  font-size: 1.5rem !important;
+  font-size: 2rem !important;
   background-color: #fff;
   z-index: 9999;
 }
@@ -217,7 +217,7 @@ body {
 /* ✅ 下拉選項 */
 .tomselect .ts-dropdown .option {
   padding: 1rem 1.5rem;
-  font-size: 1.5rem !important;
+  font-size: 2rem !important;
   cursor: pointer;
 }
 
@@ -228,7 +228,7 @@ body {
 /* ✅ 調整 TomSelect 內部 input 高度與樣式 */
 .ts-wrapper.single input[type="text"] {
   height: 2.5rem !important;
-  font-size: 1.5rem !important;
+  font-size: 2rem !important;
   padding: 0 1rem !important;
   box-sizing: border-box;
 }
@@ -240,17 +240,6 @@ body {
   align-items: center;
 }
 
-/* ✅ 下拉選單整體字體大小 */
-.tomselect .ts-dropdown {
-  font-size: 2rem !important;  /* 調大整體下拉字體 */
-}
-
-/* ✅ 單一選項字體大小 */
-.tomselect .ts-dropdown .option {
-  font-size: 2rem !important;  /* ✅ 明確定義選項文字大小 */
-  padding: 1.2rem 1.5rem;
-  cursor: pointer;
-}
 
 
 
