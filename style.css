@@ -171,64 +171,45 @@ body {
   100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,0,0.3); }
 }
 
-/* 自訂 Tom Select 控制項樣式，與 .login-card input 保持一致 */
+/* ✅ Tom Select 控制項整體樣式，與 .login-card input 保持一致 */
 .tomselect,
-.tomselect .ts-control {
+.tomselect .ts-control,
+.ts-wrapper.single .ts-control,
+.ts-wrapper.single.input-active .ts-control,
+.ts-wrapper.single.has-items .ts-control {
   width: 100%;
-  padding: 3rem;       /* 調整內邊距，變得更大 */
-  font-size: 2rem;   /* 提升文字大小 */
-  margin-bottom: 2.5rem;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  background-color: #eaf1ff;
-  box-sizing: border-box;
+  padding: 2.5rem !important;
+  font-size: 1.5rem !important;
+  margin-bottom: 2.8rem;
+  border-radius: 10px !important;
+  border: 1px solid #ccc !important;
+  background-color: #eaf1ff !important;
   color: #333;
+  box-sizing: border-box;
+  min-height: 5.5rem !important;
+  height: auto !important;
 }
+
+/* ✅ 下拉選單樣式 */
 .tomselect .ts-dropdown {
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-  font-size: 2rem;
+  font-size: 1.5rem;
   background-color: #fff;
 }
+
+/* ✅ 下拉選單每個選項 */
 .tomselect .ts-dropdown .option {
-  padding: 0.75rem 1rem;
+  padding: 1rem;
+  font-size: 1.5rem;
   cursor: pointer;
 }
 .tomselect .ts-dropdown .option:hover {
   background-color: #eaf1ff;
 }
 
-/* 調整 TomSelect 包裹容器與下方密碼欄的間距 */
-.login-card .ts-wrapper {
-  margin-bottom: 2.8rem;  /* 可依實際畫面微調 */
-}
-.login-card .ts-wrapper {
-  margin-bottom: 2.8rem;
-  font-size: 2rem;
-}
-
-/* ✅ 確保帳號欄位真正套用大字與大高度樣式 */
-.ts-wrapper.single.input-active .ts-control,
-.ts-wrapper.single.has-items .ts-control {
-  padding: 2.5rem !important;
-  min-height: 5.5rem !important;  /* 可依需求微調，例如 6rem */
-  font-size: 1.5rem !important;
-  background-color: #eaf1ff !important;
-  border-radius: 10px !important;
-  border: 1px solid #ccc !important;
-  min-height: unset !important;
-  height: auto !important;
-  box-sizing: border-box;
-}
-
-/* ✅ 調整選單裡的項目字級一致 */
-.ts-dropdown .option {
-  font-size: 1.5rem !important;
-  padding: 1rem;
-}
-
-/* ✅ 調整選擇後的顯示字級與樣式 */
+/* ✅ 選擇後呈現的項目文字樣式 */
 .ts-control .item {
   font-size: 1.5rem !important;
 }
