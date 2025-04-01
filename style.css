@@ -240,6 +240,14 @@ body {
   align-items: center;
 }
 
+/* ✅ 確保下拉選單內選項字體放大（加強權重）*/
+.ts-wrapper.tomselect .ts-dropdown,
+.ts-wrapper.tomselect .ts-dropdown .option {
+  font-size: 2rem !important;
+  padding: 1rem 1.5rem !important;
+  cursor: pointer;
+}
+
 
 
 
