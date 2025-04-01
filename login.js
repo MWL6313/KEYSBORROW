@@ -69,7 +69,7 @@ new TomSelect("#account", {
     callback({ value: input, text: input });
   },
   // 如果不希望新建立的選項被永久存留在清單中，可設定 persist: false
-  persist: false // 若希望新選項存留，設 true；若希望只用於當次，設 false
+  persist: false, // 若希望新選項存留，設 true；若希望只用於當次，設 false
    // 當新增選項時，若已存在超過一個項目，清除前面的只保留最新
   onItemAdd: function(value, item) {
     if (this.items.length > 1) {
