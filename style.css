@@ -208,19 +208,29 @@ body {
   font-size: 2rem;
 }
 
-/* 強化 Tom Select 內部 input 的樣式 */
-.tomselect .ts-control,
-.tomselect .ts-control input {
-  font-size: 2rem !important;
+/* ✅ 確保帳號欄位真正套用大字與大高度樣式 */
+.ts-wrapper.single .ts-control {
   padding: 2.5rem !important;
+  font-size: 1.5rem !important;
+  background-color: #eaf1ff !important;
+  border-radius: 10px !important;
+  border: 1px solid #ccc !important;
+  min-height: unset !important;
   height: auto !important;
+  box-sizing: border-box;
 }
 
-/* 強化選取後顯示區的 item */
-.tomselect .ts-control .item {
-  font-size: 2rem !important;
-  padding: 0.5rem 1rem;
+/* ✅ 調整選單裡的項目字級一致 */
+.ts-dropdown .option {
+  font-size: 1.5rem !important;
+  padding: 1rem;
 }
+
+/* ✅ 調整選擇後的顯示字級與樣式 */
+.ts-control .item {
+  font-size: 1.5rem !important;
+}
+
 
 
 /* ✅ 手機專用調整 */
