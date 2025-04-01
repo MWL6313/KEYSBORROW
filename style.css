@@ -174,12 +174,12 @@ body {
 .tomselect,
 .tomselect .ts-control {
   width: 100%;
-  padding: 2.5rem;
+  padding: 3rem;       /* 調整內邊距，變得更大 */
+  font-size: 2rem;   /* 提升文字大小 */
   margin-bottom: 2.5rem;
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #eaf1ff;
-  font-size: 1.1rem;
   box-sizing: border-box;
   color: #333;
 }
