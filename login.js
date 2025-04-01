@@ -24,7 +24,7 @@ const ts = new TomSelect("#account", {
   maxOptions: 300,
   maxItems: 1,
   searchField: ["value", "text"],
-  placeholder: "請輸入或選擇帳號",
+  placeholder: "選擇帳號",
   create: (input, callback) => {
     callback({ value: input, text: input });
   },
