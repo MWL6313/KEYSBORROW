@@ -234,15 +234,15 @@ body {
   align-items: center;
 }
 
-/* /* ✅ 下拉選單完整調整（高權重版）*/
+/* ✅ 下拉選單完整調整（高權重版）*/
 .ts-dropdown,
 .ts-dropdown-content,
 .ts-dropdown-content .option,
 .ts-control,
 .ts-control .item,
 .ts-control input {
-  font-size: 1.5rem !important;
-} */
+  font-size: 1rem !important;
+}
 
 /* ✅ 下拉選單完整調整（高權重版）*/
 .ts-dropdown-content,{
