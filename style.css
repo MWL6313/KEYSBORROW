@@ -289,3 +289,63 @@ body {
     width: 100%;
   }
 }
+
+ /*   body {
+     font-size: 2.25rem;
+     padding: 10vh 7vw; /* ✅ 加大上下 padding */
+   }
+ 
+   .login-card {
+     padding: 5rem 3rem;      /* ✅ 加大登入區塊內間距 */
+     margin-bottom: 6vh;      /* ✅ 與下方區塊的距離 */
+   }
+ 
+   .login-card h2 {
+     font-size: 3.6rem;
+     margin-bottom: 2.4rem;   /* ✅ 標題與下方文字的間距 */
+   }
+ 
+   .login-card p {
+     margin-bottom: 3rem;     /* ✅ 提示文字與輸入框距離 */
+   }
+ 
+   .login-card input {
+     margin-bottom: 2.8rem;   /* ✅ 每個 input 之間的距離 */
+     padding: 2.5rem;
+   }
+ 
+   .login-card button {
+     padding: 2.6rem;
+     margin-top: 2rem;        /* ✅ 按鈕與 input 間距 */
+   }
+ 
+   .login-card .links {
+     margin-top: 3rem;        /* ✅ 與按鈕的距離 */
+     gap: 2rem;
+   }
+ 
+   .card {
+     padding: 4rem;
+     margin-bottom: 3rem;     /* ✅ 每張卡片間距 */
+   }
+ 
+   .card h3 {
+     font-size: 2.8rem;
+     margin-bottom: 2.2rem;
+   }
+ 
+   .card .info {
+     font-size: 2.2rem;
+     gap: 2.5rem;
+     margin-bottom: 2.2rem;   /* ✅ info 區塊與按鈕區距離 */
+   }
+ 
+   .card .actions {
+     gap: 2.5rem;
+   }
+ 
+   .card .action-btn {
+     padding: 2rem;
+     font-size: 2.1rem;
+   }
+ } */
