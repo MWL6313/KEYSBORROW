@@ -1,4 +1,10 @@
- // 若使用 module 載入，否則全域 TomSelect 可直接使用
+window.addEventListener("load", () => {
+  document.getElementById("account").value = "";
+  document.getElementById("password").value = "";
+});
+
+
+// 若使用 module 載入，否則全域 TomSelect 可直接使用
 
 const loginBtn = document.getElementById("loginBtn");
 const msg = document.getElementById("msg");
