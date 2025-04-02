@@ -206,7 +206,7 @@ function renderRow(record, tbody) {
     // !record.巡檢結束時間 &&
     // timeout &&
     // !hasAction
-    ((noInspection && timeout && !hasAction) || (incomplete && timeout && !hasAction))
+    ((noInspection && timeout && !hasAction) || (incomplete && timeout && !hasAction)) || (noRear && timeout && !hasAction) // 逾時、沒尾車、沒處理
     ) {
     const editBtn = document.createElement("button");
     editBtn.innerText = "📝 編輯";
