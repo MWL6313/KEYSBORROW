@@ -1,12 +1,27 @@
-// dashboard.js
+// dashboard.js（支援雙軌制登入）
 
 let currentUser = null;
 const token = localStorage.getItem("authToken");
 
-// 驗證 Token
-if (!token) {
-  location.href = "index.html";
-} else {
+// ✅ 判斷是否為白名單帳號登入（local- 開頭）
+if (token && token.startsWith("local-")) {
+  const account = token.replace("local-", "");
+  const info = window.dic?.[account];
+  if (info && Array.isArray(info)) {
+    const [hint, carNo, name] = info;
+    currentUser = { name, carNo };
+    document.getElementById("welcome").innerText = `Hi, ${name}`;
+    document.getElementById("borrower").value = name;
+    document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
+    loadCarNumbers(carNo);
+    loadPhoneItems();
+  } else {
+    Swal.fire("找不到帳號資料，請重新登入");
+    localStorage.removeItem("authToken");
+    location.href = "index.html";
+  }
+} else if (token) {
+  // ✅ 正常後端驗證流程
   fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -18,10 +33,7 @@ if (!token) {
         currentUser = data.user;
         document.getElementById("welcome").innerText = `Hi, ${data.user.name}`;
         document.getElementById("borrower").value = data.user.name;
-    
-        // 顯示目前時間
         document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
-    
         await loadCarNumbers(data.user.carNo);
         await loadPhoneItems();
       } else {
@@ -29,13 +41,13 @@ if (!token) {
         location.href = "index.html";
       }
     })
-
-
     .catch(err => {
       console.error("Token validation error:", err);
       localStorage.removeItem("authToken");
       location.href = "index.html";
     });
+} else {
+  location.href = "index.html";
 }
 
 // 登出按鈕
