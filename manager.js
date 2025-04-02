@@ -15,8 +15,7 @@ window.addEventListener("load", () => {
 const accountOptions = Object.keys(dic).map(acc => ({
   value: acc,
   // text: `${acc} (提示: ${dic[acc]})`
-  text: `${acc} (${dic[acc]})`
-}));
+  text: `${acc} (${dic[acc][0]})`  // 取提示碼 3355}));
 
 // ✅ 初始化 TomSelect，並保留實例到 window.ts
 const ts = new TomSelect("#account", {
@@ -73,6 +72,7 @@ const ts = new TomSelect("#account", {
 window.ts = ts; // 可供其他地方呼叫 clear()
 
 // ✅ 登入流程
+// ✅ 雙軌制登入流程
 loginBtn.addEventListener("click", async () => {
   const account = document.getElementById("account").value.trim();
   const password = document.getElementById("password").value;
@@ -86,6 +86,25 @@ loginBtn.addEventListener("click", async () => {
     return;
   }
 
+  // ✅ 若在 dic 白名單中 → 不需 POST，直接比對密碼
+  if (dic[account]) {
+    const expectedPwd = dic[account][0];
+    if (password === expectedPwd) {
+      const token = `local-${account}`;
+      localStorage.setItem("authToken", token);
+      document.body.classList.add("fade-out");
+      setTimeout(() => {
+        location.href = "dashboard.html";
+      }, 500);
+      return; // ✅ 結束流程，不再送出後端
+    } else {
+      msg.innerText = "密碼錯誤";
+      msg.classList.add("shake");
+      return;
+    }
+  }
+
+  // ✅ 不在 dic → 呼叫後端登入
   loading.style.display = "block";
   loginBtn.disabled = true;
 
@@ -101,7 +120,7 @@ loginBtn.addEventListener("click", async () => {
       localStorage.setItem("authToken", data.token);
       document.body.classList.add("fade-out");
       setTimeout(() => {
-        location.href = "record.html";
+        location.href = "dashboard.html";
       }, 500);
     } else {
       msg.innerText = "登入失敗，請檢查帳密";
@@ -116,99 +135,3 @@ loginBtn.addEventListener("click", async () => {
     loginBtn.disabled = false;
   }
 });
-
-
-// window.addEventListener("load", () => {
-//   document.getElementById("account").value = "";
-//   document.getElementById("password").value = "";
-// });
-
-
-// // 若使用 module 載入，否則全域 TomSelect 可直接使用
-
-// const loginBtn = document.getElementById("loginBtn");
-// const msg = document.getElementById("msg");
-// const loading = document.getElementById("loading");
-
-// loginBtn.addEventListener("click", async () => {
-//   const account = document.getElementById("account").value.trim();
-//   const password = document.getElementById("password").value;
-
-//   msg.innerText = "";
-//   msg.classList.remove("shake");
-
-//   if (!account || !password) {
-//     msg.innerText = "請輸入帳號與密碼";
-//     msg.classList.add("shake");
-//     return;
-//   }
-
-//   loading.style.display = "block";         // 顯示載入動畫
-//   loginBtn.disabled = true;                // 防止重複點擊
-
-//   try {
-//     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/login", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ account, password }),
-//     });
-//     const data = await res.json();
-
-//     if (data.success) {
-//       localStorage.setItem("authToken", data.token);
-
-//       // 成功動畫後再導向
-//       document.body.classList.add("fade-out");
-//       setTimeout(() => {
-//         location.href = "dashboard.html";
-//       }, 500); // 等動畫跑完
-//     } else {
-//       msg.innerText = "登入失敗，請檢查帳密";
-//       msg.classList.add("shake");
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     msg.innerText = "發生錯誤，請稍後再試。";
-//     msg.classList.add("shake");
-//   } finally {
-//     loading.style.display = "none";
-//     loginBtn.disabled = false;
-//   }
-// });
-
-// // 準備選項資料：dic 為 auth.js 中定義的全域變數
-// // 準備選項資料：dic 為 auth.js 中定義的全域變數
-// const accountOptions = Object.keys(dic).map(acc => ({
-//   value: acc,
-//   text: `${acc} (提示: ${dic[acc]})`
-// }));
-
-// // 初始化 Tom Select，讓使用者可關鍵字搜尋並選擇帳號（帳號為 dic 的 key）
-// new TomSelect("#account", {
-//   options: accountOptions, // 固定清單資料，格式 { value, text }
-//   maxOptions: 300,
-//   maxItem: 1, //只允許單選
-//   searchField: ["value", "text"],
-//   placeholder: "請輸入或選擇帳號",
-//   create: function(input, callback) {
-//     // 當輸入的帳號不在預設選項中時，建立一個新的選項
-//     callback({ value: input, text: input });
-//   },
-//   // 如果不希望新建立的選項被永久存留在清單中，可設定 persist: false
-//   persist: false, // 若希望新選項存留，設 true；若希望只用於當次，設 false
-//    // 當新增選項時，若已存在超過一個項目，清除前面的只保留最新
-//   onItemAdd: function(value, item) {
-//     if (this.items.length > 1) {
-//       const last = this.items[this.items.length - 1];
-//       this.clear(true); // 清除所有已選項目，但保留 options 不變
-//       this.addItem(last);
-//     }
-//   // 當選擇後自動將焦點移到密碼欄
-//   document.getElementById("password").focus();
-//   }
-// });
-//   btn.style.fontSize = "0.9em";
-//   return btn;
-// }
-
-
