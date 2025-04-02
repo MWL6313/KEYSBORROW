@@ -139,21 +139,21 @@ function renderRow(record, tbody) {
   //     tr.style.backgroundColor = "#eeeeee"; // 灰色表示異常已處理
   //   }
   // }
-
-  if (
-      (noInspection && timeout && !hasAction) ||         // 無巡檢、逾時、未處理
-      (incomplete && timeout && !hasAction) ||           // 完成率不足、逾時、未處理
-      (noRear && timeout && !hasAction)                            // 逾時、沒尾車、沒處理
-    ) {
-      tr.style.backgroundColor = "#ffdddd"; // 🔴 異常未處理
-    } else if (
-      (noInspection && timeout && hasAction) ||
-      (incomplete && timeout && hasAction) ||
-      (noRear && timeout && hasAction)                            // 逾時、沒尾車、沒處理
-    ) {
-      tr.style.backgroundColor = "#eeeeee"; // ⚪ 異常已處理
+  if (record.type !== '手機') {
+    if (
+        (noInspection && timeout && !hasAction) ||         // 無巡檢、逾時、未處理
+        (incomplete && timeout && !hasAction) ||           // 完成率不足、逾時、未處理
+        (noRear && timeout && !hasAction)                            // 逾時、沒尾車、沒處理
+      ) {
+        tr.style.backgroundColor = "#ffdddd"; // 🔴 異常未處理
+      } else if (
+        (noInspection && timeout && hasAction) ||
+        (incomplete && timeout && hasAction) ||
+        (noRear && timeout && hasAction)                            // 逾時、沒尾車、沒處理
+      ) {
+        tr.style.backgroundColor = "#eeeeee"; // ⚪ 異常已處理
+      }
     }
-  }
   
   const typeIcon = record.type === '手機' ? "📱" : "🚗";
   const cols = record.type === '手機'
