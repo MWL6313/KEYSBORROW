@@ -104,9 +104,11 @@ function filterAndRender() {
     const isPhone = record.type === '手機';
     const hasReturned = !!record.歸還時間;
     const hasInspection = !!record.巡檢結束時間;
+    const noRear = !record.尾車;
+    const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
 
     // 分流邏輯：
-    const isDone = (isPhone && hasReturned) || (!isPhone && hasReturned && hasInspection);
+    const isDone = (isPhone && hasReturned) || (!isPhone && hasReturned && hasInspection && !noRear && !incomplete);
     const targetBody = isDone ? historyBody : recordBody;
 
     renderRow(record, targetBody);
