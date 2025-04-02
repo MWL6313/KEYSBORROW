@@ -15,7 +15,7 @@ window.addEventListener("load", () => {
 const accountOptions = Object.keys(dic).map(acc => ({
   value: acc,
   // text: `${acc} (提示: ${dic[acc]})`
-  text: `${acc} (${dic[acc]})`
+  text: `${acc} (${dic[acc][0]})`  // 取提示碼 3355
 }));
 
 // ✅ 初始化 TomSelect，並保留實例到 window.ts
