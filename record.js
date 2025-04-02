@@ -123,6 +123,7 @@ function renderRow(record, tbody) {
   const now = new Date();
   const borrowTime = new Date(record.借用時間);
   const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
+  const noRear = !record.尾車;
 
   const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
   
@@ -130,20 +131,27 @@ function renderRow(record, tbody) {
   const noInspection = !inspectionTime;
   const hasAction = !!record.異常處置對策;
 
+  //   // ✅ 異常標示（非手機且完成率異常）
   // if (record.type !== '手機') {
-  //   if (noInspection && timeout && !hasAction) {
-  //     tr.style.backgroundColor = "#ffdddd";
-  //   } else if (noInspection && timeout && hasAction) {
-  //     tr.style.backgroundColor = "#eeeeee";
+  //   if ((noInspection && timeout && !hasAction) || (incomplete && timeout && !hasAction)) {
+  //     tr.style.backgroundColor = "#ffdddd"; // 紅色表示異常未處理
+  //   } else if ((noInspection && timeout && hasAction) || (incomplete && timeout && hasAction)) {
+  //     tr.style.backgroundColor = "#eeeeee"; // 灰色表示異常已處理
   //   }
   // }
 
-    // ✅ 異常標示（非手機且完成率異常）
-  if (record.type !== '手機') {
-    if ((noInspection && timeout && !hasAction) || (incomplete && timeout && !hasAction)) {
-      tr.style.backgroundColor = "#ffdddd"; // 紅色表示異常未處理
-    } else if ((noInspection && timeout && hasAction) || (incomplete && timeout && hasAction)) {
-      tr.style.backgroundColor = "#eeeeee"; // 灰色表示異常已處理
+  if (
+      (noInspection && timeout && !hasAction) ||         // 無巡檢、逾時、未處理
+      (incomplete && timeout && !hasAction) ||           // 完成率不足、逾時、未處理
+      (noRear && timeout && !hasAction)                            // 逾時、沒尾車、沒處理
+    ) {
+      tr.style.backgroundColor = "#ffdddd"; // 🔴 異常未處理
+    } else if (
+      (noInspection && timeout && hasAction) ||
+      (incomplete && timeout && hasAction) ||
+      (noRear && timeout && hasAction)                            // 逾時、沒尾車、沒處理
+    ) {
+      tr.style.backgroundColor = "#eeeeee"; // ⚪ 異常已處理
     }
   }
   
