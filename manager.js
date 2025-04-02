@@ -207,8 +207,8 @@ loginBtn.addEventListener("click", async () => {
 //   document.getElementById("password").focus();
 //   }
 // });
-  btn.style.fontSize = "0.9em";
-  return btn;
-}
+//   btn.style.fontSize = "0.9em";
+//   return btn;
+// }
 
 
