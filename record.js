@@ -5,14 +5,14 @@ let allRecords = [];
 let currentRole = "";
 let showOnlyAbnormal = false;
 
-document.getElementById("filterAbnormalBtn").addEventListener("click", () => {
-  showOnlyAbnormal = !showOnlyAbnormal;
+// document.getElementById("filterAbnormalBtn").addEventListener("click", () => {
+//   showOnlyAbnormal = !showOnlyAbnormal;
 
-  document.getElementById("filterAbnormalBtn").innerText = showOnlyAbnormal
-    ? "✅ 顯示全部"
-    : "🚨 僅顯示異常（逾時未巡檢）";
-  filterAndRender();
-});
+//   document.getElementById("filterAbnormalBtn").innerText = showOnlyAbnormal
+//     ? "✅ 顯示全部"
+//     : "🚨 僅顯示異常（逾時未巡檢）";
+//   filterAndRender();
+// });
 
 document.getElementById("searchUser").addEventListener("input", filterAndRender);
 document.getElementById("searchCar").addEventListener("input", filterAndRender);
