@@ -26,33 +26,6 @@ const ts = new TomSelect("#account", {
   searchField: ["value", "text"],
   placeholder: "選擇帳號",
 
-
-  // create: (input, callback) => {
-  //   const whitelist = Object.keys(dic); // ✅ 使用 dic 當白名單
-  
-  //   if (!whitelist.includes(input)) {
-  //     Swal.fire({
-  //       icon: "warning",
-  //       title: "⚠ 非預設帳號",
-  //       html: `帳號 <strong>${input}</strong> 不在預設清單中，你可能操作錯誤，應使用已建檔帳號。<br><br>是否仍要新增？`,
-  //       showCancelButton: true,
-  //       confirmButtonText: "✅ 確定新增",
-  //       cancelButtonText: "❌ 取消",
-  //       reverseButtons: true,
-  //     }).then(result => {
-  //       if (result.isConfirmed) {
-  //         callback({ value: input, text: input });
-  //       } else {
-  //         callback(null); // 取消新增
-  //       }
-  //     });
-  //   } else {
-  //     callback({ value: input, text: `${input} (新增)` }); // ✅ 預設帳號仍可新增
-  //   }
-  // },
-
-  
-  // persist: false,
   onItemAdd: () => {
     document.getElementById("password").focus(); // 選擇後跳至密碼
   }
