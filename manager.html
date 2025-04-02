@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>借用系統 - 登入</title>
+  <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png">
+  <link rel="stylesheet" href="style.css">
+  <!-- 引入 Tom Select CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div class="login-card">
+    <h2>借用系統</h2>
+    <p>帳號登入</p>
+    <!-- 在 input 上加上 autocomplete="off" -->
+    <input type="text" id="account" placeholder="選擇帳號" autocomplete="off" />
+    <input type="password" id="password" placeholder="GPS的4碼數字" autocomplete="off" />
+    <button id="loginBtn">登入</button>
+    <div id="loading" style="display:none; margin-top:10px;">🔄 登入中，請稍候...</div>
+    <p id="msg" style="color:red;"></p>
+  </div>
+
+  <!-- 先引入 auth.js 確保 dic 全域變數存在 -->
+  <script src="auth.js"></script>
+  <!-- 引入 Tom Select JS -->
+  <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+  <script type="module" src="login.js"></script>
+</body>
+</html>
