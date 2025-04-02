@@ -25,20 +25,6 @@ const ts = new TomSelect("#account", {
   searchField: ["value", "text"],
   placeholder: "選擇帳號",
 
-  // create: (input, callback) => {
-  // const whitelist = Object.keys(dic); // ✅ 使用 dic 當白名單
-
-  // if (!whitelist.includes(input)) {
-  //   if (confirm(`⚠ 帳號 "${input}" 不在預設清單中，我覺得很可能操作錯誤，應該用選擇已建檔的資料，請確定是否要新增？`)) {
-  //     callback({ value: input, text: input });
-  //   } else {
-  //     callback(null); // 取消新增
-  //   }
-  // } else {
-  //   callback({ value: input, text: `${input} (新增)` }); // 可自訂顯示文字
-  // }
-  // },
-
   create: (input, callback) => {
     const whitelist = Object.keys(dic); // ✅ 使用 dic 當白名單
   
