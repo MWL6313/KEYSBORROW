@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>手機 NFC 感應器</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 40px; }
+    #status { font-size: 24px; margin-top: 20px; color: green; }
+  </style>
+</head>
+<body>
+  <h1>📲 手機 NFC 感應</h1>
+  <button onclick="startNFC()">開始感應</button>
+  <div id="status">尚未開始</div>
+
+  <script>
+    async function startNFC() {
+      const status = document.getElementById('status');
+      if (!("NDEFReader" in window)) {
+        status.textContent = "❌ 不支援 Web NFC，請使用 Android + Chrome";
+        return;
+      }
+
+      try {
+        const reader = new NDEFReader();
+        await reader.scan();
+        status.textContent = "✅ 等待感應...";
+
+        reader.onreading = (event) => {
+          const uid = event.serialNumber;
+          status.textContent = `📟 讀取到 UID: ${uid}`;
+          sendToPC(uid);
+        };
+      } catch (err) {
+        status.textContent = `錯誤: ${err}`;
+      }
+    }
+
+    function sendToPC(uid) {
+      fetch("http://192.168.1.100:5000/from_mobile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid })
+      })
+      .then(res => res.text())
+      .then(txt => {
+        console.log("伺服器回應:", txt);
+      });
+    }
+  </script>
+</body>
+</html>
