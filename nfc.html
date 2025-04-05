@@ -36,17 +36,28 @@
       }
     }
 
-    function sendToPC(uid) {
-      fetch("http://192.168.0.104:5000/from_mobile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid })
-      })
-      .then(res => res.text())
-      .then(txt => {
-        console.log("伺服器回應:", txt);
-      });
-    }
+  function sendToPC(uid) {
+    const status = document.getElementById('status');
+  
+    fetch("http://192.168.0.104:5000/from_mobile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uid })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("伺服器回應錯誤");
+      return res.text();
+    })
+    .then(txt => {
+      console.log("✅ 伺服器回應:", txt);
+      status.textContent += " ✅ 已傳送";
+    })
+    .catch(err => {
+      console.error("❌ 傳送失敗:", err);
+      status.textContent += " ❌ 傳送失敗";
+    });
+  }
+
   </script>
 </body>
 </html>
