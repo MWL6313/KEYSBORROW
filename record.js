@@ -164,7 +164,7 @@ function renderRow(record, tbody) {
         `${typeIcon} ${record.物品 || "-"}`,
         formatDate(record.借用時間),
         formatDate(record.歸還時間),
-        "-", "-", "-", "-", "-"
+        "-", "-", "-", "-", "-", "-"
       ]
     : [
         record.借用人,
