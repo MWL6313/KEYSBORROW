@@ -1,5 +1,5 @@
 const token = localStorage.getItem("authToken");
-if (!token) location.href = "index.html";
+if (!token) location.href = "manager.html";
 
 // Flask API base URL
 const API_BASE = "http://127.0.0.1:5000/api";
