@@ -81,7 +81,7 @@ loginBtn.addEventListener("click", async () => {
       localStorage.setItem("authToken", token);
       document.body.classList.add("fade-out");
       setTimeout(() => {
-        location.href = "dashboard.html";
+        location.href = "recordtest.html";
       }, 500);
       return; // ✅ 結束流程，不再送出後端
     } else {
