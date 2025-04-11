@@ -228,7 +228,7 @@ body {
 
 /* ✅ 調整 TomSelect 內部 input 高度與樣式 */
 .ts-wrapper.single input[type="text"] {
-  height: 2.5rem !important;
+  height: 4rem !important;
   font-size: 2rem !important;
   padding: 0 1rem !important;
   box-sizing: border-box;
@@ -236,7 +236,7 @@ body {
 
 /* ✅ 確保外層控制容器也有一致樣式 */
 .ts-wrapper.single .ts-control {
-  min-height: 2.5rem !important;
+  min-height: 4rem !important;
   display: flex;
   align-items: center;
 }
