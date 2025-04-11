@@ -69,10 +69,11 @@ async function loadRecords() {
     }
 
     filterAndRender();
-  } catch (err) {
-    console.error("載入失敗", err);
-    statusMsg.innerText = "無法連線伺服器。";
-  }
+     }
+  // } catch (err) {
+  //   console.error("載入失敗", err);
+  //   statusMsg.innerText = "無法連線伺服器。";
+  // }
 }
 
 
@@ -385,10 +386,10 @@ async function handleReturn(record) {
       alert("❌ 歸還失敗：" + (result.message || ""));
       if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
     }
-
-  } catch (err) {
-    alert("⚠️ 無法連線伺服器");
-    console.error(err);
+  }
+  // } catch (err) {
+  //   alert("⚠️ 無法連線伺服器");
+  //   console.error(err);
     if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
   } finally {
     if (returnBtn) {
@@ -614,9 +615,10 @@ async function handleEditAbnormal(record) {
       alert("❌ 更新失敗：" + (result.message || ""));
       if (targetRow) targetRow.style.backgroundColor = "#f8d7da"; // 紅色錯誤提示
     }
-  } catch (err) {
-    console.error("伺服器錯誤", err);
-    alert("⚠️ 伺服器錯誤，請稍後再試");
+    }
+  // } catch (err) {
+  //   console.error("伺服器錯誤", err);
+  //   alert("⚠️ 伺服器錯誤，請稍後再試");
     if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
   } finally {
     if (editBtn) {
@@ -652,9 +654,10 @@ async function handleDelete(record) {
     } else {
       alert("刪除失敗：" + (result.message || ""));
     }
-  } catch (err) {
-    alert("伺服器錯誤");
-    console.error(err);
+  } 
+  // catch (err) {
+  //   alert("伺服器錯誤");
+  //   console.error(err);
   }
 }
 
@@ -805,8 +808,9 @@ async function checkLatestChanges() {
       lastCheckTime = new Date(Math.max(...allTimes)).toISOString();
     }
 
-  } catch (err) {
-    console.error("❌ checkLatestChanges 錯誤：", err);
+  } 
+  // catch (err) {
+  //   console.error("❌ checkLatestChanges 錯誤：", err);
   }
 }
 
