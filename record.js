@@ -1,7 +1,3 @@
-const token = localStorage.getItem("authToken");
-if (!token) location.href = "managertest.html";
-
-// dashboard.js（支援雙軌制登入）
 
 let currentUser = null;
 const token = localStorage.getItem("authToken");
