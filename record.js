@@ -853,6 +853,25 @@ export function showToast(message, type = "success") {
   }, 5000);
 }
 
+function updateLastUpdateTime() {
+  const now = new Date().toLocaleString("zh-TW");
+  document.getElementById("lastUpdateTime").innerText = now;
+}
+
+// 啟用桌面通知
+if (Notification.permission !== "granted") {
+  Notification.requestPermission();
+}
+
+
+
+function speakText(message) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = "zh-TW"; // 使用中文語音
+    speechSynthesis.speak(utterance);
+  }
+}
 
 
 // function showSingleChange(message) {
