@@ -1,6 +1,44 @@
 const token = localStorage.getItem("authToken");
 if (!token) location.href = "managertest.html";
 
+// dashboard.js（支援雙軌制登入）
+
+let currentUser = null;
+const token = localStorage.getItem("authToken");
+
+// ✅ 正常後端驗證流程
+fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ token }),
+})
+  .then(res => res.json())
+  .then(async data => {
+    if (data.success) {
+      currentUser = data.user;
+      document.getElementById("welcome").innerText = `Hi, ${data.user.name}`;
+      document.getElementById("borrower").value = data.user.name;
+      document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
+      await loadCarNumbers(data.user.carNo);
+      await loadPhoneItems();
+    } else {
+      localStorage.removeItem("authToken");
+      location.href = "index.html";
+    }
+  })
+  .catch(err => {
+    console.error("Token validation error:", err);
+    localStorage.removeItem("authToken");
+    location.href = "managertest.html";
+  });
+
+
+
+
+
+
+
+
 let allRecords = [];
 let currentRole = "";
 let showOnlyAbnormal = false;
