@@ -1,6 +1,5 @@
 
-let currentUser = null;
-const token = localStorage.getItem("authToken");
+
 
 // ✅ 正常後端驗證流程
 fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
@@ -12,7 +11,7 @@ fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
   .then(async data => {
     if (data.success) {
       localStorage.setItem("authToken", data.token); // ✅ 存入 localStorage
-      location.href = "managertest.html";
+      location.href = "record.html";
     } else {
       alert("登入失敗");
     }
@@ -23,7 +22,8 @@ fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
     location.href = "managertest.html";
   });
 
-
+let currentUser = null;
+const token = localStorage.getItem("authToken");
 
 
 
