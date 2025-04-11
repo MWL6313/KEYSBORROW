@@ -275,6 +275,10 @@ body {
   padding: 10px 12px;
 }
 
+.ts-dropdown {
+  overflow-y: auto;
+}
+
 
 /* ✅ 手機專用調整 */
 @media (max-width: 768px) {
