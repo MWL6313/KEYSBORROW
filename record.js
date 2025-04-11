@@ -1,5 +1,5 @@
 const token = localStorage.getItem("authToken");
-if (!token) location.href = "index.html";
+if (!token) location.href = "managertest.html";
 
 let allRecords = [];
 let currentRole = "";
