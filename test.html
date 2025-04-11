@@ -1,1 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>借用紀錄總覽</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png">
+  <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f7fb;
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #ccc;
+    }
+    h2 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+    .filters, .controls {
+      margin: 15px 0;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tab-buttons select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 18px;
+      background-color: #fff;
+      color: #333;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease-in-out;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 18px;
+      padding-right: 30px;
+    }
+    .tab-buttons select:focus {
+      outline: none;
+      border-color: #5a9bd5;
+      box-shadow: 0 0 5px rgba(90, 155, 213, 0.5);
+    }
+    .filters input {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: border 0.2s;
+    }
+    .filters input:focus {
+      border-color: #5a9bd5;
+      outline: none;
+      box-shadow: 0 0 5px rgba(90, 155, 213, 0.5);
+    }
+    input[type="text"], input[type="date"] {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 8px 14px;
+      font-size: 1rem;
+      background-color: #eee;
+      border: 1px solid #bbb;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ddd;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      font-size: 1rem;
+    }
+    th, td {
+      padding: 12px 10px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    th {
+      background-color: #f2f4f8;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f9fbfd;
+    }
+    #statusMsg {
+      margin-top: 15px;
+      color: #888;
+      font-style: italic;
+    }
+    .fade-in {
+      animation: fadeIn 0.6s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .tab-buttons button {
+      padding: 8px 16px;
+      border: none;
+      background-color: #eee;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .tab-buttons button.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+    /* Modal 樣式 */
+    .modal {
+      display: none; /* 預設隱藏 */
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 1200px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border-radius: 8px;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+    }
+    .modal-close:hover,
+    .modal-close:focus {
+      color: #000;
+    }
+    
+    /* ✅ 固定比例 iframe 容器（16:9） */
+    .responsive-iframe {
+      position: relative;
+      width: 100%;
+      max-width: 1200px; /* 原本是 800px */
+      padding-top: 100%; /* 16:9 比例 */
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* ✅ 讓 iframe 充滿整個容器 */
+    .responsive-iframe iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h2>🔑 借用與巡檢總覽</h2>
+    <div style="position: absolute; top: 10px; right: 20px;">
+      👤 使用者帳號：<span id="currentUserName">載入中...</span>
+      <button onclick="location.href='dashboard.html'">返回首頁</button>
+    </div>
+  </header>
+
+  <section id="latestChanges" style="position: fixed; bottom: 20px; right: 20px; width: 700px; max-height: 400px; overflow-y: auto; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 10px; border: 1px solid #ccc; z-index: 9999; display: none;">
+    <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+      <strong>📣 最新異動紀錄</strong>
+      <button id="clearChangesBtn" style="font-size: 0.8rem; background: none; border: none; cursor: pointer;">🧹 清空</button>
+    </div>
+    <ul id="changesList" style="list-style: none; margin: 0; padding: 10px;"></ul>
+  </section>
+
+  <div class="top-bar">
+    <div class="filters">
+      <input type="text" id="searchUser" placeholder="🔍 搜尋借用人">
+      <input type="text" id="searchCar" placeholder="🔍 搜尋車號">
+    </div>
+    <div class="controls">
+      <div style="margin-bottom: 10px;">
+        ⏱️ 最後更新時間：<span id="lastUpdateTime">尚未更新</span>
+<!--         <button id="refreshBtn">🔄 手動更新</button> -->
+      </div>
+  <!--<div>
+        <button id="filterAbnormalBtn">🚨 僅顯示異常（逾時未巡檢）</button>
+        <button id="sortTimeBtn">⏳ 借用時間排序</button>
+        <button id="sortInspectionBtn">📅 巡檢時間排序</button>
+        <button id="refreshBtn">🔄 手動更新</button>
+
+      </div>-->
+    </div>
+  </div>
+
+  <div class="tab-buttons">
+    <select id="typeFilter">
+      <option value="all">🔍 顯示全部</option>
+      <option value="鑰匙">🚗 顯示鑰匙</option>
+      <option value="手機">📱 顯示手機</option>
+    </select>
+    <button id="tabReview" class="active">📝 審核區</button>
+    <button id="tabHistory">📜 歷史紀錄區</button>
+    <!-- 新增按鈕：顯示 Google Sheets 表格 -->
+    <button id="showSheetBtn">🔍原始巡檢資料</button>
+    <button id="sortTimeBtn">⏳ 借用時間排序</button>
+    <button id="sortInspectionBtn">📅 巡檢時間排序</button>
+    <button id="refreshBtn">🔄 手動更新</button>
+  </div>
+
+  <main>
+    <div id="recordSection">
+      <table id="recordTable">
+        <thead>
+          <tr>
+            <th>借用人</th>
+            <th>車號</th>
+            <th>借用時間</th>
+            <th>歸還時間</th>
+            <th>車頭</th>
+            <th>尾車</th>
+            <th>完成率</th>
+            <th>巡檢結束時間</th>
+            <th>查核是否正常</th>
+            <th>異常處置對策</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="historySection" style="display:none;">
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>借用人</th>
+            <th>車號</th>
+            <th>借用時間</th>
+            <th>歸還時間</th>
+            <th>車頭</th>
+            <th>尾車</th>
+            <th>完成率</th>
+            <th>巡檢結束時間</th>
+            <th>查核是否正常</th>
+            <th>異常處置對策</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p id="statusMsg"></p>
+  </main>
+
+  <!-- 編輯異常處置對策用的彈窗 -->
+  <div id="abnormalModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 20px; border-radius: 8px; max-width: 500px; width: 90%; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+      <h3>✏️ 輸入異常處置對策</h3>
+      <textarea id="abnormalInput" rows="5" style="width: 100%; font-size: 1rem;"></textarea>
+      <div style="margin-top: 15px; text-align: right;">
+        <button onclick="closeAbnormalModal()">取消</button>
+        <button id="submitAbnormalBtn" style="background-color: #d32f2f; color: white;">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🆕 固定比例 iframe 區塊 -->
+  <div id="sheetModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <!-- 固定比例容器，維持 16:9 -->
+      <div class="responsive-iframe">
+        <iframe id="sheetIframe"
+                src="https://docs.google.com/spreadsheets/d/1W69cmG7xEqp2vGAhpM435_Sb8_Si5CUh4RWVm2tsbLg/edit?gid=0#gid=0"
+                frameborder="0"
+                allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="module" src="test.js"></script>
+  <script>
+    document.getElementById("tabReview").addEventListener("click", () => {
+      document.getElementById("recordSection").style.display = "block";
+      document.getElementById("historySection").style.display = "none";
+      document.getElementById("tabReview").classList.add("active");
+      document.getElementById("tabHistory").classList.remove("active");
+    });
+    document.getElementById("tabHistory").addEventListener("click", () => {
+      document.getElementById("recordSection").style.display = "none";
+      document.getElementById("historySection").style.display = "block";
+      document.getElementById("tabReview").classList.remove("active");
+      document.getElementById("tabHistory").classList.add("active");
+    });
+    // Google Sheets Modal 操作
+    const sheetModal = document.getElementById("sheetModal");
+    const showSheetBtn = document.getElementById("showSheetBtn");
+    const closeModal = document.querySelector(".modal-close");
+    showSheetBtn.addEventListener("click", () => {
+      sheetModal.style.display = "block";
+    });
+    closeModal.addEventListener("click", () => {
+      sheetModal.style.display = "none";
+    });
+    window.addEventListener("click", (event) => {
+      if (event.target === sheetModal) {
+        sheetModal.style.display = "none";
+      }
+    });
+  </script>
+  <!-- Toast 提示 -->
+  <div id="toast" style="
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: #ffffff;
+    border-left: 6px solid #4caf50;
+    padding: 16px 24px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 500;
+    color: #333;
+    display: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.4s ease;
+    max-width: 80%;
+    text-align: center;
+    white-space: pre-line;
+  "></div>
+</body>
+</html>
