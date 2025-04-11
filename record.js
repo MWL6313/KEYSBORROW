@@ -688,8 +688,8 @@ async function reloadWithTimestamp() {
 // 手動刷新按鈕
 document.getElementById("refreshBtn").addEventListener("click", reloadWithTimestamp);
 
-// 自動每 1800 秒更新
-setInterval(reloadWithTimestamp, 1800 * 1000);
+// 自動每 900 秒 15分更新
+setInterval(reloadWithTimestamp, 900 * 1000);
 
 
 // 初次載入
