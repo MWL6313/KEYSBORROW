@@ -107,8 +107,13 @@ function filterAndRender() {
     const noRear = !record.尾車;
     const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
 
-    // 分流邏輯：
-    const isDone = (isPhone && hasReturned) || (!isPhone && hasReturned && hasInspection && !noRear && !incomplete);
+    // ✅ 新增條件：查核是否正常 === '巡檢正常'
+    const isVerified = record.查核是否正常 === "巡檢正常";
+
+    const isDone = (
+      (isPhone && hasReturned) ||
+      (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
+    );
     const targetBody = isDone ? historyBody : recordBody;
 
     renderRow(record, targetBody);
@@ -129,33 +134,46 @@ function renderRow(record, tbody) {
 
   const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
   
+  // ✅ 新增條件：查核是否正常 === '巡檢正常'
+  const isVerified = record.查核是否正常 === "巡檢正常";
+
   const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
   const noInspection = !inspectionTime;
   const hasAction = !!record.異常處置對策;
 
-  //   // ✅ 異常標示（非手機且完成率異常）
   // if (record.type !== '手機') {
-  //   if ((noInspection && timeout && !hasAction) || (incomplete && timeout && !hasAction)) {
-  //     tr.style.backgroundColor = "#ffdddd"; // 紅色表示異常未處理
-  //   } else if ((noInspection && timeout && hasAction) || (incomplete && timeout && hasAction)) {
-  //     tr.style.backgroundColor = "#eeeeee"; // 灰色表示異常已處理
+  //   if (
+  //       (noInspection && timeout && !hasAction) ||         // 無巡檢、逾時、未處理
+  //       (incomplete && timeout && !hasAction) ||           // 完成率不足、逾時、未處理
+  //       (noRear && timeout && !hasAction)                            // 逾時、沒尾車、沒處理
+  //     ) {
+  //       tr.style.backgroundColor = "#ffdddd"; // 🔴 異常未處理
+  //     } else if (
+  //       (noInspection && timeout && hasAction) ||
+  //       (incomplete && timeout && hasAction) ||
+  //       (noRear && timeout && hasAction)                            // 逾時、沒尾車、沒處理
+  //     ) {
+  //       tr.style.backgroundColor = "#eeeeee"; // ⚪ 異常已處理
+  //     }
   //   }
-  // }
+
   if (record.type !== '手機') {
     if (
-        (noInspection && timeout && !hasAction) ||         // 無巡檢、逾時、未處理
-        (incomplete && timeout && !hasAction) ||           // 完成率不足、逾時、未處理
-        (noRear && timeout && !hasAction)                            // 逾時、沒尾車、沒處理
-      ) {
-        tr.style.backgroundColor = "#ffdddd"; // 🔴 異常未處理
-      } else if (
-        (noInspection && timeout && hasAction) ||
-        (incomplete && timeout && hasAction) ||
-        (noRear && timeout && hasAction)                            // 逾時、沒尾車、沒處理
-      ) {
-        tr.style.backgroundColor = "#eeeeee"; // ⚪ 異常已處理
-      }
+      // (noInspection && timeout && !hasAction) ||
+      // (incomplete && timeout && !hasAction) ||
+      // (noRear && timeout && !hasAction) ||
+      (!isVerified && timeout && !hasAction)
+    ) {
+      tr.style.backgroundColor = "#ffdddd";
+    } else if (
+      // (noInspection && timeout && hasAction) ||
+      // (incomplete && timeout && hasAction) ||
+      // (noRear && timeout && hasAction) ||
+      (!isVerified && timeout && hasAction)
+    ) {
+      tr.style.backgroundColor = "#fef9dc";
     }
+  }
   
   const typeIcon = record.type === '手機' ? "📱" : "🚗";
   const cols = record.type === '手機'
