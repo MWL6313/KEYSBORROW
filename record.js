@@ -853,10 +853,6 @@ export function showToast(message, type = "success") {
   }, 5000);
 }
 
-function updateLastUpdateTime() {
-  const now = new Date().toLocaleString("zh-TW");
-  document.getElementById("lastUpdateTime").innerText = now;
-}
 
 // 啟用桌面通知
 if (Notification.permission !== "granted") {
