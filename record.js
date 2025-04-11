@@ -220,19 +220,21 @@ function renderRow(record, tbody) {
     actionTd.appendChild(deleteBtn);
   }
   
-  if (
-    record.type !== '手機' &&
-    (currentRole === 'admin' || currentRole === 'manager') &&
-    // !record.巡檢結束時間 &&
-    // timeout &&
-    // !hasAction
-    ((noInspection && timeout && !hasAction) || (incomplete && timeout && !hasAction)) || (noRear && timeout && !hasAction) // 逾時、沒尾車、沒處理
+    if (
+      record.type !== '手機' &&
+      (currentRole === 'admin' || currentRole === 'manager') &&
+      // ((noInspection && timeout && !hasAction) ||
+      //  (incomplete && timeout && !hasAction) ||
+      //  (noRear && timeout && !hasAction)) ||
+       (!isVerified && timeout && !hasAction)
+
     ) {
     const editBtn = document.createElement("button");
     editBtn.innerText = "📝 編輯";
     editBtn.onclick = () => handleEditAbnormal(record);
     actionTd.appendChild(editBtn);
   }
+
 
   tr.appendChild(actionTd);
   tbody.appendChild(tr);
@@ -898,7 +900,18 @@ function updateTableRow(record) {
       parent.removeChild(tr);
 
       const isPhone = record.type === '手機';
-      const isDone = (isPhone && record.歸還時間) || (!isPhone && record.歸還時間 && record.巡檢結束時間);
+      const hasReturned = !!record.歸還時間;
+      const hasInspection = !!record.巡檢結束時間;
+      const noRear = !record.尾車;
+      const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
+  
+      // ✅ 新增條件：查核是否正常 === '巡檢正常'
+      const isVerified = record.查核是否正常 === "巡檢正常";
+      // const isDone = (isPhone && record.歸還時間) || (!isPhone && record.歸還時間 && record.巡檢結束時間);
+      const isDone = (
+      (isPhone && hasReturned) ||
+      (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
+    );
       const targetBody = isDone
         ? document.querySelector("#historyTable tbody")
         : document.querySelector("#recordTable tbody");
@@ -911,7 +924,18 @@ function updateTableRow(record) {
 
 function appendTableRow(record) {
   const isPhone = record.type === '手機';
-  const isDone = (isPhone && record.歸還時間) || (!isPhone && record.歸還時間 && record.巡檢結束時間);
+  const hasReturned = !!record.歸還時間;
+  const hasInspection = !!record.巡檢結束時間;
+  const noRear = !record.尾車;
+  const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
+
+  // ✅ 新增條件：查核是否正常 === '巡檢正常'
+  const isVerified = record.查核是否正常 === "巡檢正常";
+  // const isDone = (isPhone && record.歸還時間) || (!isPhone && record.歸還時間 && record.巡檢結束時間);
+  const isDone = (
+  (isPhone && hasReturned) ||
+  (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
+  );
   const targetBody = isDone
     ? document.querySelector("#historyTable tbody")
     : document.querySelector("#recordTable tbody");
