@@ -83,7 +83,7 @@ function formatDate(str) {
   return isNaN(d) ? str : d.toLocaleString("zh-TW");
 }
 
-function filterAndRender() {
+function filterAndRender() { 
   const searchUser = document.getElementById("searchUser").value.toLowerCase();
   const searchCar = document.getElementById("searchCar").value.toLowerCase();
   const typeFilter = document.getElementById("typeFilter").value;
@@ -107,13 +107,20 @@ function filterAndRender() {
     const noRear = !record.尾車;
     const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
 
-    // 分流邏輯：
-    const isDone = (isPhone && hasReturned) || (!isPhone && hasReturned && hasInspection && !noRear && !incomplete);
+    // ✅ 新增條件：查核是否正常 === '巡檢正常'
+    const isVerified = record.查核是否正常 === "巡檢正常";
+
+    const isDone = (
+      (isPhone && hasReturned) ||
+      (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
+    );
+
     const targetBody = isDone ? historyBody : recordBody;
 
     renderRow(record, targetBody);
   });
 }
+
 
 
 
@@ -124,39 +131,67 @@ function renderRow(record, tbody) {
 
   const now = new Date();
   const borrowTime = new Date(record.借用時間);
-  const inspectionTime = record.巡檢結束時間 ? new Date(record.巡檢結束時間) : null;
+  let inspectionTime = null;
+  if (record.巡檢結束時間) {
+    const firstTimeStr = record.巡檢結束時間.split("、")[0].trim();
+    const parsed = new Date(firstTimeStr);
+    if (!isNaN(parsed)) inspectionTime = parsed;
+  }
   const noRear = !record.尾車;
-
   const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
-  
+
+  // ✅ 新增條件：查核是否正常 === '巡檢正常'
+  const isVerified = record.查核是否正常 === "巡檢正常";
+
+  // let timeout = false;
+  // if (!isNaN(borrowTime)) {
+  //   if (inspectionTime) {
+  //     timeout = (inspectionTime - borrowTime) > 1.5 * 60 * 60 * 1000;
+  //   } else {
+  //     timeout = (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+  //   }
+  // }
   const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+
+
   const noInspection = !inspectionTime;
   const hasAction = !!record.異常處置對策;
 
-  //   // ✅ 異常標示（非手機且完成率異常）
   // if (record.type !== '手機') {
-  //   if ((noInspection && timeout && !hasAction) || (incomplete && timeout && !hasAction)) {
-  //     tr.style.backgroundColor = "#ffdddd"; // 紅色表示異常未處理
-  //   } else if ((noInspection && timeout && hasAction) || (incomplete && timeout && hasAction)) {
-  //     tr.style.backgroundColor = "#eeeeee"; // 灰色表示異常已處理
-  //   }
+  //   if (
+  //     (timeout && !hasAction && (
+  //       noInspection || incomplete || noRear || inspectionTime // 巡檢有填，但時間太晚
+  //     ))
+  //   ) {
+  //     tr.style.backgroundColor = "#ffdddd";
+  //   }else if (
+  //     (timeout && hasAction && (
+  //       noInspection || incomplete || noRear || inspectionTime
+  //     ))
+  //   ) {
+  //     tr.style.backgroundColor = "#fef9dc";
+  //   }  
   // }
+
   if (record.type !== '手機') {
     if (
-        (noInspection && timeout && !hasAction) ||         // 無巡檢、逾時、未處理
-        (incomplete && timeout && !hasAction) ||           // 完成率不足、逾時、未處理
-        (noRear && timeout && !hasAction)                            // 逾時、沒尾車、沒處理
-      ) {
-        tr.style.backgroundColor = "#ffdddd"; // 🔴 異常未處理
-      } else if (
-        (noInspection && timeout && hasAction) ||
-        (incomplete && timeout && hasAction) ||
-        (noRear && timeout && hasAction)                            // 逾時、沒尾車、沒處理
-      ) {
-        tr.style.backgroundColor = "#eeeeee"; // ⚪ 異常已處理
-      }
+      // (noInspection && timeout && !hasAction) ||
+      // (incomplete && timeout && !hasAction) ||
+      // (noRear && timeout && !hasAction) ||
+      (!isVerified && timeout && !hasAction)
+    ) {
+      tr.style.backgroundColor = "#ffdddd";
+    } else if (
+      // (noInspection && timeout && hasAction) ||
+      // (incomplete && timeout && hasAction) ||
+      // (noRear && timeout && hasAction) ||
+      (!isVerified && timeout && hasAction)
+    ) {
+      tr.style.backgroundColor = "#fef9dc";
     }
-  
+  }
+
+
   const typeIcon = record.type === '手機' ? "📱" : "🚗";
   const cols = record.type === '手機'
     ? [
@@ -187,7 +222,6 @@ function renderRow(record, tbody) {
 
   const actionTd = document.createElement("td");
 
-  // 操作按鈕
   if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
     const returnBtn = document.createElement("button");
     returnBtn.innerText = "🔁 歸還";
@@ -201,14 +235,22 @@ function renderRow(record, tbody) {
     deleteBtn.onclick = () => handleDelete(record);
     actionTd.appendChild(deleteBtn);
   }
-  
-  if (
-    record.type !== '手機' &&
-    (currentRole === 'admin' || currentRole === 'manager') &&
-    // !record.巡檢結束時間 &&
-    // timeout &&
-    // !hasAction
-    ((noInspection && timeout && !hasAction) || (incomplete && timeout && !hasAction)) || (noRear && timeout && !hasAction) // 逾時、沒尾車、沒處理
+
+  // if (
+  //   record.type !== '手機' &&
+  //   (currentRole === 'admin' || currentRole === 'manager') &&
+  //   (timeout && !hasAction && (
+  //     noInspection || incomplete || noRear || inspectionTime
+  //   ))
+  // ) {
+    if (
+      record.type !== '手機' &&
+      (currentRole === 'admin' || currentRole === 'manager') &&
+      // ((noInspection && timeout && !hasAction) ||
+      //  (incomplete && timeout && !hasAction) ||
+      //  (noRear && timeout && !hasAction)) ||
+       (!isVerified && timeout && !hasAction)
+
     ) {
     const editBtn = document.createElement("button");
     editBtn.innerText = "📝 編輯";
@@ -216,15 +258,12 @@ function renderRow(record, tbody) {
     actionTd.appendChild(editBtn);
   }
 
+
   tr.appendChild(actionTd);
   tbody.appendChild(tr);
 
-  return tr; // ✅ 回傳 <tr> 供 update/append 使用
+  return tr;
 }
-
-
-// // 初始化
-// loadRecords();
 
 
 async function handleReturn(record) {
