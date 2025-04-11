@@ -982,7 +982,7 @@ function appendTableRow(record) {
   renderRow(record, targetBody);
 }
 
-/ ✅ 使用者閒置檢查 + 心跳輪詢
+// ✅ 使用者閒置檢查
 let lastAction = Date.now();
 
 // 滑鼠移動即更新最後操作時間
