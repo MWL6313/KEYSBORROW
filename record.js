@@ -11,15 +11,10 @@ fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
   .then(res => res.json())
   .then(async data => {
     if (data.success) {
-      currentUser = data.user;
-      document.getElementById("welcome").innerText = `Hi, ${data.user.name}`;
-      document.getElementById("borrower").value = data.user.name;
-      document.getElementById("borrowTimeDisplay").value = new Date().toLocaleString();
-      await loadCarNumbers(data.user.carNo);
-      await loadPhoneItems();
+      localStorage.setItem("authToken", data.token); // ✅ 存入 localStorage
+      location.href = "managertest.html";
     } else {
-      localStorage.removeItem("authToken");
-      location.href = "index.html";
+      alert("登入失敗");
     }
   })
   .catch(err => {
