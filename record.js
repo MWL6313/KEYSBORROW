@@ -893,6 +893,17 @@ function showChange(message) {
 
   // 顯示懸浮窗
   latestChanges.style.display = "block";
+
+    // ✅ 額外通知 - 桌面通知
+  if (Notification.permission === "granted") {
+    new Notification("🔔 異動通知", {
+      body: message,
+      icon: "https://github.githubassets.com/favicons/favicon.png"
+    });
+  }
+
+  // ✅ 額外通知 - 音效播放（下一步實作）
+  speakText(message);  // 🗣️ 用語音講出異動內容
 }
 
 // 清空按鈕
@@ -971,3 +982,19 @@ function appendTableRow(record) {
   renderRow(record, targetBody);
 }
 
+/ ✅ 使用者閒置檢查 + 心跳輪詢
+let lastAction = Date.now();
+
+// 滑鼠移動即更新最後操作時間
+document.addEventListener('mousemove', () => lastAction = Date.now());
+document.addEventListener('keydown', () => lastAction = Date.now());
+
+setInterval(() => {
+  const now = Date.now();
+  const idleTime = now - lastAction;
+
+  if (idleTime > 30 * 60 * 1000) {  // 30 分鐘
+    alert("閒置太久，請重新登入");
+    location.reload();  // 或 location.href = "index.html"
+  } 
+}, 90000); // 每 90 秒執行一次
