@@ -842,6 +842,17 @@ export function showToast(message, type = "success") {
       toast.style.display = "none";
     }, 400);
   }, 5000);
+  
+  // ✅ 額外通知 - 桌面通知
+  if (Notification.permission === "granted") {
+    new Notification("🔔 異動通知", {
+      body: message,
+      icon: "https://github.githubassets.com/favicons/favicon.png"
+    });
+  }
+
+  // ✅ 額外通知 - 音效播放（下一步實作）
+  speakText(message);  // 🗣️ 用語音講出異動內容
 }
 
 
