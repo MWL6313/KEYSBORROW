@@ -260,7 +260,20 @@ body {
   font-size: 1.1rem !important;
   line-height: 1.6 !important;
 }
+.ts-dropdown, .ts-dropdown .dropdown-content {
+  max-height: 300px !important;  /* ✅ 展開高度 */
+  font-size: 1.2rem;             /* ✅ 放大字體 */
+  line-height: 1.8;
+}
 
+.ts-dropdown .option {
+  padding: 12px 14px;            /* ✅ 放大點選區塊 */
+}
+
+.ts-control {
+  font-size: 1.2rem;             /* ✅ 選到後顯示區塊放大 */
+  padding: 10px 12px;
+}
 
 
 /* ✅ 手機專用調整 */
