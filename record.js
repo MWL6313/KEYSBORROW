@@ -1097,7 +1097,26 @@ function appendTableRow(record) {
   const targetBody = isDone
     ? document.querySelector("#historyTable tbody")
     : document.querySelector("#recordTable tbody");
-
+  
+    // ✅ 更新背景顏色
+    const now = new Date();
+    const borrowTime = new Date(record.借用時間);
+    const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+    const isVerified = record.查核是否正常 === "巡檢正常";
+    const hasAction = !!record.異常處置對策;
+    
+    // 強制先清除背景（以防殘留）
+    tr.style.backgroundColor = "";
+    
+    if (!isVerified && timeout && !hasAction) {
+      // tr.style.backgroundColor = "#ffdddd";  // 🔴 異常未處理
+      tr.style.setProperty("background-color", "#ffdddd", "important");
+      console.log("❗ 標紅色：", record);
+    } else if (!isVerified && timeout && hasAction) {
+      // tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
+      tr.style.setProperty("background-color", "#fef9dc", "important");
+      console.log("⚠️ 標黃色：", record);
+    }
   renderRow(record, targetBody);
 }
 
