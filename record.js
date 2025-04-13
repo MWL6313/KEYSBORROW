@@ -1256,7 +1256,7 @@ setInterval(() => {
   const idleTime = now - lastAction;
 
   if (idleTime > 30 * 60 * 1000) {  // 30 分鐘
-    alert("閒置太久，請重新登入");
     location.reload();  // 或 location.href = "index.html"
+    alert("閒置太久，請重新登入");
   } 
 }, 90000); // 每 90 秒執行一次
