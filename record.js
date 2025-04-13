@@ -1025,7 +1025,7 @@ function updateTableRow(record) {
       const hasAction = !!record.異常處置對策;
 
       // 清除原本樣式
-      tr.style.backgroundColor = "";
+      // tr.style.backgroundColor = "";
 
       if (record.type !== '手機') {
         if (!isVerified && timeout && !hasAction) {
