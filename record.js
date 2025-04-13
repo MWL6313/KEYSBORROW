@@ -1028,10 +1028,12 @@ function updateTableRow(record) {
       tr.style.backgroundColor = "";
       
       if (!isVerified && timeout && !hasAction) {
-        tr.style.backgroundColor = "#ffdddd";  // 🔴 異常未處理
+        // tr.style.backgroundColor = "#ffdddd";  // 🔴 異常未處理
+        tr.style.setProperty("background-color", "#ffdddd", "important");
         console.log("❗ 標紅色：", record);
       } else if (!isVerified && timeout && hasAction) {
-        tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
+        // tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
+        tr.style.setProperty("background-color", "#fef9dc", "important");
         console.log("⚠️ 標黃色：", record);
       }
       
