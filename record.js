@@ -820,7 +820,7 @@ async function checkLatestChanges() {
 }
 
 
-setInterval(checkLatestChanges, 60 * 1000); // 每 60 秒 1分檢查一次
+setInterval(checkLatestChanges, 90 * 1000); // 每 90 秒 1.5分檢查一次
 
 
 export function showToast(message, type = "success") {
