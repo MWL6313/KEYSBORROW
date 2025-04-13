@@ -936,6 +936,46 @@ document.getElementById("clearChangesBtn").addEventListener("click", () => {
 
 
 
+// //🔧 更新單一列（by 資料）
+// function updateTableRow(record) {
+//   const allRows = document.querySelectorAll("#recordTable tbody tr, #historyTable tbody tr");
+
+//   for (const tr of allRows) {
+//     const rUser = tr.children[0].innerText;
+//     const rItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
+//     const rTime = tr.dataset.borrowTime;
+
+//     if (
+//       rUser === record.借用人 &&
+//       rItem === (record.車號 || record.物品 || "-") &&
+//       rTime === record.借用時間
+//     ) {
+//       const parent = tr.parentElement;
+//       parent.removeChild(tr);
+
+//       const isPhone = record.type === '手機';
+//       const hasReturned = !!record.歸還時間;
+//       const hasInspection = !!record.巡檢結束時間;
+//       const noRear = !record.尾車;
+//       const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
+  
+//       // ✅ 新增條件：查核是否正常 === '巡檢正常'
+//       const isVerified = record.查核是否正常 === "巡檢正常";
+//       // const isDone = (isPhone && record.歸還時間) || (!isPhone && record.歸還時間 && record.巡檢結束時間);
+//       const isDone = (
+//       (isPhone && hasReturned) ||
+//       (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
+//     );
+//       const targetBody = isDone
+//         ? document.querySelector("#historyTable tbody")
+//         : document.querySelector("#recordTable tbody");
+
+//       renderRow(record, targetBody);
+//       return;
+//     }
+//   }
+// }
+
 //🔧 更新單一列（by 資料）
 function updateTableRow(record) {
   const allRows = document.querySelectorAll("#recordTable tbody tr, #historyTable tbody tr");
@@ -950,27 +990,80 @@ function updateTableRow(record) {
       rItem === (record.車號 || record.物品 || "-") &&
       rTime === record.借用時間
     ) {
-      const parent = tr.parentElement;
-      parent.removeChild(tr);
-
       const isPhone = record.type === '手機';
-      const hasReturned = !!record.歸還時間;
-      const hasInspection = !!record.巡檢結束時間;
-      const noRear = !record.尾車;
-      const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
-  
-      // ✅ 新增條件：查核是否正常 === '巡檢正常'
-      const isVerified = record.查核是否正常 === "巡檢正常";
-      // const isDone = (isPhone && record.歸還時間) || (!isPhone && record.歸還時間 && record.巡檢結束時間);
-      const isDone = (
-      (isPhone && hasReturned) ||
-      (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
-    );
-      const targetBody = isDone
-        ? document.querySelector("#historyTable tbody")
-        : document.querySelector("#recordTable tbody");
 
-      renderRow(record, targetBody);
+      const newCols = isPhone
+        ? [
+            record.借用人,
+            `📱 ${record.物品 || "-"}`,
+            formatDate(record.借用時間),
+            formatDate(record.歸還時間),
+            "-", "-", "-", "-", "-", "-"
+          ]
+        : [
+            record.借用人,
+            `🚗 ${record.車號 || "-"}`,
+            formatDate(record.借用時間),
+            formatDate(record.歸還時間),
+            record.車頭 || "-",
+            record.尾車 || "-",
+            record.完成率 || "-",
+            formatDate(record.巡檢結束時間),
+            record.查核是否正常 || "-",
+            record.異常處置對策 || "-"
+          ];
+
+      newCols.forEach((val, idx) => {
+        if (tr.children[idx]) tr.children[idx].innerText = val;
+      });
+
+      // ✅ 更新背景顏色
+      const now = new Date();
+      const borrowTime = new Date(record.借用時間);
+      const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+      const isVerified = record.查核是否正常 === "巡檢正常";
+      const hasAction = !!record.異常處置對策;
+
+      // 清除原本樣式
+      tr.style.backgroundColor = "";
+
+      if (record.type !== '手機') {
+        if (!isVerified && timeout && !hasAction) {
+          tr.style.backgroundColor = "#ffdddd";  // ❌ 異常未處理
+        } else if (!isVerified && timeout && hasAction) {
+          tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
+        }
+      }
+
+      // ✅ 操作按鈕重新建立
+      const actionTd = tr.children[tr.children.length - 1];
+      actionTd.innerHTML = "";
+
+      if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
+        const returnBtn = document.createElement("button");
+        returnBtn.innerText = "🔁 歸還";
+        returnBtn.onclick = () => handleReturn(record);
+        actionTd.appendChild(returnBtn);
+      }
+
+      if (currentRole === "admin") {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerText = "⛔ 刪除";
+        deleteBtn.onclick = () => handleDelete(record);
+        actionTd.appendChild(deleteBtn);
+      }
+
+      if (
+        record.type !== '手機' &&
+        (currentRole === 'admin' || currentRole === 'manager') &&
+        !isVerified && timeout && !hasAction
+      ) {
+        const editBtn = document.createElement("button");
+        editBtn.innerText = "📝 編輯";
+        editBtn.onclick = () => handleEditAbnormal(record);
+        actionTd.appendChild(editBtn);
+      }
+
       return;
     }
   }
