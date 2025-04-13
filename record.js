@@ -1027,23 +1027,6 @@ function updateTableRow(record) {
       // 強制先清除背景（以防殘留）
       tr.style.backgroundColor = "";
       
-      if (!isVerified && timeout && !hasAction) {
-        // tr.style.backgroundColor = "#ffdddd";  // 🔴 異常未處理
-        tr.style.setProperty("background-color", "#ffdddd", "important");
-        console.log("❗ 標紅色：", record);
-      } else if (!isVerified && timeout && hasAction) {
-        // tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
-        tr.style.setProperty("background-color", "#fef9dc", "important");
-        console.log("⚠️ 標黃色：", record);
-      }
-      
-      console.log("🔍 record for debug", {
-        借用人: record.借用人,
-        查核是否正常: record.查核是否正常,
-        借用時間: record.借用時間,
-        timeout: timeout,
-        hasAction: hasAction
-      });
 
 
       // ✅ 操作按鈕重新建立
@@ -1074,7 +1057,17 @@ function updateTableRow(record) {
         editBtn.onclick = () => handleEditAbnormal(record);
         actionTd.appendChild(editBtn);
       }
-
+      
+      if (!isVerified && timeout && !hasAction) {
+        // tr.style.backgroundColor = "#ffdddd";  // 🔴 異常未處理
+        tr.style.setProperty("background-color", "#ffdddd", "important");
+        console.log("❗ 標紅色：", record);
+      } else if (!isVerified && timeout && hasAction) {
+        // tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
+        tr.style.setProperty("background-color", "#fef9dc", "important");
+        console.log("⚠️ 標黃色：", record);
+      }
+      
       return;
     }
   }
