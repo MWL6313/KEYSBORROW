@@ -1034,6 +1034,14 @@ function updateTableRow(record) {
         tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
         console.log("⚠️ 標黃色：", record);
       }
+      
+      console.log("🔍 record for debug", {
+        借用人: record.借用人,
+        查核是否正常: record.查核是否正常,
+        借用時間: record.借用時間,
+        timeout: timeout,
+        hasAction: hasAction
+      });
 
 
       // ✅ 操作按鈕重新建立
