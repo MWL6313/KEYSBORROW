@@ -1023,17 +1023,20 @@ function updateTableRow(record) {
       const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
       const isVerified = record.查核是否正常 === "巡檢正常";
       const hasAction = !!record.異常處置對策;
-
-      // 清除原本樣式
-      // tr.style.backgroundColor = "";
-
+      
+      // ✅ 清除背景樣式（強制清除）
+      tr.style.backgroundColor = "";
+      
       if (record.type !== '手機') {
         if (!isVerified && timeout && !hasAction) {
-          tr.style.backgroundColor = "#ffdddd";  // ❌ 異常未處理
+          tr.style.backgroundColor = "#ffdddd";  // 🔴 異常未處理
         } else if (!isVerified && timeout && hasAction) {
           tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
+        } else {
+          tr.style.backgroundColor = "";         // ✅ 確實正常 → 清除殘色
         }
       }
+
 
       // ✅ 操作按鈕重新建立
       const actionTd = tr.children[tr.children.length - 1];
