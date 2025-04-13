@@ -1024,17 +1024,15 @@ function updateTableRow(record) {
       const isVerified = record.查核是否正常 === "巡檢正常";
       const hasAction = !!record.異常處置對策;
       
-      // ✅ 清除背景樣式（強制清除）
+      // 強制先清除背景（以防殘留）
       tr.style.backgroundColor = "";
       
-      if (record.type !== '手機') {
-        if (!isVerified && timeout && !hasAction) {
-          tr.style.backgroundColor = "#ffdddd";  // 🔴 異常未處理
-        } else if (!isVerified && timeout && hasAction) {
-          tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
-        } else {
-          tr.style.backgroundColor = "";         // ✅ 確實正常 → 清除殘色
-        }
+      if (!isVerified && timeout && !hasAction) {
+        tr.style.backgroundColor = "#ffdddd";  // 🔴 異常未處理
+        console.log("❗ 標紅色：", record);
+      } else if (!isVerified && timeout && hasAction) {
+        tr.style.backgroundColor = "#fef9dc";  // ⚠️ 異常已處理
+        console.log("⚠️ 標黃色：", record);
       }
 
 
