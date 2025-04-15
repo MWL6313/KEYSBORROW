@@ -63,7 +63,7 @@ async function loadRecords() {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
-
+    
     if (!Array.isArray(data)) {
       statusMsg.innerText = "資料載入失敗，請稍後再試。";
       return;
@@ -146,7 +146,7 @@ function filterAndRender() {
     const isVerified = record.查核是否正常 === "巡檢正常";
 
     const inspectionFilter = document.getElementById("inspectionFilter").value;
-    const filteredData = allData.filter((record) => {
+    const filteredData = allRecords.filter((record) => {
       // 依照選項篩選尚未巡檢完成（查核結果 ≠ 巡檢正常）
       if (inspectionFilter === "incomplete") {
         return record.type === "鑰匙" && record.查核是否正常 !== "巡檢正常";
