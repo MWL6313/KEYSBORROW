@@ -33,6 +33,13 @@ let allRecords = [];
 let currentRole = "";
 let showOnlyAbnormal = false;
 
+
+// 🔍 巡檢完成狀態篩選器
+document.getElementById("inspectionFilter").addEventListener("change", () => {
+  filterAndRender(); // 觸發重繪
+});
+
+
 // document.getElementById("filterAbnormalBtn").addEventListener("click", () => {
 //   showOnlyAbnormal = !showOnlyAbnormal;
 
@@ -138,6 +145,21 @@ function filterAndRender() {
     // ✅ 新增條件：查核是否正常 === '巡檢正常'
     const isVerified = record.查核是否正常 === "巡檢正常";
 
+    const inspectionFilter = document.getElementById("inspectionFilter").value;
+    const filteredData = allData.filter((record) => {
+      // ✅ 僅處理鑰匙資料
+      if (record.type !== "鑰匙") return false;
+    
+      // ✅ 巡檢未完成：巡檢結束時間為空或空字串
+      if (inspectionFilter === "incomplete") {
+        return !record.巡檢結束時間 || record.巡檢結束時間.trim() === "";
+      }
+    
+      return true; // 預設全部
+    });
+
+
+    
     const isDone = (
       (isPhone && hasReturned) ||
       (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
