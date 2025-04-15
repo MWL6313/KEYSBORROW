@@ -122,49 +122,85 @@ function filterAndRender() {
   const searchUser = document.getElementById("searchUser").value.toLowerCase();
   const searchCar = document.getElementById("searchCar").value.toLowerCase();
   const typeFilter = document.getElementById("typeFilter").value;
+  const inspectionFilter = document.getElementById("inspectionFilter").value;
 
   const recordBody = document.querySelector("#recordTable tbody");
   const historyBody = document.querySelector("#historyTable tbody");
   recordBody.innerHTML = "";
   historyBody.innerHTML = "";
 
-  allRecords.forEach(record => {
+  // 將所有條件整合過濾，包含巡檢狀態
+  const filteredRecords = allRecords.filter(record => {
     const matchUser = !searchUser || record.借用人.toLowerCase().includes(searchUser);
     const itemName = record.車號 || record.物品 || "";
     const matchCar = !searchCar || itemName.toLowerCase().includes(searchCar);
     const matchType = typeFilter === "all" || record.type === typeFilter;
 
-    if (!matchUser || !matchCar || !matchType) return;
+    let matchInspection = true;
+    if (inspectionFilter === "incomplete") {
+      // 當選取「僅顯示尚未巡檢完成」時，僅保留鑰匙資料且查核狀態不是「巡檢正常」
+      matchInspection = record.type === "鑰匙" && record.查核是否正常 !== "巡檢正常";
+    }
 
+    return matchUser && matchCar && matchType && matchInspection;
+  });
+
+  // 將篩選後的資料渲染到適當的表格中
+  filteredRecords.forEach(record => {
     const isPhone = record.type === '手機';
     const hasReturned = !!record.歸還時間;
     const hasInspection = !!record.巡檢結束時間;
     const noRear = !record.尾車;
     const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
 
-    // ✅ 新增條件：查核是否正常 === '巡檢正常'
+    // 判斷是否完成（依照你的邏輯）
     const isVerified = record.查核是否正常 === "巡檢正常";
-
-    const inspectionFilter = document.getElementById("inspectionFilter").value;
-    const filteredData = allRecords.filter((record) => {
-      // 依照選項篩選尚未巡檢完成（查核結果 ≠ 巡檢正常）
-      if (inspectionFilter === "incomplete") {
-        return record.type === "鑰匙" && record.查核是否正常 !== "巡檢正常";
-      } 
-      return true; // 預設全部
-    });
-
-
-    
     const isDone = (
       (isPhone && hasReturned) ||
       (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
     );
-    const targetBody = isDone ? historyBody : recordBody;
+
+    const targetBody = isDone ? document.querySelector("#historyTable tbody")
+                                : document.querySelector("#recordTable tbody");
 
     renderRow(record, targetBody);
   });
 }
+
+// function filterAndRender() {
+//   const searchUser = document.getElementById("searchUser").value.toLowerCase();
+//   const searchCar = document.getElementById("searchCar").value.toLowerCase();
+//   const typeFilter = document.getElementById("typeFilter").value;
+
+//   const recordBody = document.querySelector("#recordTable tbody");
+//   const historyBody = document.querySelector("#historyTable tbody");
+//   recordBody.innerHTML = "";
+//   historyBody.innerHTML = "";
+
+//   allRecords.forEach(record => {
+//     const matchUser = !searchUser || record.借用人.toLowerCase().includes(searchUser);
+//     const itemName = record.車號 || record.物品 || "";
+//     const matchCar = !searchCar || itemName.toLowerCase().includes(searchCar);
+//     const matchType = typeFilter === "all" || record.type === typeFilter;
+
+//     if (!matchUser || !matchCar || !matchType) return;
+
+//     const isPhone = record.type === '手機';
+//     const hasReturned = !!record.歸還時間;
+//     const hasInspection = !!record.巡檢結束時間;
+//     const noRear = !record.尾車;
+//     const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
+
+   
+//     const isDone = (
+//       (isPhone && hasReturned) ||
+//       (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
+//     );
+//     const targetBody = isDone ? historyBody : recordBody;
+
+//     renderRow(record, targetBody);
+//   });
+// }
 
 
 
