@@ -147,14 +147,10 @@ function filterAndRender() {
 
     const inspectionFilter = document.getElementById("inspectionFilter").value;
     const filteredData = allData.filter((record) => {
-      // ✅ 僅處理鑰匙資料
-      if (record.type !== "鑰匙") return false;
-    
-      // ✅ 巡檢未完成：巡檢結束時間為空或空字串
+      // 依照選項篩選尚未巡檢完成（查核結果 ≠ 巡檢正常）
       if (inspectionFilter === "incomplete") {
-        return !record.巡檢結束時間 || record.巡檢結束時間.trim() === "";
-      }
-    
+        return record.type === "鑰匙" && record.查核是否正常 !== "巡檢正常";
+      } 
       return true; // 預設全部
     });
 
