@@ -329,8 +329,152 @@ function renderRow(record, tbody) {
 // loadRecords();
 
 
+// async function handleReturn(record) {
+//   if (!confirm("確定要標記為歸還嗎？")) return;
+
+//   const tableBody = document.querySelector("#recordTable tbody");
+//   const rows = tableBody.querySelectorAll("tr");
+
+//   let targetRow = null;
+//   let returnBtn = null;
+//   for (let tr of rows) {
+//     const rUser = tr.children[0].innerText;
+//     const rItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
+//     const rTime = tr.dataset.borrowTime;
+
+//     if (
+//       rUser === record.借用人 &&
+//       rItem === (record.車號 || record.物品 || "-") &&
+//       rTime === record.借用時間
+//     ) {
+//       targetRow = tr;
+//       returnBtn = Array.from(tr.querySelectorAll("button")).find(btn => btn.innerText.includes("🔁"));
+//       break;
+//     }
+//   }
+
+//   if (returnBtn) {
+//     returnBtn.disabled = true;
+//     returnBtn.innerText = "⏳ 處理中...";
+//   }
+//   if (targetRow) {
+//     targetRow.style.backgroundColor = "#d0f0ff";
+//   }
+
+//   try {
+//     const endpoint = record.type === '手機'
+//       ? "https://key-loan-api-978908472762.asia-east1.run.app/phone/return"
+//       : "https://key-loan-api-978908472762.asia-east1.run.app/borrow/return";
+
+//     const payload = record.type === '手機'
+//       ? {
+//           借用人: record.借用人,
+//           物品: record.物品,
+//           借用時間: record.借用時間
+//         }
+//       : {
+//           借用人: record.借用人,
+//           車號: record.車號,
+//           借用時間: record.借用時間
+//         };
+
+//     const res = await fetch(endpoint, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${token}`
+//       },
+//       body: JSON.stringify(payload)
+//     });
+
+//     const result = await res.json();
+
+//     if (result.success) {
+//       // alert("✅ 已成功標記為歸還");
+//       // showSingleChange("✅ 已成功標記為歸還");
+//       showToast("✅ 已成功標記為歸還", "success");
+
+//       // 📌 分流處理
+//       let updatedRecord = null;
+
+//       if (record.type === '手機') {
+//         // ✅ 手機改用 /borrow/all
+//         const resAll = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
+//           headers: { Authorization: `Bearer ${token}` }
+//         });
+//         const dataAll = await resAll.json();
+
+//         updatedRecord = dataAll.find(r =>
+//           r.借用人 === record.借用人 &&
+//           r.借用時間 === record.借用時間 &&
+//           r.物品 === record.物品
+//         );
+
+//       } else {
+//         // ✅ 鑰匙使用 withInspection
+//         const resInspect = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
+//           headers: { Authorization: `Bearer ${token}` }
+//         });
+//         const dataInspect = await resInspect.json();
+
+//         if (dataInspect.success && Array.isArray(dataInspect.records)) {
+//           updatedRecord = dataInspect.records.find(r =>
+//             r.借用人 === record.借用人 &&
+//             r.借用時間 === record.借用時間 &&
+//             r.車號 === record.車號
+//           );
+//         }
+//       }
+
+//       if (updatedRecord) {
+//         if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
+
+//         const idx = allRecords.findIndex(r =>
+//           r.借用人 === updatedRecord.借用人 &&
+//           r.借用時間 === updatedRecord.借用時間 &&
+//           (
+//             (updatedRecord.type === '手機' && r.物品 === updatedRecord.物品) ||
+//             (updatedRecord.type !== '手機' && r.車號 === updatedRecord.車號)
+//           )
+//         );
+
+//         if (idx !== -1) allRecords[idx] = updatedRecord;
+//         else allRecords.push(updatedRecord);
+
+//         updateTableRow(updatedRecord);
+//       }
+
+//     } else {
+//       alert("❌ 歸還失敗：" + (result.message || ""));
+//       if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+//     }
+
+//   } catch (err) {
+//     alert("⚠️ 無法連線伺服器");
+//     console.error(err);
+//     if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+//   } finally {
+//     if (returnBtn) {
+//       returnBtn.disabled = false;
+//       returnBtn.innerText = "🔁 歸還";
+//     }
+//   }
+// }
+
 async function handleReturn(record) {
-  if (!confirm("確定要標記為歸還嗎？")) return;
+  const { value: reason } = await Swal.fire({
+    title: "請輸入歸還原因",
+    input: "text",
+    inputPlaceholder: "例如：由管理員代為歸還",
+    showCancelButton: true,
+    confirmButtonText: "確定",
+    cancelButtonText: "取消"
+  });
+
+  if (!reason || reason.trim() === "") {
+    Swal.fire("已取消", "請填寫歸還原因", "info");
+    return;
+  }
 
   const tableBody = document.querySelector("#recordTable tbody");
   const rows = tableBody.querySelectorAll("tr");
@@ -370,12 +514,14 @@ async function handleReturn(record) {
       ? {
           借用人: record.借用人,
           物品: record.物品,
-          借用時間: record.借用時間
+          借用時間: record.借用時間,
+          歸還原因: reason.trim()
         }
       : {
           借用人: record.借用人,
           車號: record.車號,
-          借用時間: record.借用時間
+          借用時間: record.借用時間,
+          歸還原因: reason.trim()
         };
 
     const res = await fetch(endpoint, {
@@ -390,15 +536,11 @@ async function handleReturn(record) {
     const result = await res.json();
 
     if (result.success) {
-      // alert("✅ 已成功標記為歸還");
-      // showSingleChange("✅ 已成功標記為歸還");
       showToast("✅ 已成功標記為歸還", "success");
 
-      // 📌 分流處理
       let updatedRecord = null;
 
       if (record.type === '手機') {
-        // ✅ 手機改用 /borrow/all
         const resAll = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -409,9 +551,7 @@ async function handleReturn(record) {
           r.借用時間 === record.借用時間 &&
           r.物品 === record.物品
         );
-
       } else {
-        // ✅ 鑰匙使用 withInspection
         const resInspect = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -445,13 +585,13 @@ async function handleReturn(record) {
       }
 
     } else {
-      alert("❌ 歸還失敗：" + (result.message || ""));
+      Swal.fire("❌ 歸還失敗", result.message || "未知錯誤", "error");
       if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
     }
 
   } catch (err) {
-    alert("⚠️ 無法連線伺服器");
-    console.error(err);
+    console.error("⚠️ 錯誤", err);
+    Swal.fire("⚠️ 無法連線伺服器", "", "error");
     if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
   } finally {
     if (returnBtn) {
@@ -460,6 +600,7 @@ async function handleReturn(record) {
     }
   }
 }
+
 
 
 async function handleEditAbnormal(record) {
