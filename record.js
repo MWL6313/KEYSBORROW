@@ -841,34 +841,27 @@ async function handleEditAbnormal(record) {
 
 async function handleAlcoholEdit(record) {
   try {
-    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/getAlcoholInfo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        借用人: record.借用人,
-        車號: record.車號,
-        借用時間: record.借用時間
-      })
-    });
+    // 🔁 直接從 allRecords 找出這筆紀錄
+    const target = allRecords.find(r =>
+      r.借用人 === record.借用人 &&
+      r.借用時間 === record.借用時間 &&
+      r.車號 === record.車號
+    );
 
-    const data = await res.json();
-    if (!data.success) {
-      Swal.fire("❌ 查詢失敗", data.message || "無法取得酒測資料", "error");
+    if (!target) {
+      Swal.fire("❌ 找不到資料", "請重新整理頁面", "error");
       return;
     }
 
-    const { 回場酒測, 酒測追查註記, 紀錄15hr, 紀錄3hr } = data;
+    const { 回場酒測, 酒測追查註記, 酒測3to15, 酒測3小時內 } = target;
 
     const { value: formValues } = await Swal.fire({
       title: "🍺 編輯酒測資料",
       html: `
         <input id="field1" class="swal2-input" placeholder="回場酒測" value="${回場酒測 || ""}">
         <input id="field2" class="swal2-input" placeholder="酒測追查註記" value="${酒測追查註記 || ""}">
-        <input id="field3" class="swal2-input" placeholder="借用後3~15小時紀錄" value="${紀錄15hr || ""}">
-        <input id="field4" class="swal2-input" placeholder="借用後3小時內紀錄" value="${紀錄3hr || ""}">
+        <input id="field3" class="swal2-input" placeholder="借用後3~15小時紀錄" value="${酒測3to15 || ""}">
+        <input id="field4" class="swal2-input" placeholder="借用後3小時內紀錄" value="${酒測3小時內 || ""}">
       `,
       focusConfirm: false,
       showCancelButton: true,
@@ -904,6 +897,7 @@ async function handleAlcoholEdit(record) {
     const updateData = await updateRes.json();
     if (updateData.success) {
       Swal.fire("✅ 更新成功", "酒測資料已儲存", "success");
+      reloadWithTimestamp();  // ✅ 更新畫面
     } else {
       Swal.fire("❌ 更新失敗", updateData.message || "", "error");
     }
