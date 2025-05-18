@@ -167,42 +167,6 @@ function filterAndRender() {
   });
 }
 
-// function filterAndRender() {
-//   const searchUser = document.getElementById("searchUser").value.toLowerCase();
-//   const searchCar = document.getElementById("searchCar").value.toLowerCase();
-//   const typeFilter = document.getElementById("typeFilter").value;
-
-//   const recordBody = document.querySelector("#recordTable tbody");
-//   const historyBody = document.querySelector("#historyTable tbody");
-//   recordBody.innerHTML = "";
-//   historyBody.innerHTML = "";
-
-//   allRecords.forEach(record => {
-//     const matchUser = !searchUser || record.借用人.toLowerCase().includes(searchUser);
-//     const itemName = record.車號 || record.物品 || "";
-//     const matchCar = !searchCar || itemName.toLowerCase().includes(searchCar);
-//     const matchType = typeFilter === "all" || record.type === typeFilter;
-
-//     if (!matchUser || !matchCar || !matchType) return;
-
-//     const isPhone = record.type === '手機';
-//     const hasReturned = !!record.歸還時間;
-//     const hasInspection = !!record.巡檢結束時間;
-//     const noRear = !record.尾車;
-//     const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
-
-   
-//     const isDone = (
-//       (isPhone && hasReturned) ||
-//       (!isPhone && hasReturned && hasInspection && !noRear && !incomplete && isVerified)
-//     );
-//     const targetBody = isDone ? historyBody : recordBody;
-
-//     renderRow(record, targetBody);
-//   });
-// }
-
-
 
 function renderRow(record, tbody) {
   const tr = document.createElement("tr");
@@ -223,21 +187,17 @@ function renderRow(record, tbody) {
   const noInspection = !inspectionTime;
   const hasAction = !!record.異常處置對策;
 
-  // if (record.type !== '手機') {
-  //   if (
-  //       (noInspection && timeout && !hasAction) ||         // 無巡檢、逾時、未處理
-  //       (incomplete && timeout && !hasAction) ||           // 完成率不足、逾時、未處理
-  //       (noRear && timeout && !hasAction)                            // 逾時、沒尾車、沒處理
-  //     ) {
-  //       tr.style.backgroundColor = "#ffdddd"; // 🔴 異常未處理
-  //     } else if (
-  //       (noInspection && timeout && hasAction) ||
-  //       (incomplete && timeout && hasAction) ||
-  //       (noRear && timeout && hasAction)                            // 逾時、沒尾車、沒處理
-  //     ) {
-  //       tr.style.backgroundColor = "#eeeeee"; // ⚪ 異常已處理
-  //     }
-  //   }
+  // 增加酒測編輯按鍵
+  if (
+    record.type === '鑰匙' &&
+    (currentRole === 'admin' || currentRole === 'manager')
+  ) {
+    const alcoholBtn = document.createElement("button");
+    alcoholBtn.innerText = "🍺 酒測";
+    alcoholBtn.onclick = () => handleAlcoholEdit(record);
+    actionTd.appendChild(alcoholBtn);
+  }
+  
 
   if (record.type !== '手機') {
     if (
@@ -880,6 +840,80 @@ async function handleEditAbnormal(record) {
 //   }
 // }
 
+async function handleAlcoholEdit(record) {
+  try {
+    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/getAlcoholInfo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        借用人: record.借用人,
+        車號: record.車號,
+        借用時間: record.借用時間
+      })
+    });
+
+    const data = await res.json();
+    if (!data.success) {
+      Swal.fire("❌ 查詢失敗", data.message || "無法取得酒測資料", "error");
+      return;
+    }
+
+    const { 回場酒測, 酒測追查註記, 紀錄15hr, 紀錄3hr } = data;
+
+    const { value: formValues } = await Swal.fire({
+      title: "🍺 編輯酒測資料",
+      html: `
+        <input id="field1" class="swal2-input" placeholder="回場酒測" value="${回場酒測 || ""}">
+        <input id="field2" class="swal2-input" placeholder="酒測追查註記" value="${酒測追查註記 || ""}">
+        <input id="field3" class="swal2-input" placeholder="借用後3~15小時紀錄" value="${紀錄15hr || ""}">
+        <input id="field4" class="swal2-input" placeholder="借用後3小時內紀錄" value="${紀錄3hr || ""}">
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: "儲存",
+      cancelButtonText: "取消",
+      preConfirm: () => {
+        return {
+          回場酒測: document.getElementById("field1").value.trim(),
+          酒測追查註記: document.getElementById("field2").value.trim(),
+          紀錄15hr: document.getElementById("field3").value.trim(),
+          紀錄3hr: document.getElementById("field4").value.trim()
+        };
+      }
+    });
+
+    if (!formValues) return;
+
+    // ⬇ 送出更新 API
+    const updateRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAlcoholInfo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        借用人: record.借用人,
+        車號: record.車號,
+        借用時間: record.借用時間,
+        ...formValues
+      })
+    });
+
+    const updateData = await updateRes.json();
+    if (updateData.success) {
+      Swal.fire("✅ 更新成功", "酒測資料已儲存", "success");
+    } else {
+      Swal.fire("❌ 更新失敗", updateData.message || "", "error");
+    }
+
+  } catch (err) {
+    console.error("handleAlcoholEdit 錯誤", err);
+    Swal.fire("❌ 錯誤", "無法連線伺服器", "error");
+  }
+}
 
 
 async function handleDelete(record) {
@@ -1211,6 +1245,20 @@ function updateTableRow(record) {
       const actionTd = tr.children[tr.children.length - 1];
       actionTd.innerHTML = "";
 
+      
+      // 增加酒測編輯按鍵
+      if (
+        record.type === '鑰匙' &&
+        (currentRole === 'admin' || currentRole === 'manager')
+      ) {
+        const alcoholBtn = document.createElement("button");
+        alcoholBtn.innerText = "🍺 酒測";
+        alcoholBtn.onclick = () => handleAlcoholEdit(record);
+        actionTd.appendChild(alcoholBtn);
+      }
+
+
+      
       if ((currentRole === 'admin' || currentRole === 'manager') && !record.歸還時間) {
         const returnBtn = document.createElement("button");
         returnBtn.innerText = "🔁 歸還";
