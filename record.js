@@ -186,17 +186,6 @@ function renderRow(record, tbody) {
   const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
   const noInspection = !inspectionTime;
   const hasAction = !!record.異常處置對策;
-
-  // 增加酒測編輯按鍵
-  if (
-    record.type === '鑰匙' &&
-    (currentRole === 'admin' || currentRole === 'manager')
-  ) {
-    const alcoholBtn = document.createElement("button");
-    alcoholBtn.innerText = "🍺 酒測";
-    alcoholBtn.onclick = () => handleAlcoholEdit(record);
-    actionTd.appendChild(alcoholBtn);
-  }
   
 
   if (record.type !== '手機') {
@@ -277,6 +266,16 @@ function renderRow(record, tbody) {
     actionTd.appendChild(editBtn);
   }
 
+    // 增加酒測編輯按鍵
+  if (
+    record.type === '鑰匙' &&
+    (currentRole === 'admin' || currentRole === 'manager')
+  ) {
+    const alcoholBtn = document.createElement("button");
+    alcoholBtn.innerText = "🍺 酒測";
+    alcoholBtn.onclick = () => handleAlcoholEdit(record);
+    actionTd.appendChild(alcoholBtn);
+  }
 
   tr.appendChild(actionTd);
   tbody.appendChild(tr);
@@ -879,8 +878,8 @@ async function handleAlcoholEdit(record) {
         return {
           回場酒測: document.getElementById("field1").value.trim(),
           酒測追查註記: document.getElementById("field2").value.trim(),
-          紀錄15hr: document.getElementById("field3").value.trim(),
-          紀錄3hr: document.getElementById("field4").value.trim()
+          酒測3to15: document.getElementById("field3").value.trim(),
+          酒測3小時內: document.getElementById("field4").value.trim()
         };
       }
     });
@@ -888,7 +887,7 @@ async function handleAlcoholEdit(record) {
     if (!formValues) return;
 
     // ⬇ 送出更新 API
-    const updateRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAlcoholInfo", {
+    const updateRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAlcoholFields", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
