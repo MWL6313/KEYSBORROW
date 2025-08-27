@@ -993,8 +993,8 @@ async function reloadWithTimestamp() {
 // 手動刷新按鈕
 document.getElementById("refreshBtn").addEventListener("click", reloadWithTimestamp);
 
-// 自動每 120 秒 2分更新
-setInterval(reloadWithTimestamp, 120 * 1000);
+// 自動每 60 秒 1分更新
+setInterval(reloadWithTimestamp, 60 * 1000);
 
 
 // 初次載入
