@@ -999,6 +999,9 @@ document.getElementById("refreshBtn").addEventListener("click", reloadWithTimest
 setInterval(reloadWithTimestamp, 60 * 1000);
 
 
+// 初次載入前先設定 inspectionFilter 預設值
+document.getElementById("inspectionFilter").value = "incomplete";
+
 // 初次載入
 reloadWithTimestamp();
 
