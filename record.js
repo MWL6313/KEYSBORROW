@@ -75,6 +75,10 @@ async function loadRecords() {
     allRecords.forEach(rec => {
       if (!rec.type) rec.type = rec.物品 ? '手機' : '鑰匙';
     });
+
+    // 🆕 預設依借用時間排序（新到舊）
+    allRecords.sort((a, b) => new Date(b.借用時間) - new Date(a.借用時間));
+    sortAsc = false; // 預設方向為反向排序
     
     // 🔐 再取得目前登入者的角色和完整巡檢資訊
     const res2 = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
