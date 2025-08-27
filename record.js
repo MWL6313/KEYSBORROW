@@ -189,13 +189,13 @@ function renderRow(record, tbody) {
   const { timeout, timeout0 } = getTimeoutFlags(record.借用時間);
 
   if (record.type !== '手機') {
-    // 顏色：>1hr 紅/黃；0.5~1hr 且未處置 → 綠
-    if (!isVerified && timeout && !hasAction) {
-      tr.style.backgroundColor = "#ffdddd";  // 紅：異常 + 未處置
-    } else if (!isVerified && timeout && hasAction) {
-      tr.style.backgroundColor = "#fef9dc";  // 黃：異常 + 已處置
+    // 顏色優先序：有處置→黃；>1hr 未處置→紅；0.5~1hr 未處置→綠
+    if (!isVerified && hasAction) {
+      tr.style.backgroundColor = "#fef9dc";  // 黃：已處置（無論時間帶）
+    } else if (!isVerified && timeout && !hasAction) {
+      tr.style.backgroundColor = "#ffdddd";  // 紅：>1hr 未處置
     } else if (!isVerified && timeout0 && !hasAction) {
-      tr.style.backgroundColor = "#d4edda";  // 綠：0.5~1 小時 + 未處置
+      tr.style.backgroundColor = "#d4edda";  // 綠：0.5~1 小時 未處置
     }
   }
   
@@ -244,7 +244,7 @@ function renderRow(record, tbody) {
     actionTd.appendChild(deleteBtn);
   }
   
-  // 📝 編輯：改為 (timeout || timeout0) 且未處置 且 未巡檢正常
+  // 📝 編輯：只在 未巡檢正常 + 未處置 + (timeout || timeout0) 時顯示
   if (
     record.type !== '手機' &&
     (currentRole === 'admin' || currentRole === 'manager') &&
@@ -496,7 +496,7 @@ async function handleEditAbnormal(record) {
 
       // 📌 一律改成黃色，並移除編輯按鈕
       if (targetRow) {
-        targetRow.style.backgroundColor = "#fef9dc"; // ⚠️ 黃色：已處置
+        targetRow.style.backgroundColor = "#fef9dc"; // ⚠️ 黃色：已處置（統一規則）
         const actionTd = targetRow.children[targetRow.children.length - 1];
         const editBtn2 = Array.from(actionTd.querySelectorAll("button"))
           .find(btn => btn.innerText.includes("📝"));
@@ -518,143 +518,6 @@ async function handleEditAbnormal(record) {
     }
   }
 }
-
-
-
-// async function handleEditAbnormal(record) {
-//   const { value: input } = await Swal.fire({
-//     title: "請輸入異常處置對策",
-//     input: "text",
-//     inputPlaceholder: "請說明處置方式或補救措施",
-//     showCancelButton: true,
-//     confirmButtonText: "確定",
-//     cancelButtonText: "取消"
-//   });
-
-//   if (!input || input.trim() === "") {
-//     Swal.fire("未填寫", "已取消更新", "info");
-//     return;
-//   }
-
-//   const tableBody = document.querySelector("#recordTable tbody");
-//   const rows = tableBody.querySelectorAll("tr");
-
-//   let targetRow = null;
-//   let editBtn = null;
-
-//   for (let tr of rows) {
-//     const tdUser = tr.children[0].innerText.trim();
-//     const tdItem = tr.children[1].innerText.replace(/^📱|🚗/, "").trim();
-//     const tdTime = tr.children[2].innerText.trim();
-
-//     if (
-//       tdUser === record.借用人 &&
-//       tdItem === (record.車號 || record.物品 || "-") &&
-//       tdTime === formatDate(record.借用時間)
-//     ) {
-//       targetRow = tr;
-//       const actionTd = tr.children[9];
-//       editBtn = Array.from(actionTd.querySelectorAll("button"))
-//         .find(btn => btn.innerText.includes("📝"));
-//       break;
-//     }
-//   }
-
-//   if (editBtn) {
-//     editBtn.disabled = true;
-//     editBtn.innerText = "⏳ 更新中...";
-//   }
-
-//   if (targetRow) {
-//     targetRow.style.transition = "background-color 0.3s ease";
-//     targetRow.style.backgroundColor = "#fff3cd";
-//   }
-
-//   try {
-//     const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAction", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${token}`
-//       },
-//       body: JSON.stringify({
-//         借用人: record.借用人,
-//         車號: record.車號,
-//         借用時間: record.借用時間,
-//         異常處置對策: input.trim()
-//       })
-//     });
-
-//     const result = await res.json();
-//     if (result.success) {
-//       showToast("✅ 已成功更新異常處置對策", "success");
-
-//       const updatedRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
-//         headers: { Authorization: `Bearer ${token}` }
-//       });
-//       const data = await updatedRes.json();
-
-//       if (data.success && Array.isArray(data.records)) {
-//         const updatedRecord = data.records.find(r =>
-//           r.借用人 === record.借用人 &&
-//           r.借用時間 === record.借用時間 &&
-//           (
-//             (record.type === '手機' && r.物品 === record.物品) ||
-//             (record.type !== '手機' && r.車號 === record.車號)
-//           )
-//         );
-
-//         if (updatedRecord) {
-//           if (!updatedRecord.type) updatedRecord.type = updatedRecord.物品 ? '手機' : '鑰匙';
-
-//           const idx = allRecords.findIndex(r =>
-//             r.借用人 === updatedRecord.借用人 &&
-//             r.借用時間 === updatedRecord.借用時間 &&
-//             (
-//               (record.type === '手機' && r.物品 === updatedRecord.物品) ||
-//               (record.type !== '手機' && r.車號 === updatedRecord.車號)
-//             )
-//           );
-//           if (idx !== -1) allRecords[idx] = updatedRecord;
-//           else allRecords.push(updatedRecord);
-
-//           updateTableRow(updatedRecord);
-
-//           const isVerified = (updatedRecord.查核是否正常 || "").trim() === "巡檢正常";
-//           const { timeout } = getTimeoutFlags(updatedRecord.借用時間);
-
-//           if (updatedRecord.type !== '手機') {
-//             if (!isVerified && timeout) {
-//               console.log("保持異常背景：", updatedRecord);
-//             } else {
-//               targetRow.style.backgroundColor = "#d4edda";
-//               setTimeout(() => {
-//                 targetRow.style.backgroundColor = "";
-//               }, 1000);
-//             }
-//           } else {
-//             targetRow.style.backgroundColor = "#d4edda";
-//             setTimeout(() => {
-//               targetRow.style.backgroundColor = "";
-//             }, 1000);
-//           }
-//         }
-//       }
-//     } else {
-//       Swal.fire("❌ 更新失敗", result.message || "", "error");
-//       if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
-//     }
-//   } catch (err) {
-//     console.error("伺服器錯誤", err);
-//     Swal.fire("⚠️ 伺服器錯誤", "請稍後再試", "error");
-//     if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
-//   } finally {
-//     if (editBtn) {
-//       editBtn.disabled = false;
-//       editBtn.innerText = "📝 編輯";
-//     }
-//   }
-// }
 
 // async function handleEditAbnormal(record) {
 //   ...（舊版，已移除，保留註解略）
@@ -1041,15 +904,13 @@ function updateTableRow(record) {
       tr.style.backgroundColor = "";
 
       if (!isPhone) {
-        if (!isVerified && timeout && !hasAction) {
+        // 有處置 → 黃；>1hr 未處置 → 紅；0.5~1hr 未處置 → 綠
+        if (!isVerified && hasAction) {
+          tr.style.setProperty("background-color", "#fef9dc", "important"); // 黃（已處置）
+        } else if (!isVerified && timeout && !hasAction) {
           tr.style.setProperty("background-color", "#ffdddd", "important"); // 紅
-          // console.log("❗ 標紅色：", record);
-        } else if (!isVerified && timeout && hasAction) {
-          tr.style.setProperty("background-color", "#fef9dc", "important"); // 黃
-          // console.log("⚠️ 標黃色：", record);
         } else if (!isVerified && timeout0 && !hasAction) {
           tr.style.setProperty("background-color", "#d4edda", "important"); // 綠（未處置）
-          // console.log("✅ 綠帶：", record);
         }
       }
 
@@ -1107,7 +968,7 @@ function appendTableRow(record) {
   const noRear = !record.尾車;
   const incomplete = record.完成率 !== "100%" && record.完成率 !== "100%、100%";
 
-  // ✅ 新增條件：查核是否正常 === '巡檢正常'
+  // ✅ 新增條件：查核是否正常 === "巡檢正常"
   const isVerified = record.查核是否正常 === "巡檢正常";
   const isDone = (
     (isPhone && hasReturned) ||
