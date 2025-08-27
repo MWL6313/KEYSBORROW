@@ -189,7 +189,7 @@ function renderRow(record, tbody) {
   // ✅ 新增條件：查核是否正常 === '巡檢正常'
   const isVerified = record.查核是否正常 === "巡檢正常";
 
-  const timeout = !isNaN(borrowTime) && (now - borrowTime) > 1.5 * 60 * 60 * 1000;
+  const timeout = !isNaN(borrowTime) && (now - borrowTime) > 0.75 * 60 * 60 * 1000;
   const noInspection = !inspectionTime;
   const hasAction = !!record.異常處置對策;
   
