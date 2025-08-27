@@ -939,7 +939,8 @@ async function handleDelete(record) {
   }
 }
 
-let sortAsc = true;  // 初始排序方向
+// let sortAsc = true;  // 初始排序方向
+let sortAsc = false;  // 初始排序方向
 
 // 排序借用時間
 document.getElementById("sortTimeBtn").onclick = () => {
