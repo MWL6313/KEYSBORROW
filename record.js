@@ -1341,8 +1341,8 @@ setInterval(() => {
   const now = Date.now();
   const idleTime = now - lastAction;
 
-  if (idleTime > 30 * 60 * 1000) {  // 30 分鐘
+  if (idleTime > 60 * 60 * 1000) {  // 60 分鐘
     location.reload();  // 或 location.href = "index.html"
     alert("閒置太久，請重新登入");
   } 
-}, 90000); // 每 90 秒執行一次
+}, 300000); // 每 300 秒執行一次
