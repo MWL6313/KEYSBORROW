@@ -16,6 +16,8 @@ fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
       currentUser = data.user;
       currentRole = data.role;
       document.getElementById("currentUserName").innerText = currentUser.name || currentUser.id;
+      // 初次載入前先設定 inspectionFilter 預設值
+      document.getElementById("inspectionFilter").value = "incomplete";
       await reloadWithTimestamp();  // 開始載入資料
     } else {
       localStorage.removeItem("authToken");
