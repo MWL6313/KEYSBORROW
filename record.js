@@ -189,13 +189,22 @@ function renderRow(record, tbody) {
   const { timeout, timeout0 } = getTimeoutFlags(record.借用時間);
 
   if (record.type !== '手機') {
-    // 顏色優先序：有處置→黃；>1hr 未處置→紅；0.5~1hr 未處置→綠
+    // // 顏色優先序：有處置→黃；>1hr 未處置→紅；0.5~1hr 未處置→綠
+    // if (!isVerified && hasAction) {
+    //   tr.style.backgroundColor = "#fef9dc";  // 黃：已處置（無論時間帶）
+    // } else if (!isVerified && timeout && !hasAction) {
+    //   tr.style.backgroundColor = "#ffdddd";  // 紅：>1hr 未處置
+    // } else if (!isVerified && timeout0 && !hasAction) {
+    //   tr.style.backgroundColor = "#d4edda";  // 綠：0.5~1 小時 未處置
+    // }
+
+    // 顏色優先序：有處置→綠；>1hr 未處置→紅；0.5~1hr 未處置→黃
     if (!isVerified && hasAction) {
-      tr.style.backgroundColor = "#fef9dc";  // 黃：已處置（無論時間帶）
+      tr.style.backgroundColor = "#d4edda";  // 綠：已處置（無論時間帶）
     } else if (!isVerified && timeout && !hasAction) {
       tr.style.backgroundColor = "#ffdddd";  // 紅：>1hr 未處置
     } else if (!isVerified && timeout0 && !hasAction) {
-      tr.style.backgroundColor = "#d4edda";  // 綠：0.5~1 小時 未處置
+      tr.style.backgroundColor = "#fef9dc";  // 黃：0.5~1 小時 未處置
     }
   }
   
@@ -496,7 +505,7 @@ async function handleEditAbnormal(record) {
 
       // 📌 一律改成黃色，並移除編輯按鈕
       if (targetRow) {
-        targetRow.style.backgroundColor = "#fef9dc"; // ⚠️ 黃色：已處置（統一規則）
+        targetRow.style.backgroundColor = "#d4edda"; //"#fef9dc";  ⚠️ 黃色：已處置（統一規則）
         const actionTd = targetRow.children[targetRow.children.length - 1];
         const editBtn2 = Array.from(actionTd.querySelectorAll("button"))
           .find(btn => btn.innerText.includes("📝"));
@@ -904,13 +913,22 @@ function updateTableRow(record) {
       tr.style.backgroundColor = "";
 
       if (!isPhone) {
-        // 有處置 → 黃；>1hr 未處置 → 紅；0.5~1hr 未處置 → 綠
+        // // 有處置 → 黃；>1hr 未處置 → 紅；0.5~1hr 未處置 → 綠
+        // if (!isVerified && hasAction) {
+        //   tr.style.setProperty("background-color", "#fef9dc", "important"); // 黃（已處置）
+        // } else if (!isVerified && timeout && !hasAction) {
+        //   tr.style.setProperty("background-color", "#ffdddd", "important"); // 紅
+        // } else if (!isVerified && timeout0 && !hasAction) {
+        //   tr.style.setProperty("background-color", "#d4edda", "important"); // 綠（未處置）
+        // }
+        
+        // 顏色優先序：有處置→綠；>1hr 未處置→紅；0.5~1hr 未處置→黃
         if (!isVerified && hasAction) {
-          tr.style.setProperty("background-color", "#fef9dc", "important"); // 黃（已處置）
+          tr.style.backgroundColor = "#d4edda";  // 綠：已處置（無論時間帶）
         } else if (!isVerified && timeout && !hasAction) {
-          tr.style.setProperty("background-color", "#ffdddd", "important"); // 紅
+          tr.style.backgroundColor = "#ffdddd";  // 紅：>1hr 未處置
         } else if (!isVerified && timeout0 && !hasAction) {
-          tr.style.setProperty("background-color", "#d4edda", "important"); // 綠（未處置）
+          tr.style.backgroundColor = "#fef9dc";  // 黃：0.5~1 小時 未處置
         }
       }
 
