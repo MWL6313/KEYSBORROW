@@ -606,10 +606,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const { value: input } = await Swal.fire({
       title: "請輸入異常處置對策",
       input: "textarea",
-      inputPlaceholder: "只須說明處置或補救措施。.\
+      inputPlaceholder: "只須說明處置或補救措施。\
                         (系統將自動編號並帶入登入帳號、時間)",
       inputAttributes: {
-        style: "height:120px;"   // ← 調整高度
+        style: "height:200px;"   // ← 調整高度
       },
       showCancelButton: true,
       confirmButtonText: "確定",
