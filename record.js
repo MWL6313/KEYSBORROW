@@ -1,4 +1,3 @@
-<script>
 // --------------------------- 設定與初始化 ---------------------------
 const token = localStorage.getItem("authToken");
 if (!token) {
@@ -946,7 +945,6 @@ setInterval(() => {
     alert("閒置太久，請重新登入");
   } 
 }, 300000); // 每 300 秒執行一次
-</script>
 
 
 // const token = localStorage.getItem("authToken");
