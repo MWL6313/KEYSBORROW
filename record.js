@@ -597,7 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // const { value: input } = await Swal.fire({
     //   title: "請輸入異常處置對策",
     //   input: "text",
-    //   inputPlaceholder: "說明處置或補救措施(系統自動編號帶入帳號、時間)",
+    //   inputPlaceholder: "只須說明處置或補救措施(系統將自動編號並帶入登入帳號、時間)",
     //   showCancelButton: true,
     //   confirmButtonText: "確定",
     //   cancelButtonText: "取消"
