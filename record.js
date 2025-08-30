@@ -1983,8 +1983,8 @@ setInterval(() => {
 //   const now = Date.now();
 //   const idleTime = now - lastAction;
 
-  if (idleTime > 60 * 60 * 1000) {  // 60 分鐘
-    location.reload();  // 或 location.href = "index.html"
-    alert("閒置太久，請重新登入");
-  } 
-}, 300000); // 每 300 秒執行一次
+//   if (idleTime > 60 * 60 * 1000) {  // 60 分鐘
+//     location.reload();  // 或 location.href = "index.html"
+//     alert("閒置太久，請重新登入");
+//   } 
+// }, 300000); // 每 300 秒執行一次
