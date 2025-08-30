@@ -451,15 +451,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --------------------------- 動作：歸還 ---------------------------
   async function handleReturn(record) {
+    // const { value: reason } = await Swal.fire({
+    //   title: "請輸入管理人員代為歸還原因",
+    //   input: "text",
+    //   inputPlaceholder: "例如：維修中無法感應",
+    //   showCancelButton: true,
+    //   confirmButtonText: "確定",
+    //   cancelButtonText: "取消"
+    // });
+
     const { value: reason } = await Swal.fire({
       title: "請輸入管理人員代為歸還原因",
-      input: "text",
+      input: "textarea",
       inputPlaceholder: "例如：維修中無法感應",
+      inputAttributes: {
+        style: "height:120px;"   // ← 調整高度
+      },
       showCancelButton: true,
       confirmButtonText: "確定",
       cancelButtonText: "取消"
     });
 
+
+
+    
     if (!reason || reason.trim() === "") {
       Swal.fire("已取消", "請填寫歸還原因", "info");
       return;
@@ -579,15 +594,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --------------------------- 動作：編輯異常處置 ---------------------------
   async function handleEditAbnormal(record) {
+    // const { value: input } = await Swal.fire({
+    //   title: "請輸入異常處置對策",
+    //   input: "text",
+    //   inputPlaceholder: "說明處置或補救措施(系統自動編號帶入帳號、時間)",
+    //   showCancelButton: true,
+    //   confirmButtonText: "確定",
+    //   cancelButtonText: "取消"
+    // });
+
     const { value: input } = await Swal.fire({
       title: "請輸入異常處置對策",
-      input: "text",
-      inputPlaceholder: "請說明處置方式或補救措施(系統自動編號並帶入說明人帳號、說明時間)",
+      input: "textarea",
+      inputPlaceholder: "說明處置或補救措施(系統自動編號帶入帳號、時間)",
+      inputAttributes: {
+        style: "height:120px;"   // ← 調整高度
+      },
       showCancelButton: true,
       confirmButtonText: "確定",
       cancelButtonText: "取消"
     });
 
+
+    
     if (!input || input.trim() === "") {
       Swal.fire("未填寫", "已取消更新", "info");
       return;
