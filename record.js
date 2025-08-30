@@ -490,32 +490,54 @@ async function handleEditAbnormal(record) {
     });
 
     const result = await res.json();
-    if (result.success) {
-      showToast("✅ 已成功更新異常處置對策", "success");
+    // if (result.success) {
+    //   showToast("✅ 已成功更新異常處置對策", "success");
 
-      // 🔄 更新本地資料
-      const idx = allRecords.findIndex(r =>
-        r.借用人 === record.借用人 &&
-        r.借用時間 === record.借用時間 &&
-        r.車號 === record.車號
-      );
-      if (idx !== -1) {
-        allRecords[idx].異常處置對策 = input.trim();
-      }
+    //   // 🔄 更新本地資料
+    //   const idx = allRecords.findIndex(r =>
+    //     r.借用人 === record.借用人 &&
+    //     r.借用時間 === record.借用時間 &&
+    //     r.車號 === record.車號
+    //   );
+    //   if (idx !== -1) {
+    //     allRecords[idx].異常處置對策 = input.trim();
+    //   }
 
-      // 📌 一律改成黃色，並移除編輯按鈕
-      if (targetRow) {
-        targetRow.style.backgroundColor = "#d4edda"; //"#fef9dc";  ⚠️ 黃色：已處置（統一規則）
-        const actionTd = targetRow.children[targetRow.children.length - 1];
-        const editBtn2 = Array.from(actionTd.querySelectorAll("button"))
-          .find(btn => btn.innerText.includes("📝"));
-        if (editBtn2) editBtn2.remove();
-      }
+    //   // 📌 一律改成黃色，並移除編輯按鈕
+    //   if (targetRow) {
+    //     targetRow.style.backgroundColor = "#d4edda"; //"#fef9dc";  ⚠️ 黃色：已處置（統一規則）
+    //     const actionTd = targetRow.children[targetRow.children.length - 1];
+    //     const editBtn2 = Array.from(actionTd.querySelectorAll("button"))
+    //       .find(btn => btn.innerText.includes("📝"));
+    //     if (editBtn2) editBtn2.remove();
+    //   }
 
-    } else {
-      Swal.fire("❌ 更新失敗", result.message || "", "error");
-      if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+    // } else {
+    //   Swal.fire("❌ 更新失敗", result.message || "", "error");
+    //   if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+    // }
+
+    
+    // 成功後
+  if (result.success) {
+    showToast("✅ 已成功更新異常處置對策", "success");
+  
+    // 直接重抓，讓前端顯示到完整的「編號 + 內容(時間)」合併結果
+    await reloadWithTimestamp();
+  
+    // 視覺提示：維持暫黃就好；不要移除「📝 編輯」按鈕
+    if (targetRow) {
+      targetRow.style.backgroundColor = "#fff3cd"; // 暫黃提示
+      setTimeout(() => {
+        // 由 updateTableRow / render 決定真正底色
+        targetRow.style.backgroundColor = "";
+      }, 800);
     }
+  } else {
+    Swal.fire("❌ 更新失敗", result.message || "", "error");
+    if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+  
+
   } catch (err) {
     console.error("伺服器錯誤", err);
     Swal.fire("⚠️ 伺服器錯誤", "請稍後再試", "error");
