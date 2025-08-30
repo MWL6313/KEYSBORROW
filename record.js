@@ -5,7 +5,7 @@ if (!token) {
   location.href = "managertest.html"; // 沒 token，回登入頁
 }
 
-fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
+fetch("https://key-loan-api-299116105630.asia-east1.run.app/validateToken", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ token }),
@@ -58,7 +58,7 @@ async function loadRecords() {
   const statusMsg = document.getElementById("statusMsg");
 
   try {
-    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
+    const res = await fetch("https://key-loan-api-299116105630.asia-east1.run.app/borrow/all", {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
@@ -80,7 +80,7 @@ async function loadRecords() {
     sortAsc = false; // 預設方向為反向排序
     
     // 🔐 再取得目前登入者的角色和完整巡檢資訊
-    const res2 = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
+    const res2 = await fetch("https://key-loan-api-299116105630.asia-east1.run.app/borrow/withInspection", {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data2 = await res2.json();
@@ -310,8 +310,8 @@ async function handleReturn(record) {
 
   try {
     const endpoint = record.type === '手機'
-      ? "https://key-loan-api-978908472762.asia-east1.run.app/phone/return"
-      : "https://key-loan-api-978908472762.asia-east1.run.app/borrow/return";
+      ? "https://key-loan-api-299116105630.asia-east1.run.app/phone/return"
+      : "https://key-loan-api-299116105630.asia-east1.run.app/borrow/return";
 
     const payload = record.type === '手機'
       ? {
@@ -344,7 +344,7 @@ async function handleReturn(record) {
       let updatedRecord = null;
 
       if (record.type === '手機') {
-        const resAll = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
+        const resAll = await fetch("https://key-loan-api-299116105630.asia-east1.run.app/borrow/all", {
           headers: { Authorization: `Bearer ${token}` }
         });
         const dataAll = await resAll.json();
@@ -355,7 +355,7 @@ async function handleReturn(record) {
           r.物品 === record.物品
         );
       } else {
-        const resInspect = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
+        const resInspect = await fetch("https://key-loan-api-299116105630.asia-east1.run.app/borrow/withInspection", {
           headers: { Authorization: `Bearer ${token}` }
         });
         const dataInspect = await resInspect.json();
@@ -455,7 +455,7 @@ async function handleEditAbnormal(record) {
   }
 
   try {
-    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAction", {
+    const res = await fetch("https://key-loan-api-299116105630.asia-east1.run.app/borrow/updateAction", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -539,7 +539,7 @@ async function handleAlcoholEdit(record) {
 
     if (!formValues) return;
 
-    const updateRes = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/updateAlcoholFields", {
+    const updateRes = await fetch("https://key-loan-api-299116105630.asia-east1.run.app/borrow/updateAlcoholFields", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -572,7 +572,7 @@ async function handleDelete(record) {
   if (!confirm("確定要刪除此紀錄嗎？此操作不可復原")) return;
 
   try {
-    const res = await fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/delete", {
+    const res = await fetch("https://key-loan-api-299116105630.asia-east1.run.app/borrow/delete", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -654,10 +654,10 @@ const shownKeys = new Set();  // 防止重複顯示
 async function checkLatestChanges() {
   try {
     const [resPhone, resKey] = await Promise.all([
-      fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/all", {
+      fetch("https://key-loan-api-299116105630.asia-east1.run.app/borrow/all", {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      fetch("https://key-loan-api-978908472762.asia-east1.run.app/borrow/withInspection", {
+      fetch("https://key-loan-api-299116105630.asia-east1.run.app/borrow/withInspection", {
         headers: { Authorization: `Bearer ${token}` }
       })
     ]);
@@ -955,7 +955,7 @@ setInterval(() => {
 //   location.href = "managertest.html"; // 沒 token，回登入頁
 // }
 
-// fetch("https://key-loan-api-978908472762.asia-east1.run.app/validateToken", {
+// fetch("https://key-loan-api-299116105630.asia-east1.run.app/validateToken", {
 //   method: "POST",
 //   headers: { "Content-Type": "application/json" },
 //   body: JSON.stringify({ token }),
