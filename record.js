@@ -582,7 +582,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const { value: input } = await Swal.fire({
       title: "請輸入異常處置對策",
       input: "text",
-      inputPlaceholder: "請說明處置方式或補救措施",
+      inputPlaceholder: "請說明處置方式或補救措施(系統自動編號並帶入說明人帳號、說明時間)",
       showCancelButton: true,
       confirmButtonText: "確定",
       cancelButtonText: "取消"
