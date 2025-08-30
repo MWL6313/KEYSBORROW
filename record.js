@@ -516,6 +516,17 @@ async function handleEditAbnormal(record) {
     //   Swal.fire("❌ 更新失敗", result.message || "", "error");
     //   if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
     // }
+//      } catch (err) {
+//     console.error("伺服器錯誤", err);
+//     Swal.fire("⚠️ 伺服器錯誤", "請稍後再試", "error");
+//     if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
+//   } finally {
+//     if (editBtn) {
+//       editBtn.disabled = false;
+//       editBtn.innerText = "📝 編輯";
+//     }
+//   }
+// }
 
     
     // 成功後
@@ -536,19 +547,9 @@ async function handleEditAbnormal(record) {
   } else {
     Swal.fire("❌ 更新失敗", result.message || "", "error");
     if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
-  
-
-  } catch (err) {
-    console.error("伺服器錯誤", err);
-    Swal.fire("⚠️ 伺服器錯誤", "請稍後再試", "error");
-    if (targetRow) targetRow.style.backgroundColor = "#f8d7da";
-  } finally {
-    if (editBtn) {
-      editBtn.disabled = false;
-      editBtn.innerText = "📝 編輯";
-    }
   }
-}
+
+ 
 
 // async function handleEditAbnormal(record) {
 //   ...（舊版，已移除，保留註解略）
